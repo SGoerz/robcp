@@ -5,16 +5,16 @@
 #include <stdlib.h>
 
 // k function for 
-double k(double x)
+/*double k(double x)
 {
        if(fabs(x) <= 0.5) return x;
        else if(fabs(x) > 0.5 && fabs(x) < 1) return (2 - 2 * fabs(x));
        else return 0;
-}
+}*/
 
 
 //function to extract a column of a matrix (given by vector arr[]) into temp
-void extract(double ma[], double arr[], int start, int n)
+/*void extract(double ma[], double arr[], int start, int n)
 {
        int i;
        
@@ -22,11 +22,11 @@ void extract(double ma[], double arr[], int start, int n)
        {
              arr[i] = ma[start + i];
        }
-}
+}*/
 
 
 // sigma_1: long run variance of a single signal
-double sigma_1(double *x, int n, double b_n)
+/*double sigma_1(double *x, int n, double b_n)
 {
      int i, h;
      
@@ -52,11 +52,11 @@ double sigma_1(double *x, int n, double b_n)
      
      erg = (var + 2 * temp) / n;
      return erg;
-}
+}*/
 
 
 // sigma_2: long run variance of two signals
-double sigma_2(double x1[], double x2[], int n, double b_n)
+/*double sigma_2(double x1[], double x2[], int n, double b_n)
 {
      int i, h;
      
@@ -80,10 +80,10 @@ double sigma_2(double x1[], double x2[], int n, double b_n)
      erg /= n;
      
      return erg;
-}
+}*/
 
 // return sigma^2 for the one-dimensional case
-SEXP sigma2(SEXP X, SEXP BN)
+/*SEXP lrv(SEXP X, SEXP BN)
 {
      double *x = REAL(X);
      int n = length(X);
@@ -97,10 +97,10 @@ SEXP sigma2(SEXP X, SEXP BN)
      
      UNPROTECT(1);
      return ERG;
-}
+}*/
 
 
-SEXP sigma_matrix(SEXP Y, SEXP N, SEXP M, SEXP BN)
+/*SEXP lrv_matrix(SEXP Y, SEXP N, SEXP M, SEXP BN)
 {
      SEXP X = duplicate(Y);
      PROTECT(X);
@@ -144,7 +144,7 @@ SEXP sigma_matrix(SEXP Y, SEXP N, SEXP M, SEXP BN)
      
      UNPROTECT(2);
      return ERG;
-}
+}*/
 
 // finds the minimum in array arr with boundaries l and u
 double minimum(double arr[], int l, int u)
@@ -160,7 +160,7 @@ double minimum(double arr[], int l, int u)
 }
 
 // standardizes arr[start:(n-1)] by location mu and scale sigma
-void trafo(double arr[], double mu, double sigma, int start, int n)
+/*void trafo(double arr[], double mu, double sigma, int start, int n)
 {
      int i;
           
@@ -168,11 +168,11 @@ void trafo(double arr[], double mu, double sigma, int start, int n)
      {
            arr[i] = (arr[i] - mu) / sigma;
      }
-}
+}*/
 
 
 // marginal huberized location
-void HLm(double arr[], int start, int n, int m, double k)
+/*void HLm(double arr[], int start, int n, int m, double k)
 {
      int j; 
      for(j = 0; j < m; j++)
@@ -250,10 +250,10 @@ void VLg(double arr[], int start, int n, int m, double k)
                 arr[start + j * n] = arr[start + j * n] / sum;
           }
      }
-}
+}*/
 
 
-SEXP psi_location(SEXP Y, SEXP FUN, SEXP N, SEXP M, SEXP K, //SEXP CONST, 
+/*SEXP psi_location(SEXP Y, SEXP FUN, SEXP N, SEXP M, SEXP K, //SEXP CONST, 
                   SEXP MED, SEXP MAD)
 {
      int n = *REAL(N);
@@ -276,7 +276,7 @@ SEXP psi_location(SEXP Y, SEXP FUN, SEXP N, SEXP M, SEXP K, //SEXP CONST,
      for(j = 0; j < m; j++)
      {
            // copy parts of x (columns of matrix) into temp 
-           extract(x, temp, j * n, n);
+           //extract(x, temp, j * n, n);
            
            // for now: median and mad need to be computed in R
            //med = median(temp, n);
@@ -284,6 +284,7 @@ SEXP psi_location(SEXP Y, SEXP FUN, SEXP N, SEXP M, SEXP K, //SEXP CONST,
            
            trafo(x, med[j], mad[j], j * n, n);
      }
+     
      for(i = 0; i < n; i++)
      {
            switch(fun)
@@ -297,9 +298,9 @@ SEXP psi_location(SEXP Y, SEXP FUN, SEXP N, SEXP M, SEXP K, //SEXP CONST,
      
      UNPROTECT(1);
      return X;
-}
+}*/
 
-SEXP psi_covariance(SEXP Y, SEXP FUN, SEXP N, SEXP M, SEXP K, //SEXP CONST, 
+/*SEXP psi_covariance(SEXP Y, SEXP FUN, SEXP N, SEXP M, SEXP K, //SEXP CONST, 
                     SEXP MED, SEXP MAD)
 {
      int fun = *REAL(FUN);
@@ -363,9 +364,9 @@ SEXP psi_covariance(SEXP Y, SEXP FUN, SEXP N, SEXP M, SEXP K, //SEXP CONST,
      
      UNPROTECT(3);
      return ERG;
-}
+}*/
 
-SEXP psi(SEXP Y, SEXP FUN, SEXP N, SEXP M, SEXP K, //SEXP CONST, 
+/*SEXP psi(SEXP Y, SEXP FUN, SEXP N, SEXP M, SEXP K, //SEXP CONST, 
          SEXP MED, SEXP MAD)
 {
      int fun = *REAL(FUN);
@@ -377,10 +378,10 @@ SEXP psi(SEXP Y, SEXP FUN, SEXP N, SEXP M, SEXP K, //SEXP CONST,
                                MED, MAD);
      
      return ERG;
-}
+}*/
 
 
-SEXP h_cumsum(SEXP Y)
+/*SEXP h_cumsum(SEXP Y)
 {
      SEXP X = duplicate(Y);
      PROTECT(X);
@@ -398,7 +399,7 @@ SEXP h_cumsum(SEXP Y)
 }
 
 
-SEXP cumsum_ma(SEXP Y, SEXP N, SEXP M)
+SEXP h_cumsum_ma(SEXP Y, SEXP N, SEXP M)
 {
      int n = *REAL(N);
      int m = *REAL(M);
@@ -419,13 +420,13 @@ SEXP cumsum_ma(SEXP Y, SEXP N, SEXP M)
      
      UNPROTECT(1);
      return X;
-}
+}*/
 
 
 // Following: Revised Modified Cholesky Decomposition Algorithm
 
 //swap rows and columns number j and maxindex
-void rowColSwap(double A[], int j, int maxindex, int n)
+/*void rowColSwap(double A[], int j, int maxindex, int n)
 {
      int i;
      double temp;
@@ -445,10 +446,10 @@ void rowColSwap(double A[], int j, int maxindex, int n)
            A[j + i * n] = A[maxindex + i * n];
            A[maxindex + i * n] = temp;
      }
-}
+}*/
 
 
-void jthFac(double A[], double L[], int j, int n)
+/*void jthFac(double A[], double L[], int j, int n)
 {
      int i, k;
      
@@ -470,7 +471,7 @@ void jthFac(double A[], double L[], int j, int n)
                 A[k + i * n] = A[i + k * n];
            }
      }
-}
+}*/
 
 //Revised Modified Cholesky Decomposition Algorithm
 //A symmetric, stored in lower triangle
@@ -478,7 +479,7 @@ void jthFac(double A[], double L[], int j, int n)
 //goal: find LL^T of A + E, E >= 0
 // Source of peusocode:
 // Schnabel, R. B., & Eskow, E. (1999). "A revised modified Cholesky factorization algorithm" SIAM Journal on optimization, 9(4), 1135-1148.
-void RMCDA(double A[], double L[], int n, double tau, double tau_bar, double mu, 
+/*void RMCDA(double A[], double L[], int n, double tau, double tau_bar, double mu, 
            double swaps[])
 {
        int phaseone = 1; // boolean variable
@@ -719,10 +720,10 @@ void RMCDA(double A[], double L[], int n, double tau, double tau_bar, double mu,
              swaps[n - 2] = n - 2;
              swaps[n - 1] = n - 1;
        }
-}
+}*/
 
 
-SEXP cholesky(SEXP X, SEXP N, SEXP TAU, SEXP TAU_BAR, SEXP MU)
+/*SEXP cholesky(SEXP X, SEXP N, SEXP TAU, SEXP TAU_BAR, SEXP MU)
 {
      SEXP A = duplicate(X);
      PROTECT(A);
@@ -747,10 +748,10 @@ SEXP cholesky(SEXP X, SEXP N, SEXP TAU, SEXP TAU_BAR, SEXP MU)
      
      UNPROTECT(2);
      return L;
-}
+}*/
 
 
-SEXP teststat(SEXP Y, SEXP SIGMA)
+/*SEXP h_teststat(SEXP Y, SEXP SIGMA)
 {
      PROTECT(Y);
      double sigma = *REAL(SIGMA);
@@ -779,10 +780,10 @@ SEXP teststat(SEXP Y, SEXP SIGMA)
      
      UNPROTECT(2);
      return(MAX);
-}
+}*/
 
 
-SEXP teststat_ma(SEXP Y, SEXP SIGMA, SEXP SWAPS, SEXP N, SEXP M)
+/*SEXP h_teststat_ma(SEXP Y, SEXP SIGMA, SEXP SWAPS, SEXP N, SEXP M)
 {
      PROTECT(Y);
      PROTECT(SIGMA);
@@ -793,11 +794,11 @@ SEXP teststat_ma(SEXP Y, SEXP SIGMA, SEXP SWAPS, SEXP N, SEXP M)
      int n = *REAL(N);
      int m = *REAL(M);
      
-     /*
-      * cumsum: matrix; each column is the cumulative sum of the corresponding 
-      * column in Y
-      */
-     double *cumsum = REAL(cumsum_ma(Y, N, M));
+     
+     // cumsum: matrix; each column is the cumulative sum of the corresponding 
+     // column in Y
+     
+     double *cumsum = REAL(h_cumsum_ma(Y, N, M));
      
      double sumN[m];
      double temp[m];
@@ -858,7 +859,7 @@ SEXP teststat_ma(SEXP Y, SEXP SIGMA, SEXP SWAPS, SEXP N, SEXP M)
      
      UNPROTECT(4);
      return MAX;
-}
+}*/
 
 
 // Cumulative distribution function of the limit of the two-sided KS-statistic
@@ -867,7 +868,7 @@ SEXP teststat_ma(SEXP Y, SEXP SIGMA, SEXP SWAPS, SEXP N, SEXP M)
  * Computing the Cumulative Distribution Function and Quantiles of the One-sided 
  * Kolmogorov-Smirnov Statistic. arXiv preprint arXiv:1802.06966.
  */
-static void KSdist(int n, double *x, double tol)
+/*static void KSdist(int n, double *x, double tol)
 {
     double x_new, x_old, s, z, t;
     int i, k, k_max;
@@ -917,7 +918,7 @@ SEXP pKSdist(SEXP statistic, SEXP stol)
     SEXP ans = duplicate(statistic);
     KSdist(n, REAL(ans), tol);
     return ans;
-}
+}*/
 
 
 
@@ -984,18 +985,20 @@ double quick_select(double arr[], int k, int n)
     }
 }
 
-
+/*
 // compare function
 int cmpfun(const void *a, const void *b) 
 {
    return ( *(double*)a - *(double*)b );
 }
-
+*/
 
 /* kthPair: Finds the k-th biggest element of the set X + Y 
 * x and y must be in descending order
 * 1 <= k <= n * m
 */
+
+/*
 double kthPair(double *x, double *y, int n, int m, int k)
 {               
        int i, j, l, sum1, sum2;
@@ -1111,9 +1114,8 @@ double kthPair(double *x, double *y, int n, int m, int k)
                R += n;
        }
        
-       /* create new array wA containing all elements that have not been 
-        * excluded from possibly being the k-th largest
-        */
+       // create new array wA containing all elements that have not been 
+       // excluded from possibly being the k-th largest
        l = 0;
        for(i = 0; i < n; i++)
        {
@@ -1163,5 +1165,6 @@ SEXP KthPair(SEXP X, SEXP Y, SEXP N, SEXP M, SEXP K)
      
      return RES;
 }
+*/
 
 

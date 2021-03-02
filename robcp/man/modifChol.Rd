@@ -21,12 +21,12 @@ modifChol(x, tau = .Machine$double.eps^(1 / 3),
 }
 
 \details{
-\code{modif.chol} computes the revised modified Cholesky Factorization of a symmetric, not neccessarily positive definite matrix x + E such that \eqn{LL' = x + E} for \eqn{E \ge 0}.
+\code{modif.chol} computes the revised modified Cholesky Factorization of a symmetric, not neccessarily positive definite matrix x + E such that \eqn{L'L = x + E} for \eqn{E \ge 0}.
 }
 
 \value{
-Lower triangular matrix \eqn{L} of the form \eqn{LL' = x + E}.
-The attribute \code{swaps} is a vector of the lenght of dimension of x. It cointains the indices of the rows and columns that were swapped in x in order to compute the modified Cholesky factorization. For example if the \code{i}-th element of swaps is the number \code{j}, then the \code{i}-th and the \code{j}-th row and column were swapped. To reconstruct the original matrix swaps has to be read backwards.
+Lower triangular matrix \eqn{L} of the form \eqn{L'L = x + E}.
+The attribute \code{swaps} is a vector of the lenght of dimension of x. It cointains the indices of the rows and columns that were swapped in x in order to compute the modified Cholesky factorization. For example if the \code{i}-th element of \code{swaps} is the number \code{j}, then the \code{i}-th and the \code{j}-th row and column were swapped. To reconstruct the original matrix swaps has to be read backwards.
 }
 
 \references{
