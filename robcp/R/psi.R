@@ -19,6 +19,7 @@
 psi <- function(y, fun = "HLm", k, constant = 1.4826)
 {
   ## argument check
+  ### preserve (dim)names????
   if(is(y, "ts"))
   {
     timeseries <- TRUE
@@ -69,7 +70,7 @@ psi <- function(y, fun = "HLm", k, constant = 1.4826)
                as.numeric(m), as.numeric(k), #as.numeric(constant), 
                # median and mad are being computed in R 
                as.numeric(med), as.numeric(MAD))
-  
+
   if(is(y, "matrix")) erg <- matrix(erg, nrow = n)
   if(timeseries) 
   {

@@ -20,7 +20,7 @@ importFrom("methods", "is")
 
 
 export(
-h_cumsum
+psi_cumsum
 )
 
 export(lrv)
@@ -29,13 +29,13 @@ export(psi)
 
 export(modifChol)
 
-export(h_teststat)
+export(CUSUM)
 
 export(pKSdist)
 
 export(huber_cusum)
 
-export(pbessel3)
+export(pBessel)
 
 export(kthPair)
 

@@ -6,13 +6,13 @@
 
 //** code for the computation of cumulative sums **//
 
-/* h_cumsum: cumulative sum
+/* c_cumsum: cumulative sum
  * 
  * input: Y (numeric vector)
  * 
  * output: cumulative sum (numeric vector)
  */
-SEXP h_cumsum(SEXP Y)
+SEXP c_cumsum(SEXP Y)
 {
   SEXP X = duplicate(Y);
   PROTECT(X);
@@ -29,14 +29,14 @@ SEXP h_cumsum(SEXP Y)
   return(X);
 }
 
-/* cumsum_ma: columnwise cumulative sum of a matrix
+/* c_cumsum_ma: columnwise cumulative sum of a matrix
  * 
  * input: Y (numeric 'matrix' in shape of a vector (along columns))
  *        N,M (number of rows and columns of Y)
  * 
  * output: numeric 'matrix' of columnwise cumulative sums
  */
-SEXP h_cumsum_ma(SEXP Y, SEXP N, SEXP M)
+SEXP c_cumsum_ma(SEXP Y, SEXP N, SEXP M)
 {
   int n = *REAL(N);
   int m = *REAL(M);
@@ -60,16 +60,16 @@ SEXP h_cumsum_ma(SEXP Y, SEXP N, SEXP M)
 }
 
 
-//** computes the test statistic for the Huberized change point test **//
+//** computes the test statistic for the CUSUM change point test **//
 
-/* h_teststat: test statistic for a single time series
+/* CUSUM: test statistic for a single time series
  * 
  * input: Y (time series; numeric vector)
  *        SIGMA (inverted estimated long run variance; numeric)
  * 
  * output: test statistic (numeric)
  */
-SEXP h_teststat(SEXP Y, SEXP SIGMA)
+SEXP CUSUM(SEXP Y, SEXP SIGMA)
 {
   PROTECT(Y);
   double sigma = *REAL(SIGMA);
@@ -82,16 +82,15 @@ SEXP h_teststat(SEXP Y, SEXP SIGMA)
   int n = length(Y);
   
   double sqn = sqrt(n);
-  // does that work?????????????????????????????????????????????????????????????
-  double *cumsum = REAL(h_cumsum(Y));
-  double sumN = cumsum[n - 1] / n;
+  double *csum = REAL(c_cumsum(Y));
+  double sumN = csum[n - 1] / n;
   double temp;
   
   int i;
   
   for(i = 0; i < n; i++)
   {
-    temp = fabs(cumsum[i] - (i + 1) * sumN);
+    temp = fabs(csum[i] - (i + 1) * sumN);
     
     if(temp > max[0]) max[0] = temp; 
   }
@@ -102,7 +101,7 @@ SEXP h_teststat(SEXP Y, SEXP SIGMA)
 }
 
 
-/* h_teststat_ma: test statistic for a more-dim. time series
+/* CUSUM_ma: test statistic for a more-dim. time series
  * 
  * input: Y (time series; numeric 'matrix' in the form of a vector; columnwise)
  *        SIGMA (inverted estimated long run covariance; numeric 'matrix' in 
@@ -117,7 +116,7 @@ SEXP h_teststat(SEXP Y, SEXP SIGMA)
  *        
  * output: test statistic (numeric) 
  */
-SEXP h_teststat_ma(SEXP Y, SEXP SIGMA, SEXP SWAPS, SEXP N, SEXP M)
+SEXP CUSUM_ma(SEXP Y, SEXP SIGMA, SEXP SWAPS, SEXP N, SEXP M)
 {
   PROTECT(Y);
   PROTECT(SIGMA);
@@ -128,11 +127,10 @@ SEXP h_teststat_ma(SEXP Y, SEXP SIGMA, SEXP SWAPS, SEXP N, SEXP M)
   int n = *REAL(N);
   int m = *REAL(M);
   
-  /* cumsum: matrix; each column is the cumulative sum vector of the 
-   *         corresponding column in Y
+  /* csum: matrix; each column is the cumulative sum vector of the 
+   *       corresponding column in Y
    */
-  // does that work?????????????????????????????????????????????????????????????
-  double *cumsum = REAL(h_cumsum_ma(Y, N, M));
+  double *csum = REAL(c_cumsum_ma(Y, N, M));
   
   double temp[m];
   double maxCand, temp2;
@@ -149,9 +147,9 @@ SEXP h_teststat_ma(SEXP Y, SEXP SIGMA, SEXP SWAPS, SEXP N, SEXP M)
     for(j = 0; j < m; j++)
     {
       // temp: CUSUM statistic for each column
-      temp[j] = cumsum[j * n + i] - (i + 1) * cumsum[(j + 1) * n - 1] / n;
+      temp[j] = csum[j * n + i] - (i + 1) * csum[(j + 1) * n - 1] / n;
     }
-    
+
     // swap temp according to swaps
     for(j = 0; j < m; j++)
     {

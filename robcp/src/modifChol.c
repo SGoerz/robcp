@@ -88,7 +88,7 @@ void RMCDA(double A[], double L[], int n, double tau, double tau_bar, double mu,
   while(j < n && phaseone == 1)
   {
     max = A[j + j * n];
-    maxindex = j;
+    maxindex = j;/////////////////////////////////////////////////////////////
     min = max;
     
     for(i = (j + 1); i < n; i++)

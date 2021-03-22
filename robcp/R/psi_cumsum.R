@@ -1,4 +1,4 @@
-## h_cumsum: cumulative sums of psi-transformed (multivariate) time series
+## psi_cumsum: cumulative sums of psi-transformed (multivariate) time series
 ##
 ## input: y (time series; numeric vector, matrix or ts object)
 ##        fun (psi function; character)
@@ -6,7 +6,7 @@
 ##        constant (scale factor of the MAD; numeric)
 ##
 ## output: cumulative sum vector, matrix or ts object
-h_cumsum <- function(y, fun = "HLm", k, constant = 1.4826)
+psi_cumsum <- function(y, fun = "HLm", k, constant = 1.4826)
 {
   ## argument check
   if(is(y, "ts"))
@@ -32,12 +32,12 @@ h_cumsum <- function(y, fun = "HLm", k, constant = 1.4826)
     m <- ncol(x)
     n <- nrow(x)
     
-    erg <- .Call("h_cumsum_ma", as.numeric(x), as.numeric(n), as.numeric(m))
+    erg <- .Call("c_cumsum_ma", as.numeric(x), as.numeric(n), as.numeric(m))
     erg <- matrix(erg, ncol = m)
   }
   else
   {
-    erg <- .Call("h_cumsum", as.numeric(x))
+    erg <- .Call("c_cumsum", as.numeric(x))
   }
   
   if(timeseries)

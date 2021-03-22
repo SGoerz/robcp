@@ -19,7 +19,10 @@ static void KSdist(int n, double *x, double tol)
   
   for(i = 0; i < n; i++) 
   {
-    if(x[i] < 1) 
+    if(x[i] <= 0)
+    {
+      x[i] = 0;
+    } else if(x[i] < 1) 
     {    
       t = exp(- M_PI * M_PI / (8 * x[i] * x[i]));
       z = 1 + 8 * pow(t, k_max);
@@ -31,8 +34,7 @@ static void KSdist(int n, double *x, double tol)
       }
       
       x[i] = s * t * z;
-    }
-    else 
+    } else 
     {
       z = -2 * x[i] * x[i];
       s = -1;

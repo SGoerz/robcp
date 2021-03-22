@@ -65,8 +65,8 @@ Note that for all covariances only the upper diagonal is used and turned into a 
 }
 
 \seealso{
-\code{\link{h_cumsum}}, 
-\code{\link{teststat}}
+\code{\link{psi_cumsum}}, 
+\code{\link{CUSUM}}
 }
 
 

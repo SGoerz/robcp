@@ -18,10 +18,10 @@ modifChol <- function(x, tau = .Machine$double.eps^(1/3),
   if(!is(x, "matrix") | !is.numeric(x)) stop("x must be a numeric matrix!")
   
   n <- nrow(x)
-  if(n != nrow(x)) stop("x must be a square matrix!")
+  if(n != ncol(x)) stop("x must be a square matrix!")
   ## end argument check 
   
-  erg <- matrix(.Call("cholesky", as.numeric(x), as.numeric(n),as.numeric(tau),
+  erg <- matrix(.Call("cholesky", as.numeric(x), as.numeric(n), as.numeric(tau),
                       as.numeric(tau_bar), as.numeric(mu)), nrow = n)
   
   swaps <- erg[, n + 1]

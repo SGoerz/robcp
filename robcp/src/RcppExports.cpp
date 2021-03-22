@@ -19,11 +19,11 @@ BEGIN_RCPP
 END_RCPP
 }
 
+RcppExport SEXP c_cumsum(SEXP);
+RcppExport SEXP c_cumsum_ma(SEXP, SEXP, SEXP);
 RcppExport SEXP cholesky(SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP h_cumsum(SEXP);
-RcppExport SEXP h_cumsum_ma(SEXP, SEXP, SEXP);
-RcppExport SEXP h_teststat(SEXP, SEXP);
-RcppExport SEXP h_teststat_ma(SEXP, SEXP, SEXP, SEXP, SEXP);
+RcppExport SEXP CUSUM(SEXP, SEXP);
+RcppExport SEXP CUSUM_ma(SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP lrv(SEXP, SEXP);
 RcppExport SEXP lrv_matrix(SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP pKSdist(SEXP, SEXP);
@@ -31,15 +31,15 @@ RcppExport SEXP psi(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_robcp_kthPair", (DL_FUNC) &_robcp_kthPair, 3},
-    {"cholesky",      (DL_FUNC) &cholesky,      5},
-    {"h_cumsum",      (DL_FUNC) &h_cumsum,      1},
-    {"h_cumsum_ma",   (DL_FUNC) &h_cumsum_ma,   3},
-    {"h_teststat",    (DL_FUNC) &h_teststat,    2},
-    {"h_teststat_ma", (DL_FUNC) &h_teststat_ma, 5},
-    {"lrv",           (DL_FUNC) &lrv,           2},
-    {"lrv_matrix",    (DL_FUNC) &lrv_matrix,    4},
-    {"pKSdist",       (DL_FUNC) &pKSdist,       2},
-    {"psi",           (DL_FUNC) &psi,           7},
+    {"c_cumsum",    (DL_FUNC) &c_cumsum,    1},
+    {"c_cumsum_ma", (DL_FUNC) &c_cumsum_ma, 3},
+    {"cholesky",    (DL_FUNC) &cholesky,    5},
+    {"CUSUM",       (DL_FUNC) &CUSUM,       2},
+    {"CUSUM_ma",    (DL_FUNC) &CUSUM_ma,    5},
+    {"lrv",         (DL_FUNC) &lrv,         2},
+    {"lrv_matrix",  (DL_FUNC) &lrv_matrix,  4},
+    {"pKSdist",     (DL_FUNC) &pKSdist,     2},
+    {"psi",         (DL_FUNC) &psi,         7},
     {NULL, NULL, 0}
 };
 

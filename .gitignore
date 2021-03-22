@@ -2,3 +2,9 @@
 .Rhistory
 .RData
 .Ruserdata
+
+diverses/
+/robcp/src/*.o
+*.pdf
+robcp.Rproj
+*.dll

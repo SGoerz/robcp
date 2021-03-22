@@ -22,7 +22,7 @@ void extract(double ma[], double arr[], int start, int n)
 // flat top kernel function 
 double k(double x)
 {
-  if(fabs(x) <= 0.5) return x;
+  if(fabs(x) <= 0.5) return 1;
   else if(fabs(x) > 0.5 && fabs(x) < 1) return (2 - 2 * fabs(x));
   else return 0;
 }
