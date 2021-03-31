@@ -30,6 +30,7 @@ Sheila \enc{Görz}{Goerz}
 }
 
 \examples{
+set.seed(1895)
 x <- rnorm(100)
 y <- runif(100)
 

@@ -71,7 +71,7 @@ Note that for all covariances only the upper diagonal is used and turned into a 
 
 
 \author{
-Sheila Görz
+Sheila \enc{Görz}{Goerz}
 }
 
 

@@ -29,8 +29,13 @@ test_that("CUSUM test statistic is computed correctly",
     return(numerator)
   }
   
-  expect_equal(CUSUM(x), max(abs(CUSUM2(x))) / sqrt(lrv(x) * n))
-  expect_equal(CUSUM(y), max(abs(CUSUM2(y))) / sqrt(lrv(y) * n))
+  cx <- CUSUM(x)
+  attributes(cx) <- NULL
+  cy <- CUSUM(y)
+  attributes(cy) <- NULL
+  
+  expect_equal(cx, max(abs(CUSUM2(x))) / sqrt(lrv(x) * n))
+  expect_equal(cy, max(abs(CUSUM2(y))) / sqrt(lrv(y) * n))
   
   m <- 3
   X <- matrix(rnorm(9), ncol = m)
@@ -63,7 +68,12 @@ test_that("CUSUM test statistic is computed correctly",
   res1 <- max(apply(teststat, 1, function(x) t(x) %*% mchol.inv %*% x)) / nrow(Y)
   res2 <- max(apply(teststat, 1, function(x) t(x) %*% g.inv %*% x)) / nrow(Y)
   
-  expect_equal(res1, CUSUM(Y, inverse = "Cholesky"), tolerance = 1e-5)
-  expect_equal(res2, CUSUM(Y, inverse = "generalized"), tolerance = 1e-5)
+  Ychol <- CUSUM(Y, inverse = "Cholesky")
+  attributes(Ychol) <- NULL
+  Yginv <- CUSUM(Y, inverse = "generalized")
+  attributes(Yginv) <- NULL
+  
+  expect_equal(res1, Ychol, tolerance = 1e-5)
+  expect_equal(res2, Yginv, tolerance = 1e-5)
 })
 

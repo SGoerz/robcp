@@ -5,7 +5,7 @@
 Huberized CUSUM test
 }
 \description{
-Performs a CUSUM test on data transformed by \code{\link{psi}}. Depending in the choosen psi-function different types of changes can be detected.
+Performs a CUSUM test on data transformed by \code{\link{psi}}. Depending in the chosen psi-function different types of changes can be detected.
 }
 \usage{
 huber_cusum(x, fun = "HLm", b_n, k, constant = 1.4826, fpc = TRUE, tol = 1e-8, ...)
@@ -13,7 +13,7 @@ huber_cusum(x, fun = "HLm", b_n, k, constant = 1.4826, fpc = TRUE, tol = 1e-8, .
 
 \arguments{
   \item{x}{numeric vector containing a single time series or a numeric matrix containing multiple time series (column-wise).}
-  \item{fun}{character string specifiyng the transformation function \eqn{\psi}, see details.}
+  \item{fun}{character string specifying the transformation function \eqn{\psi}, see details.}
   \item{b_n}{bandwidth, which is used to estimate the long run variance, see the help page of \code{\link{lrv}} for details.}
   \item{k}{numeric bound used in \code{\link{psi}}.}
 	\item{constant}{scale factor of the MAD. Default is 1.4826.}
@@ -23,11 +23,12 @@ huber_cusum(x, fun = "HLm", b_n, k, constant = 1.4826, fpc = TRUE, tol = 1e-8, .
 }
 
 \value{
-A list of the class "htest" containing the following compontents:
+A list of the class "htest" containing the following components:
   \item{statistic}{value of the test statistic (numeric).}
   \item{p.value}{p-value (numeric).}
   \item{alternative}{alternative hypothesis (character string).}
-  \item{method}{name of the performed test(character string).}
+  \item{method}{name of the performed test (character string).}
+  \item{cp.location}{index of the estimated change point location (integer).}
   \item{data.name}{name of the data (character string).}
 }
 
@@ -36,14 +37,21 @@ Sheila \enc{Görz}{Goerz}
 }
 
 \details{
-The function performs a Huberized CUSUM test. First the data is transformed by a suitable psi-function. To detect changes in location one can apply \code{fun = "HLm"}, \code{"HLg"}, \code{"SLm"} or \code{"SLg"}, for changes in scale \code{fun = "HCm"} is avaliable and for changes in the dependence respectively covariance structure \code{fun = "HCm"}, \code{"HCg"}, \code{"SCm"} and \code{"SCg"} are possible. The actual definitions of the psi-functions can be found in the help page of \code{\link{psi}}. Denote \eqn{Y_1,\ldots,Y_n} the transformed time series. If \eqn{Y_1} is one dimensional, then the teststatistik
+The function performs a Huberized CUSUM test. It tests the null hypothesis \eqn{H_0: \boldsymbol{\theta} does not change for x} against the corresponding alternative, where \eqn{\boldsymbol{\theta}} is the parameter vector of interest. \eqn{k} is called a 'change point'. First the data is transformed by a suitable psi-function. To detect changes in location one can apply \code{fun = "HLm"}, \code{"HLg"}, \code{"SLm"} or \code{"SLg"} and the hypothesis pair is
+\deqn{H_0: \mu_1 = ... = \mu_n  vs.}
+\deqn{H_1: \exists k \in \{1, ..., n-1\}: \mu_k \neq \mu_{k+1}}
+if \eqn{\mu_t = E(X_t)} and \eqn{n} is the length of the time series. For changes in scale \code{fun = "HCm"} is available and for changes in the dependence respectively covariance structure \code{fun = "HCm"}, \code{"HCg"}, \code{"SCm"} and \code{"SCg"} are possible. The hypothesis pair is the same as in the location case, only with \eqn{\mu_i} being replaced by \eqn{\Sigma_i}, \eqn{\Sigma_i = Cov(X_i)}. Exact definitions of the psi-functions can be found in the help page of \code{\link{psi}}. 
+
+Denote by \eqn{Y_1,\ldots,Y_n} the transformed time series. If \eqn{Y_1} is one-dimensional, then the test statistic
 \deqn{V=\max_{k=1,\ldots,n} \frac{1}{\sqrt{n}\sigma} |\sum_{i=1}^k Y_i-\frac{k}{n} \sum_{i=1}^n Y_i|
 }
-is calculated, where \eqn{\sigma^2} is an estimator for the long run variance, see the help function of \code{\link{lrv}} for details. \eqn{V} is asymptoticaly Kolmogorov-Smirnov distributed. If \code{fpc} is \code{TRUE} we use a finite sample correction \eqn{V+0.58/\sqrt{n}} to improve finite sample performance. \cr
+is calculated, where \eqn{\sigma^2} is an estimator for the long run variance, see the help function of \code{\link{lrv}} for details. \eqn{V} is asymptotically Kolmogorov-Smirnov distributed. If \code{fpc} is \code{TRUE} we use a finite sample correction \eqn{V+0.58/\sqrt{n}} to improve finite sample performance. \cr
 If \eqn{Y[1]} is multivariate, then the test statistic
-\deqn{W=\max_{k=1,\ldots,n} \frac{1}{n}(\sum_{i=1}^k Y_i-\frac{k}{n} \sum_{i=1}^n Y_i)^T\Sigma^{-1}(\sum_{i=1}^k Y_i-\frac{k}{n} \sum_{i=1}^n Y_i)
+\deqn{W=\max_{k=1,\ldots,n} \frac{1}{n}(\sum_{i=1}^k Y_i-\frac{k}{n} \sum_{i=1}^n Y_i)' \Sigma^{-1}(\sum_{i=1}^k Y_i-\frac{k}{n} \sum_{i=1}^n Y_i)
 }
 is computed, where \eqn{\Sigma} is the long run covariance, see also \code{\link{lrv}} for details. \eqn{W} is asymptotically distributed like the maximum of a squared Bessel bridge. We use the identity derived in Kiefer to derive p-values. Like in the one dimensional case if \code{fpc} is \code{TRUE} we use a finite sample correction \eqn{(\sqrt{W}+0.58/\sqrt{n})^2}.
+
+The change point location is estimated as the time point \eqn{k} for which the CUSUM process takes its maximum. 
 }
 
 \references{

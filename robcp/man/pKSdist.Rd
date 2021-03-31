@@ -61,7 +61,7 @@ Kiefer, J. (1959). "K-sample analogues of the Kolmogorov-Smirnov and Cramer-V. M
 }
 
 \author{
-Sheila Görz, Alexander Dürre
+Sheila \enc{Görz}{Goerz}, Alexander \enc{Dürre}{Duerre}
 }
 
 \seealso{

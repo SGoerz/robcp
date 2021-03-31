@@ -9,7 +9,7 @@ Contains the zeros of the Bessel function of first kind.
 }
 \usage{data("zeros")}
 \format{
-  A data frame where the ith column contains the first 50 zeros of the Bessel 
+  A data frame where the i-th column contains the first 50 zeros of the Bessel 
   function of the first kind and ((i - 1) / 2)th order, i = 1, ..., 5001.
 }
 \source{

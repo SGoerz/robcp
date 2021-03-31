@@ -75,9 +75,11 @@ SEXP CUSUM(SEXP Y, SEXP SIGMA)
   double sigma = *REAL(SIGMA);
   
   SEXP MAX;
-  PROTECT(MAX = allocVector(REALSXP, 1));
+  PROTECT(MAX = allocVector(REALSXP, 2));
   double *max = REAL(MAX);
   max[0] = 0;
+  // change point location
+  max[1] = 1;
   
   int n = length(Y);
   
@@ -92,7 +94,11 @@ SEXP CUSUM(SEXP Y, SEXP SIGMA)
   {
     temp = fabs(csum[i] - (i + 1) * sumN);
     
-    if(temp > max[0]) max[0] = temp; 
+    if(temp > max[0])
+    {
+      max[0] = temp; 
+      max[1] = i + 1;
+    }
   }
   max[0] /= (sqn * sigma);
   
@@ -136,9 +142,11 @@ SEXP CUSUM_ma(SEXP Y, SEXP SIGMA, SEXP SWAPS, SEXP N, SEXP M)
   double maxCand, temp2;
   
   SEXP MAX; 
-  PROTECT(MAX = allocVector(REALSXP, 1));
+  PROTECT(MAX = allocVector(REALSXP, 2));
   double *max = REAL(MAX);
   max[0] = 0;
+  // change point location
+  max[1] = 1;
   
   int i, j, k, index;
   
@@ -181,7 +189,11 @@ SEXP CUSUM_ma(SEXP Y, SEXP SIGMA, SEXP SWAPS, SEXP N, SEXP M)
     }
     maxCand /= n;
     
-    if(maxCand > max[0]) max[0] = maxCand;
+    if(maxCand > max[0]) 
+    {
+      max[0] = maxCand;
+      max[1] = i + 1;
+    }
   }
   
   UNPROTECT(4);

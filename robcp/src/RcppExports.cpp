@@ -5,6 +5,18 @@
 
 using namespace Rcpp;
 
+// weightedMedian
+double weightedMedian(NumericVector x, IntegerVector w);
+RcppExport SEXP _robcp_weightedMedian(SEXP xSEXP, SEXP wSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type w(wSEXP);
+    rcpp_result_gen = Rcpp::wrap(weightedMedian(x, w));
+    return rcpp_result_gen;
+END_RCPP
+}
 // kthPair
 double kthPair(NumericVector x, NumericVector y, int k);
 RcppExport SEXP _robcp_kthPair(SEXP xSEXP, SEXP ySEXP, SEXP kSEXP) {
@@ -30,6 +42,7 @@ RcppExport SEXP pKSdist(SEXP, SEXP);
 RcppExport SEXP psi(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_robcp_weightedMedian", (DL_FUNC) &_robcp_weightedMedian, 2},
     {"_robcp_kthPair", (DL_FUNC) &_robcp_kthPair, 3},
     {"c_cumsum",    (DL_FUNC) &c_cumsum,    1},
     {"c_cumsum_ma", (DL_FUNC) &c_cumsum_ma, 3},

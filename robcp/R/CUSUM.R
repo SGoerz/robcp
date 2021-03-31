@@ -5,12 +5,13 @@
 ##'       b_n (bandwidth for the long run variance estimation; numeric > 0)
 
 
-CUSUM <- function(x, fun = "HLm", b_n, inverse = "Cholesky", ...)
+CUSUM <- function(x, b_n, inverse = "Cholesky", ...)
 {
   ## argument check
   if(is(x, "ts"))
   {
     class(x) <- "numeric"
+    tsp <- attr(x, "tsp")
   }
   if(!(is(x, "matrix") || is(x, "numeric") || is(x, "integer")))
   {
@@ -27,8 +28,6 @@ CUSUM <- function(x, fun = "HLm", b_n, inverse = "Cholesky", ...)
     m <- ncol(x)
     n <- nrow(x)
     
-    #browser()
-    
     if(inverse == "Cholesky")
     {
       # Modified Cholesky Factorization
@@ -43,17 +42,20 @@ CUSUM <- function(x, fun = "HLm", b_n, inverse = "Cholesky", ...)
         stop("Package \"MASS\" needed for this function to work. Please install it.",
              call. = FALSE)
       }
-      sigma.inv <- ginv(sigma, ...)
+      sigma.inv <- MASS::ginv(sigma, ...)
       swaps <- 0:(m - 1)
     }
     
-    erg <- .Call("CUSUM_ma", as.numeric(x), as.numeric(sigma.inv), 
+    temp <- .Call("CUSUM_ma", as.numeric(x), as.numeric(sigma.inv), 
                  as.numeric(swaps), as.numeric(n), as.numeric(m))
-    
-    return(erg)
+  } else
+  {
+    sigma.inv <- sqrt(lrv(x, b_n))
+    temp <- .Call("CUSUM", as.numeric(x), as.numeric(sigma.inv))
   }
   
-  sigma.inv <- sqrt(lrv(x, b_n))
-  erg <- .Call("CUSUM", as.numeric(x), as.numeric(sigma.inv))
+  erg <- temp[1]
+  attr(erg, "cp-location") <- as.integer(temp[2])
+  
   return(erg)
 }

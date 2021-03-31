@@ -76,7 +76,8 @@ void RMCDA(double A[], double L[], int n, double tau, double tau_bar, double mu,
   for (i = 0; i < n * n - 1; i++) 
   { 
     L[i] = 0;
-  }       
+  }
+  
   //gamma = max(|A_ii|)
   for(i = 1; i < n; i++)
   {
@@ -88,7 +89,7 @@ void RMCDA(double A[], double L[], int n, double tau, double tau_bar, double mu,
   while(j < n && phaseone == 1)
   {
     max = A[j + j * n];
-    maxindex = j;/////////////////////////////////////////////////////////////
+    maxindex = j;
     min = max;
     
     for(i = (j + 1); i < n; i++)
@@ -103,6 +104,7 @@ void RMCDA(double A[], double L[], int n, double tau, double tau_bar, double mu,
         min = A[i + i * n];
       }
     }
+      
     if((max < gamma * tau_bar) || (min < - mu * max))
     {
       phaseone = 0;
@@ -116,12 +118,11 @@ void RMCDA(double A[], double L[], int n, double tau, double tau_bar, double mu,
       }
       swaps[j] = maxindex;
       
-      
       if(j < (n - 1))
       {
         min = A[(j + 1) + (j + 1) * n] - 
           A[j + (j + 1) * n] * A[j + (j + 1) * n] / 
-          A[j + j * n];         
+          A[j + j * n];   
         
         for(i = (j + 2); i < n; i++)
         {
@@ -182,12 +183,11 @@ void RMCDA(double A[], double L[], int n, double tau, double tau_bar, double mu,
       }
       for(k = i + 1; k < n; k++)          
       {
-        sumN += fabs(A[k + i * n]);                    
+        sumN += fabs(A[k + i * n]); 
       }
       
       g[i - j] = A[i + i * n] - sumI - sumN;   
     }
-    
     
     // Modified Cholesky Decomposition
     for( ; j < (n - 2); j++)
@@ -262,7 +262,7 @@ void RMCDA(double A[], double L[], int n, double tau, double tau_bar, double mu,
     double lambda_lo = 0;
     double lambda_hi = 0;
     
-    // EIGENWERTPROBLEM
+    // EIGEN VALUE PROBLEM
     double a = (A[(n - 1) * n - 2] + A[n * n - 1]) / 2;
     double b = sqrt((A[(n - 1) * n - 2] - A[n * n - 1]) * 
                     (A[(n - 1) * n - 2] - A[n * n - 1]) / 4 +
@@ -291,7 +291,6 @@ void RMCDA(double A[], double L[], int n, double tau, double tau_bar, double mu,
       A[(n - 1) * n - 2] += delta;
       A[n * n - 1] += delta;
       delta_old = delta; 
-      
     }
     
     L[(n - 1) * n - 2] = sqrt(A[(n - 1) * n - 2]); 
@@ -299,8 +298,9 @@ void RMCDA(double A[], double L[], int n, double tau, double tau_bar, double mu,
     L[n * n - 1] = sqrt(A[n * n - 1] - L[n * n - 2] * L[n * n - 2]);
     // Overwrites A in all 3 cases  
     
-    swaps[n - 2] = n - 2;
-    swaps[n - 1] = n - 1;
+    //???
+    //swaps[n - 2] = n - 2;
+    //swaps[n - 1] = n - 1;
   }
 }
 
@@ -316,6 +316,11 @@ SEXP cholesky(SEXP X, SEXP N, SEXP TAU, SEXP TAU_BAR, SEXP MU)
   double tau_bar = *REAL(TAU_BAR);
   double mu = *REAL(MU);
   double swaps[n];
+  
+  for(i = 0; i < n; i++)
+  {
+    swaps[i] = i;
+  }
   
   SEXP L; 
   PROTECT(L = allocVector(REALSXP, n * (n + 1)));

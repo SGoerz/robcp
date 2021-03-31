@@ -30,6 +30,7 @@ huber_cusum <- function(x, fun = "HLm", b_n, k, constant = 1.4826, fpc = TRUE,
   
   Dataname <- deparse(substitute(x))
   stat <- CUSUM(psi(x, fun = fun, k, constant), b_n, ...)
+  location <- attr(stat, "cp-location")
   names(stat) <- "S"
   
   if(is(x, "matrix"))
@@ -42,7 +43,8 @@ huber_cusum <- function(x, fun = "HLm", b_n, k, constant = 1.4826, fpc = TRUE,
     
     erg <- list(alternative = "two-sided", method = "Huberized CUSUM test",
                 data.name = Dataname, statistic = stat,
-                p.value = 1 - pBessel(stat, h))
+                p.value = 1 - pBessel(stat, h), 
+                cp.location = location)
   }
   else
   {
@@ -50,7 +52,8 @@ huber_cusum <- function(x, fun = "HLm", b_n, k, constant = 1.4826, fpc = TRUE,
     
     erg <- list(alternative = "two-sided", method = "Huberized CUSUM test",
                 data.name = Dataname, statistic = stat,
-                p.value = 1 - pKSdist(stat, tol))
+                p.value = 1 - pKSdist(stat, tol), 
+                cp.location = location)
   }
   
   class(erg) <- "htest"

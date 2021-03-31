@@ -25,7 +25,7 @@ The long run variance is estimated by a kernel estimator using the bandwidth \eq
 
 \deqn{\hat{\sigma}^2 = (1 / n) \sum_{i = 1}^n (x[i] - mean(x))^2 + (2 / n) \sum_{h = 1}^{n - 1} \sum_{i = 1}^{n - h} (x[i] - mean(x)) * (x[i + h] - mean(x)) * k(h / b_n).}
 
-If \code{x} is a multivariate timeseries the \eqn{k,l}-element of \eqn{\Sigma} is estimated by
+If \code{x} is a multivariate time series the \eqn{k,l}-element of \eqn{\Sigma} is estimated by
 
 \deqn{\hat{\Sigma}^{(k,l)} = (1 / n) \sum_{i,j = 1}^{n}(x[i]^{(k)} - mean(x)^{(k)}) * (x[j]^{(l)} - mean(x)^{(l)}) * k((i-j) / b_n).}
 }
@@ -46,5 +46,5 @@ Sheila \enc{Görz}{Goerz}
 
 \examples{
 Z <- c(rnorm(20), rnorm(20, 2))
-sigma2(Z)
+lrv(Z)
 }

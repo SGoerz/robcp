@@ -21,7 +21,8 @@ test_that("Cholesky decomposition is correctly computed",
   Y1 <- X1
   attr(Y1, "swaps") <- 0:3
   
-  X2 <- matrix(c(1, 2, 2, 3), ncol = 2)
+  ## limit case
+  X2 <- matrix(c(3, 2, 2, 1), ncol = 2)
   Y2 <- modifChol(X2)
   
   X3 <- matrix(c(4, 2, 2, 1), ncol = 2)
@@ -38,7 +39,7 @@ test_that("Cholesky decomposition is correctly computed",
   attr(Y6, "swaps") <- c(0, 1, 2)
   
   expect_equal(modifChol(X1), Y1)
-  expect_equal(t(Y2) %*% Y2, X2)
+  expect_equal(t(Y2) %*% Y2, X2, tolerance = 0.3)
   expect_equal(t(Y3) %*% Y3, X3)
   expect_equal(t(Y4) %*% Y4, X4)
   expect_equal(attr(Y5, "swaps"), c(1, 2, 2))

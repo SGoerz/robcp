@@ -7,10 +7,31 @@ bool sortcol(const std::vector<double>& v1, const std::vector<double>& v2)
   return v1[0] > v2[0];
 }
 
+//' Computes the weighted median of a numeric vector.
+//' @param x Numeric vector.
+//' @param w Integer vector of weights
+//'
+//' @return Weighted median of x with respect to w.
+//'
+//' @examples 
+//' x <- c(1, 4, 9)
+//' w <- c(5, 1, 1)
+//' weightedMedian(x, w)
+// [[Rcpp::export]]
 double weightedMedian(NumericVector x, IntegerVector w)
 {
   int n = w.size();
+  
+  if(n != x.size()) stop("x and w need to have the same length!");
   int i, l;
+  
+  bool allPos = true;
+  for(i = 0; i < n; i++)
+  {
+    if(w[i] < 0) allPos = false;
+  }
+  if(!allPos) stop("Negative weights supplied!");
+  
   int med = 0;
   
   std::vector<std::vector<double>> vect(n, std::vector<double> (2, 0));
@@ -49,6 +70,8 @@ double kthPair(NumericVector x, NumericVector y, int k)
   int n = x.size();
   int m = y.size();
   
+  if(k <= 0 || k > n * m) stop("k out of bounds");
+  
   std::sort(x.begin(), x.end());
   std::sort(y.begin(), y.end());
   
@@ -76,7 +99,7 @@ double kthPair(NumericVector x, NumericVector y, int k)
   {
     sum1 = 0;
     
-    // find 'middle' elements out of all possible candidates
+    // find 'middle' elements per row of possible candidates
     for(i = 0; i < n; i++)
     {
       if(Lb[i] <= Rb[i])
@@ -99,28 +122,28 @@ double kthPair(NumericVector x, NumericVector y, int k)
     // P: border after values; Q: border before value
     for(i = 0; i < n; i++)
     {
-      if(x[i] + y[Lb[i]] <= am)
+      if(Lb[i] == m || x[i] + y[Lb[i]] <= am)
       //if(x[i] + y[0] <= am) 
       {
         P[i] = Lb[i] - 1;
         //P[i] = -1;
       } else
       {
-        //j = Lb[i];
-        j = 1;
+        j = Lb[i] + 1;
+        //j = 1;
         while(j < m && x[i] + y[j] > am) j++;
         P[i] = j - 1;
       }
       
-      if(x[i] + y[Rb[i]] >= am)
+      if(Rb[i] == -1 || x[i] + y[Rb[i]] >= am)
       //if(x[i] + y[m - 1] >= am) 
       {
         Q[i] = Rb[i] + 1;
         //Q[i] = m;
       } else
       {
-        //j = Rb[i] - 1;
-        j = m - 2;
+        j = Rb[i] - 1;
+        //j = m - 2;
         while(j >= 0 && x[i] + y[j] < am) j--;
         Q[i] = j + 1;
       }
