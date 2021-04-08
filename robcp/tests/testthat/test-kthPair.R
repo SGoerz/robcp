@@ -38,4 +38,18 @@ test_that("medianDiff returns the correct value",
   y <- rnorm(99)
   
   expect_equal(medianDiff(x, y), median(apply(expand.grid(x, -y), 1, sum)))
+  
+  
+  x <- runif(3)
+  y <- rnorm(47)
+  
+  res1 <- medianDiff(x, y)
+  res2 <- median(apply(expand.grid(x, -y), 1, sum))
+  
+  expect_equal(res1, res2)
+  
+  res1 <- medianDiff(y, x)
+  res2 <- median(apply(expand.grid(y, -x), 1, sum))
+  
+  expect_equal(res1, res2)
 })

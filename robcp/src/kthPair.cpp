@@ -97,6 +97,8 @@ double kthPair(NumericVector x, NumericVector y, int k)
   
   while(R - L > n)
   {
+    Rcpp::checkUserInterrupt();
+    
     sum1 = 0;
     
     // find 'middle' elements per row of possible candidates
@@ -120,8 +122,27 @@ double kthPair(NumericVector x, NumericVector y, int k)
     // part values in sets higher than median; containing median; 
     // and lower than median
     // P: border after values; Q: border before value
+    
+    j = std::min(n-1, Lb[n-1]);
+    //j = 0;
+    for(i = n-1; i >= 0; i--)
+    {
+      while(j < m && x[i] + y[j] > am) j++;
+      P[i] = j - 1;
+    }  
+
+    j = std::max(0, Rb[0]);
     for(i = 0; i < n; i++)
     {
+      while(j >= 0 && x[i]  + y[j] < am) j--;
+      Q[i] = j + 1;
+    }
+    
+    
+    /*
+    for(i = 0; i < n; i++)
+    {
+      
       if(Lb[i] == m || x[i] + y[Lb[i]] <= am)
       //if(x[i] + y[0] <= am) 
       {
@@ -133,7 +154,7 @@ double kthPair(NumericVector x, NumericVector y, int k)
         //j = 1;
         while(j < m && x[i] + y[j] > am) j++;
         P[i] = j - 1;
-      }
+      } 
       
       if(Rb[i] == -1 || x[i] + y[Rb[i]] >= am)
       //if(x[i] + y[m - 1] >= am) 
@@ -147,7 +168,9 @@ double kthPair(NumericVector x, NumericVector y, int k)
         while(j >= 0 && x[i] + y[j] < am) j--;
         Q[i] = j + 1;
       }
+       
     }
+    */
     
     sum1 = 0;
     sum2 = 0;

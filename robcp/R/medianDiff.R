@@ -20,8 +20,16 @@ medianDiff <- function(x, y)
   {
     return(median(x - y))
   }
-  
-  nm <- length(x) * length(y)
+
+  n <- length(x) 
+  m <- length(y)
+  if(n > m)
+  {
+    temp <- -x
+    x <- -y
+    y <- temp
+  }
+  nm <- n * m
   
   if(nm %% 2 == 0)
   {
