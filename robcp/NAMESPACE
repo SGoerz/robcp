@@ -1,6 +1,8 @@
 useDynLib(robcp)
 
 
+S3method(print, cpStat)
+
 
 import(stats)
  
@@ -42,3 +44,7 @@ export(kthPair)
 export(medianDiff)
 
 export(weightedMedian)
+
+export(u_hat)
+
+export(HodgesLehmann)

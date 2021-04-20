@@ -18,15 +18,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // kthPair
-double kthPair(NumericVector x, NumericVector y, int k);
-RcppExport SEXP _robcp_kthPair(SEXP xSEXP, SEXP ySEXP, SEXP kSEXP) {
+double kthPair(NumericVector x, NumericVector y, int k, int k2);
+RcppExport SEXP _robcp_kthPair(SEXP xSEXP, SEXP ySEXP, SEXP kSEXP, SEXP k2SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
-    rcpp_result_gen = Rcpp::wrap(kthPair(x, y, k));
+    Rcpp::traits::input_parameter< int >::type k2(k2SEXP);
+    rcpp_result_gen = Rcpp::wrap(kthPair(x, y, k, k2));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -36,23 +37,29 @@ RcppExport SEXP c_cumsum_ma(SEXP, SEXP, SEXP);
 RcppExport SEXP cholesky(SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP CUSUM(SEXP, SEXP);
 RcppExport SEXP CUSUM_ma(SEXP, SEXP, SEXP, SEXP, SEXP);
+RcppExport SEXP gen_matrix(SEXP, SEXP);
 RcppExport SEXP lrv(SEXP, SEXP);
 RcppExport SEXP lrv_matrix(SEXP, SEXP, SEXP, SEXP);
+RcppExport SEXP lrv_subs(SEXP, SEXP);
 RcppExport SEXP pKSdist(SEXP, SEXP);
 RcppExport SEXP psi(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
+RcppExport SEXP u_hat(SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_robcp_weightedMedian", (DL_FUNC) &_robcp_weightedMedian, 2},
-    {"_robcp_kthPair", (DL_FUNC) &_robcp_kthPair, 3},
+    {"_robcp_kthPair", (DL_FUNC) &_robcp_kthPair, 4},
     {"c_cumsum",    (DL_FUNC) &c_cumsum,    1},
     {"c_cumsum_ma", (DL_FUNC) &c_cumsum_ma, 3},
     {"cholesky",    (DL_FUNC) &cholesky,    5},
     {"CUSUM",       (DL_FUNC) &CUSUM,       2},
     {"CUSUM_ma",    (DL_FUNC) &CUSUM_ma,    5},
+    {"gen_matrix",  (DL_FUNC) &gen_matrix,  2},
     {"lrv",         (DL_FUNC) &lrv,         2},
     {"lrv_matrix",  (DL_FUNC) &lrv_matrix,  4},
+    {"lrv_subs",    (DL_FUNC) &lrv_subs,    2},
     {"pKSdist",     (DL_FUNC) &pKSdist,     2},
     {"psi",         (DL_FUNC) &psi,         7},
+    {"u_hat",       (DL_FUNC) &u_hat,       2},
     {NULL, NULL, 0}
 };
 

@@ -1,9 +1,14 @@
-##'teststat: computes the test statistic for the CUSUM test
+##'CUSUM: computes the test statistic for the CUSUM test
 ##'
 ##'input: y (time series; vector, matrix or ts object)
 ##'       fun (psi function; character string)
 ##'       b_n (bandwidth for the long run variance estimation; numeric > 0)
-
+##'       inverse (character string specifying the method of inversion)
+##'       ... (further arguments for the inverse-computing functions)
+##'       
+##'output: test statistic (numeric) with the attribute "cp-location" indicating 
+##'        at which index a change point is most likely
+##'        -> class "cpStat"
 
 CUSUM <- function(x, b_n, inverse = "Cholesky", ...)
 {
@@ -57,5 +62,19 @@ CUSUM <- function(x, b_n, inverse = "Cholesky", ...)
   erg <- temp[1]
   attr(erg, "cp-location") <- as.integer(temp[2])
   
+  class(erg) <- "cpStat"
+  
   return(erg)
 }
+
+##'print.cpStat: print method for change point statistics
+##'              prints the value of the test statistic and add the most likely
+##'              change point location
+print.cpStat <- function(x, ...)
+{
+  loc <- attr(x, "cp-location")
+  print(round(as.numeric(x), digits = getOption("digits")), ...)
+  cat("location: ", loc)
+  return(invisible(x))
+}
+

@@ -65,13 +65,27 @@ double weightedMedian(NumericVector x, IntegerVector w)
 //'       - k (index of element to choose; integer; 1 <= k <= n * m)
 //'
 // [[Rcpp::export]]
-double kthPair(NumericVector x, NumericVector y, int k)
+double kthPair(NumericVector x, NumericVector y, int k, int k2 = NA_INTEGER)
 {
   int n = x.size();
   int m = y.size();
   
   if(k <= 0 || k > n * m) stop("k out of bounds");
-  
+  if(IntegerVector::is_na(k2))
+  {
+    k2 = k;
+  } else if(k2 <= 0 || k2 > n * m)
+  {
+    stop("k2 out of bounds");
+  } else if(fabs(k - k2) > 1)
+  {
+    stop("k and k2 must be consecutive indices!");
+  }
+
+  NumericVector temp(2);
+  temp[0] = NA_REAL;
+  temp[1] = NA_REAL;
+
   std::sort(x.begin(), x.end());
   std::sort(y.begin(), y.end());
   
@@ -118,7 +132,7 @@ double kthPair(NumericVector x, NumericVector y, int k)
     }
     
     am = weightedMedian(A, w);
-    
+
     // part values in sets higher than median; containing median; 
     // and lower than median
     // P: border after values; Q: border before value
@@ -184,21 +198,34 @@ double kthPair(NumericVector x, NumericVector y, int k)
     sum1 += n;
     
     // check in which set to search
-    if(k <= sum1)
+    if(k <= sum1 || k2 <= sum1)
+    //if(k <= sum1)
     {
       for(i = 0; i < n; i++)
       {
         Rb[i] = P[i];
       }
-    } else if(k > sum2)
+    } else if(k > sum2 || k2 > sum2)//if(k > sum2)
     {
       for(i = 0; i < n; i++)
       {
         Lb[i] = Q[i];
       }
-    } else 
+    } /*else 
     {
-      return(am);
+      return am;
+    }*/
+    if(k > sum1 && k <= sum2)
+    {
+      temp[0] = am;
+    }
+    if(k2 > sum1 && k2 <= sum2)
+    {
+      temp[1] = am;
+    }
+    if(!NumericVector::is_na(temp[0]) && !NumericVector::is_na(temp[1]))
+    {
+      return (temp[0] + temp[1]) / 2;
     }
     
     L = 0;
@@ -238,6 +265,18 @@ double kthPair(NumericVector x, NumericVector y, int k)
   
   // return the (k - L)-th largest, i.e. the (l - k + L)-th smallest 
   std::sort(wA.begin(), wA.end());
-  return wA[l - k + L];
+  
+  if(NumericVector::is_na(temp[0]))
+  {
+    temp[0] = wA[l - k + L];
+  }
+  if(NumericVector::is_na(temp[1]))
+  {
+    temp[1] = wA[l - k2 + L];
+  }
+  
+  return (temp[0] + temp[1]) / 2;
+  
+  //return wA[l - k + L];
 }
 

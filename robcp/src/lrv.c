@@ -163,3 +163,90 @@ SEXP lrv_matrix(SEXP Y, SEXP N, SEXP M, SEXP BN)
   UNPROTECT(2);
   return ERG;
 }
+
+
+
+
+
+//// u
+SEXP u_hat(SEXP X, SEXP B)
+{
+  SEXP SUM;
+  PROTECT(SUM = allocVector(REALSXP, 1));
+  double *sum = REAL(SUM);
+  sum[0] = 0;
+  
+  double *x = REAL(X);
+  double b = *REAL(B);
+  int n = length(X);
+  
+  int i, j;
+  
+  for(i = 0; i < n; i++)
+  {
+    for(j = i+1; j < n; j++)
+    {
+      sum[0] += k((x[i] - x[j]) / b);
+    }
+  }
+  
+  sum[0] = sum[0] * 2 / (n * (n - 1) * b);
+  
+  UNPROTECT(1);
+  return SUM;
+}
+
+///// sigma_hat_HL
+SEXP lrv_subs(SEXP ECDF, SEXP L)
+{
+  SEXP SUM;
+  PROTECT(SUM = allocVector(REALSXP, 1));
+  double *sum = REAL(SUM);
+  sum[0] = 0;
+  
+  double *ecdf = REAL(ECDF);
+  double l = *REAL(L);
+  int n = length(ECDF);
+  
+  int i, j;
+  double temp;
+  for(i = 0; i <= n - l; i++)
+  {
+    temp = 0;
+    for(j = i; j < i + l; j++)
+    {
+      temp += ecdf[j];
+    }
+    sum[0] += fabs(temp - l * 0.5);
+  }
+  
+  sum[0] = sum[0] * sqrt(M_PI) / (sqrt(2 * l) * (n - l + 1));
+  
+  UNPROTECT(1);
+  return SUM;
+}
+
+
+SEXP gen_matrix(SEXP N, SEXP L)
+{
+  int n = *REAL(N);
+  int l = *REAL(L);
+  
+  SEXP MATRIX; 
+  PROTECT(MATRIX = allocVector(REALSXP, n*n));
+  double *matrix = REAL(MATRIX);
+  
+  int i, j;
+  
+  for(i = 0; i < n; i++)
+  {
+    for(j = i; j < n; j++)
+    {
+      matrix[i * n + j] = k((double)(i - j) / l);
+      if(i != j) matrix[j * n + i] = matrix[i * n + j];
+    }
+  }
+  
+  UNPROTECT(1);
+  return MATRIX;
+}
