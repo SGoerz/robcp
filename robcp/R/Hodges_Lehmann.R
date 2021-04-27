@@ -6,10 +6,10 @@ HodgesLehmann <- function(x, b, l)
   n <- length(x)
   Mn <- sqrt(n) * max(sapply(1:(n-1), function(k)
   {
-    u_hat(x, b) * k / n * (1 - k / n) * abs(medianDiff(x[(k+1):n], x[1:k])) 
+    k / n * (1 - k / n) * abs(medianDiff(x[(k+1):n], x[1:k])) 
   }))
   
-  Tn <- Mn / lrv_subs(x, l)
+  Tn <- u_hat(x, b) * Mn / lrv_subs(x, l)
   
   return(Tn)
 }
