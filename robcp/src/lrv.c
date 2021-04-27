@@ -210,13 +210,15 @@ SEXP lrv_subs(SEXP ECDF, SEXP L)
   
   int i, j;
   double temp;
-  for(i = 0; i <= n - l; i++)
+  temp = 0;
+  for(j = 0; j < l; j++) {
+    temp += ecdf[j];
+  }
+  sum[0] = fabs(temp - l * 0.5);
+
+  for(i = 1; i <= n - l; i++)
   {
-    temp = 0;
-    for(j = i; j < i + l; j++)
-    {
-      temp += ecdf[j];
-    }
+    temp = temp - ecdf[i-1] + ecdf[i+l-1];
     sum[0] += fabs(temp - l * 0.5);
   }
   
