@@ -190,7 +190,7 @@ SEXP u_hat(SEXP X, SEXP B)
     }
   }
   
-  sum[0] = sum[0] * 2 / (n * (n - 1) * b);
+  sum[0] = sum[0] * 2 / (n * (n - 1) * b)* 2 / 3;
   
   UNPROTECT(1);
   return SUM;
