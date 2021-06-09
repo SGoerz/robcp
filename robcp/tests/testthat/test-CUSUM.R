@@ -13,7 +13,7 @@ test_that("output has the correct format",
   expect_true(is.numeric(Y))
   expect_equal(length(y), 1)
   expect_equal(length(Y), 1)
-  expect_error(CUSUM(x, b_n = 0))
+  expect_error(CUSUM(x, control = list(b_n = 0)))
 })
 
 test_that("CUSUM test statistic is computed correctly", 

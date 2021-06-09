@@ -10,7 +10,7 @@
 ##'        at which index a change point is most likely
 ##'        -> class "cpStat"
 
-CUSUM <- function(x, b_n, inverse = "Cholesky", ...)
+CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", ...)
 {
   ## argument check
   if(is(x, "ts"))
@@ -24,11 +24,10 @@ CUSUM <- function(x, b_n, inverse = "Cholesky", ...)
   }
   ## end argument check
   
-  #x <- psi(y, fun, k, constant)
   
   if(is(x, "matrix"))
   {
-    sigma <- lrv(x, b_n, ...)
+    sigma <- lrv(x, method = method, control = control)
     
     m <- ncol(x)
     n <- nrow(x)
@@ -55,7 +54,7 @@ CUSUM <- function(x, b_n, inverse = "Cholesky", ...)
                  as.numeric(swaps), as.numeric(n), as.numeric(m))
   } else
   {
-    sigma.inv <- sqrt(lrv(x, b_n))
+    sigma.inv <- sqrt(lrv(x, method = method, control = control))
     temp <- .Call("CUSUM", as.numeric(x), as.numeric(sigma.inv))
   }
   

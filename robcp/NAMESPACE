@@ -48,3 +48,5 @@ export(weightedMedian)
 export(u_hat)
 
 export(HodgesLehmann)
+
+export(wilcox_stat)
