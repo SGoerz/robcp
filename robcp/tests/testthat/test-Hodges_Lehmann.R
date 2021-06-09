@@ -21,9 +21,10 @@ test_that("u_hat computes the correct value",
   expect_error(u_hat(x, -2, kFun = "FT"))
   
   b <- 2
-  y <- 1 - abs(apply(combn(x, 2), 2, diff) / b)
-  y <- sum(ifelse(y < 0, 0, y))
-  expect_equal(2 / (5 * 4 * b) * y, u_hat(x, b))
+  y <- abs(apply(combn(x, 2), 2, diff) / b)
+  y <- ifelse(y > 1, 1, y)
+  y <- sum(1 - y)
+  expect_equal(2 / (5 * 4 * b) * y * 2 / 3, u_hat(x, b))
 })
 
 test_that("HodgesLehmann computes the correct value",
