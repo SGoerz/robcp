@@ -30,6 +30,7 @@ HodgesLehmann <- function(x, b, method = "subsampling", control = list())
   n <- length(x)
   Mn <- sapply(1:(n-1), function(k)
   {
+<<<<<<< HEAD
     medDiff <- medianDiff(x[(k+1):n], x[1:k])
     u_hat(x - c(rep(0, k), rep(medDiff, n - k)), b) *
       k / n * (1 - k / n) * abs(medDiff) 
@@ -38,6 +39,12 @@ HodgesLehmann <- function(x, b, method = "subsampling", control = list())
   
   attr(Tn, "cp-location") <- which.max(Mn)
   class(Tn) <- "cpStat"
+=======
+    k / n * (1 - k / n) * abs(medianDiff(x[(k+1):n], x[1:k])) 
+  }))
+  
+  Tn <- u_hat(x, b) * Mn / lrv_subs(x, l)
+>>>>>>> b1dfcc3f424d0601fd6859a4b6d7705ec0e88a07
   
   return(Tn)
 }
