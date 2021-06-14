@@ -41,7 +41,7 @@ RcppExport SEXP gen_matrix(SEXP, SEXP, SEXP);
 RcppExport SEXP lrv(SEXP, SEXP, SEXP);
 RcppExport SEXP lrv_matrix(SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP lrv_subs_nonoverlap(SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP lrv_subs_overlap(SEXP, SEXP);
+RcppExport SEXP lrv_subs_overlap(SEXP, SEXP, SEXP);
 RcppExport SEXP pKSdist(SEXP, SEXP);
 RcppExport SEXP psi(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP u_hat(SEXP, SEXP, SEXP);
@@ -59,7 +59,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"lrv",                 (DL_FUNC) &lrv,                 3},
     {"lrv_matrix",          (DL_FUNC) &lrv_matrix,          5},
     {"lrv_subs_nonoverlap", (DL_FUNC) &lrv_subs_nonoverlap, 4},
-    {"lrv_subs_overlap",    (DL_FUNC) &lrv_subs_overlap,    2},
+    {"lrv_subs_overlap",    (DL_FUNC) &lrv_subs_overlap,    3},
     {"pKSdist",             (DL_FUNC) &pKSdist,             2},
     {"psi",                 (DL_FUNC) &psi,                 7},
     {"u_hat",               (DL_FUNC) &u_hat,               3},

@@ -26,7 +26,7 @@ Let n be the length of \code{x}, i.e. the number of observations.
 \code{h = 2L}:
 \deqn{T_n = \frac{1}{\hat{\sigma}} \max_{1 \leq k \leq n} \left| \frac{1}{n^{3/2}} \sum_{i = 1}^k \sum_{j = k+1}^n (x_i - x_j) \right|}
 
-\eqn{\hat{\sigma}} is estimated by teh square root of \code{\link{lrv}}. By default, non-overlapping subsampling is used. If \code{h = 1L}, the default for \code{distr} is \code{TRUE} and otherwise it is \code{FALSE}.
+\eqn{\hat{\sigma}} is estimated by the square root of \code{\link{lrv}}. By default, non-overlapping subsampling is used. If \code{h = 1L}, the default for \code{distr} is \code{TRUE} and otherwise it is \code{FALSE}.
 }
 
 \value{

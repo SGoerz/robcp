@@ -119,6 +119,8 @@ lrv_subs <- function(x, l, overlapping = TRUE, distr = TRUE)
   }
   
   n <- length(x)
+  if(missing(l) | is.na(l)) l <- n^(1/3)
+  
   if(distr)
   {
     x <- ecdf(x)(x)
@@ -135,7 +137,7 @@ lrv_subs <- function(x, l, overlapping = TRUE, distr = TRUE)
   } else
   {
     if(!distr) warning("distr = FALSE currently not supported!")
-    res <- .Call("lrv_subs_overlap", as.numeric(x), as.numeric(l))
+    res <- .Call("lrv_subs_overlap", as.numeric(x), as.numeric(l), as.numeric(distr))
   }
   
   if(distr) res <- res^2

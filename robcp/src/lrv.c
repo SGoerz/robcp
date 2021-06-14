@@ -388,7 +388,8 @@ SEXP lrv_subs_nonoverlap(SEXP X, SEXP L, SEXP MEAN, SEXP DISTR)
 //
 // input: X: empirical cumulative distribution function
 //        L: block length
-SEXP lrv_subs_overlap(SEXP X, SEXP L)
+//        DISTR: plain observations or emp. distribution function?
+SEXP lrv_subs_overlap(SEXP X, SEXP L, SEXP DISTR)
 {
   SEXP SUM;
   PROTECT(SUM = allocVector(REALSXP, 1));
@@ -398,24 +399,55 @@ SEXP lrv_subs_overlap(SEXP X, SEXP L)
   double *x = REAL(X);
   int l = *REAL(L);
   int n = length(X);
+  int distr = *REAL(DISTR);
+  double mn = 0;
   
   int i, j;
   double temp;
+  
+  if(distr == 0)
+  {
+    for(i = 0; i < n; i++)
+    {
+      mn += x[i];
+    }
+    mn /= n;
+  }
   
   temp = 0;
   for(j = 0; j < l; j++)
   {
     temp += x[j];
   }
-  sum[0] += fabs(temp - l * 0.5);
+  if(distr == 1)
+  {
+    sum[0] += fabs(temp - l * 0.5);
+  } else
+  {
+    sum[0] += pow(temp - l * mn, 2);
+  }
   
   for(i = 1; i <= n - l; i++)
   {
     temp = temp - x[i - 1] + x[i + l - 1];
-    sum[0] += fabs(temp - l * 0.5);
+    
+    if(distr == 1)
+    {
+      sum[0] += fabs(temp - l * 0.5);
+    } else
+    {
+      sum[0] += pow(temp - l * mn, 2);
+    }
   }
   
-  sum[0] = sum[0] * sqrt(M_PI) / (sqrt(2 * l) * (n - l + 1));
+  if(distr == 1)
+  {
+    sum[0] = sum[0] * sqrt(M_PI) / (sqrt(2 * l) * (n - l + 1));
+  } else
+  {
+    sum[0] = sum[0] / (l * (n - l + 1));
+  }
+  
 
   UNPROTECT(1);
   return SUM;

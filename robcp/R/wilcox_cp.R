@@ -23,6 +23,10 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
   {
     stop("x must be a numeric or integer vector or matrix!")
   }
+  if(!(h %in% 1:2)) 
+  {
+    stop("h must be either 1 or 2!")
+  }
   
   if(is.null(control$overlapping)) 
   {
