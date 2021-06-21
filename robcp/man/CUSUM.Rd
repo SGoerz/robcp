@@ -11,12 +11,13 @@ Computes the test statistic for the CUSUM change point test.
 }
 
 \usage{
-CUSUM(x, b_n, inverse = "Cholesky", ...)
+CUSUM(x, method = "kernel", control = list(), inverse = "Cholesky", ...)
 }
 
 \arguments{
 	\item{x}{vector or matrix with each column representing a time series (numeric).}
-	\item{b_n}{bandwidth for estimating the long run variance.}
+	\item{method}{method of long run variance estimation. Options are \code{"kernel"}, \code{"subsampling"} and \code{"bootstrap"}.}
+	\item{control}{a list of control parameters for the estimation of the long run variance (cf. \code{\link{lrv}}).}
 	\item{inverse}{character string specifying the method of inversion. Options are "Cholesky" for inverting over \code{\link{modifChol}} and "generalized" for using \code{\link[MASS]{ginv}} from the \code{MASS} package.}
 	\item{...}{further arguments passed to the inverse-computing functions.}
 }

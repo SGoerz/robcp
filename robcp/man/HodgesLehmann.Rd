@@ -6,14 +6,15 @@
 Computes the test statistic for the Hodges-Lehmann change point test.
 }
 \usage{
-HodgesLehmann(x, b, control = list())
+HodgesLehmann(x, method = "subsampling", control = list())
 u_hat(x, b, kFun = "bartlett")
 }
 \arguments{
 \item{x}{time series (numeric or \code{ts} vector).}
-\item{b}{bandwidth for \code{u_hat}?}
+\item{method}{method of long run variance estimation. Options are \code{"kernel"}, \code{"subsampling"} and \code{"bootstrap"}.}
 \item{control}{a list of control parameters for the estimation of the long run variance (cf. \code{\link{lrv}}).}
 \item{kFun}{character string, name of a kernel function used in \code{u_hat} and for kernel-based estimation in \code{\link{lrv}}.}
+\item{b}{bandwidth for \code{u_hat}}
 }
 
 \details{
@@ -48,5 +49,5 @@ Dehling, H., Fried, R., and Wendler, M. "A robust method for shift detection in 
 x <- c(rnorm(20, 0), rnorm(20, 2))
 
 # Hodges-Lehmann change point test statistic
-HodgesLehmann(x, b = length(x)^(1/3))
+HodgesLehmann(x, control = list(b_n = length(x)^(1/3)))
 }

@@ -44,8 +44,6 @@ test_that("correct warnings and errors",
   expect_error(lrv(x, method = "subsampling", control = list(l = -1)))
   expect_error(lrv(x, method = "bootstrap", control = list(B = 0)))
   expect_error(lrv(x, method = "bootstrap", control = list(l = 5)))
-  expect_warning(lrv(x, method = "subsampling",
-                     control = list(overlapping = TRUE, distr = FALSE)))
   
   ## methods getting confused
   
@@ -122,7 +120,8 @@ test_that("subsampling estimation is correctly computed",
 
 test_that("bootstrap estimation is correctly computed", 
 {
-  require(mvtnorm)
+  #skip_if_not_installed("mvtnorm", minimum_version = NULL)
+  require("mvtnorm")
   x <- rnorm(5)
   sigma <- matrix(c(3, 2, 1, 0, 0, 
                     2, 3, 2, 1, 0,

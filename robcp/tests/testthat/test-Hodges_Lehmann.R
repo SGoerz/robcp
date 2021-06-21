@@ -3,7 +3,7 @@ context("Hodges_Lehmann")
 test_that("output has the correct format", 
 {
   x <- 1:5
-  y <- HodgesLehmann(x, b = 1)
+  y <- HodgesLehmann(x, control = list(b_n = 1))
   
   # X <- matrix(1:9, ncol = 3)
   # Y <- HodgesLehmann(X)
@@ -12,7 +12,7 @@ test_that("output has the correct format",
   # expect_true(is.numeric(Y))
   expect_equal(length(y), 1)
   # expect_equal(length(Y), 1)
-  expect_error(HodgesLehmann(x, b = 0))
+  expect_error(HodgesLehmann(x, b_n = 0))
 })
 
 test_that("u_hat computes the correct value",
@@ -34,8 +34,8 @@ test_that("HodgesLehmann computes the correct value",
   l <- 2
   y <- sqrt(5) * 5.44 * u_hat(x - c(0, rep(34, 4)), b) / 
     sqrt(lrv(x, "subsampling", control = list(l = l, overlapping = TRUE, distr = TRUE)))
-  z <- HodgesLehmann(x, control = list(l = l, overlapping = TRUE, distr = TRUE),
-                     b = b)
+  z <- HodgesLehmann(x, control = list(l = l, overlapping = TRUE, distr = TRUE,
+                     b_n = b))
   attributes(z) <- NULL
   
   expect_equal(z, y)
@@ -45,9 +45,39 @@ test_that("HodgesLehmann computes the correct value",
   l <- 3
   y <- sqrt(6) * 310 / 36 * u_hat(x - c(rep(0, 5), 62), b) /
     sqrt(lrv(x, "subs", control = list(l = l, overlapping = TRUE, distr = TRUE)))
-  z <- HodgesLehmann(x, control = list(l = l, overlapping = TRUE, distr = TRUE),
-                                       b = b)
+  z <- HodgesLehmann(x, control = list(l = l, overlapping = TRUE, distr = TRUE,
+                                       b_n = b))
   attributes(z) <- NULL
   
   expect_equal(z, y)
+})
+
+
+
+test_that("The output of hl_test has the correct format",
+{
+  x <- rnorm(10)
+  res <- suppressWarnings(hl_test(x, control = list(b_n = 10)))
+  
+  expect_equal(class(res), "htest")
+  expect_equal(res$alternative, "two-sided")
+  expect_equal(res$method, "Hodges-Lehmann change point test")
+})
+
+test_that("Hodges-Lehmann change point test is performed correctly", 
+{
+  ## simulation might run too long
+  skip_on_cran()
+  suppressWarnings({p <- replicate(200, 
+  {
+   x <- rnorm(200)
+   x[101:200] <- x[101:200] + 1
+   hl_test(x, control = list(b_n = 10, b2 = 0.05))$p.value
+  })})
+  
+  expect_equal(mean(p < 0.05), 1, tolerance = 0.1)
+  
+  ## maybe some more tests
+  ## best to be checked graphically:
+  ## hist(p)
 })

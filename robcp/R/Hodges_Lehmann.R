@@ -10,7 +10,7 @@
 ##'@return Test statistic (numeric value) with the attribute cp-location 
 ##'        indicating at which index a change point is most likely. Is an S3 
 ##'        object of the class cpStat        
-HodgesLehmann <- function(x, b, method = "subsampling", control = list())
+HodgesLehmann <- function(x, method = "subsampling", control = list())
 {
   ## argument check
   if(is(x, "ts"))
@@ -24,8 +24,14 @@ HodgesLehmann <- function(x, b, method = "subsampling", control = list())
   }
   ## end argument check
   
-  # b <- control$b
-  # control$b <- NULL
+  if(is.null(control$b2))
+  {
+    b <- control$b_n
+  } else
+  {
+    b <- control$b2
+    control$b2 <- NULL
+  }
   
   n <- length(x)
   Mn <- sapply(1:(n-1), function(k)
@@ -43,7 +49,6 @@ HodgesLehmann <- function(x, b, method = "subsampling", control = list())
 }
 
 
-## braucht man das als eigenstaendige Funktion??????
 ## default values?
 u_hat <- function(x, b, kFun = "bartlett")
 {

@@ -50,3 +50,7 @@ export(u_hat)
 export(HodgesLehmann)
 
 export(wilcox_stat)
+
+export(hl_test)
+
+export(wmw_test)

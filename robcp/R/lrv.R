@@ -82,6 +82,8 @@ lrv <- function(x, method = "kernel", control = list()) #b_n, l, method = "kerne
 ##'       gamma0 (for the kernel-based estimation: if the estimated lrv is <= 0,
 ##'               should only the estimated value to the lag 0 be returned?; 
 ##'               default: TRUE)
+##'               
+##'@name lrv
 lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE)
 {
   n <- length(x)
@@ -109,6 +111,8 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE)
 ##'       l (block length; numeric; 1 <= l <= length(x))
 ##'       overlapping (overlapping subsamplin? boolean)
 ##'       distr (distribution function or plain observations? boolean)
+##'       
+##'@name lrv
 lrv_subs <- function(x, l, overlapping = TRUE, distr = TRUE)
 {
   ## default value for l?
@@ -136,7 +140,7 @@ lrv_subs <- function(x, l, overlapping = TRUE, distr = TRUE)
                as.numeric(meanX), as.numeric(distr))
   } else
   {
-    if(!distr) warning("distr = FALSE currently not supported!")
+    #if(!distr) warning("distr = FALSE currently not supported!")
     res <- .Call("lrv_subs_overlap", as.numeric(x), as.numeric(l), as.numeric(distr))
   }
   
@@ -151,6 +155,8 @@ lrv_subs <- function(x, l, overlapping = TRUE, distr = TRUE)
 ##'       l (block length??, 1 <= l)
 ##'       B (number of bootstrap samples, numeric > 0)
 ##'       seed (start for random number generator)
+##'       
+##'@name lrv
 lrv_dwb <- function(x, l, B, kFun, seed = NA)
 {
   n <- length(x)

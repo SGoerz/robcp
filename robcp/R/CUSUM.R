@@ -69,6 +69,7 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
 ##'print.cpStat: print method for change point statistics
 ##'              prints the value of the test statistic and add the most likely
 ##'              change point location
+##'@name CUSUM
 print.cpStat <- function(x, ...)
 {
   loc <- attr(x, "cp-location")

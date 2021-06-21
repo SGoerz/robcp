@@ -1,6 +1,6 @@
-context("Wilcoxon")
+context("Wilcoxon-Mann-Whitney")
 
-test_that("output has the correct format", 
+test_that("output of wilcox_stat has the correct format", 
 {
   x <- 1:5
   y <- wilcox_stat(x)
@@ -46,4 +46,44 @@ test_that("wilcox_stat returns the correct value",
   y <- wilcox_stat(x, 2, "subs", list(overlapping = FALSE, distr = FALSE))
   attributes(y) <- NULL
   expect_equal(y, t2)
+})
+
+
+test_that("The output of wmw_test has the correct format",
+{
+  x <- rnorm(10)
+  res <- suppressWarnings(wmw_test(x))
+  
+  expect_equal(class(res), "htest")
+  expect_equal(res$alternative, "two-sided")
+  expect_equal(res$method, "Wilcoxon-Mann-Whitney change point test")
+})
+
+test_that("Wilcoxon-Mann-Whitney change point test is performed correctly", 
+{
+  ## simulation might run too long
+  skip_on_cran()
+  suppressWarnings({p <- replicate(200, 
+  {
+   x <- rnorm(200)
+   x[101:200] <- x[101:200] + 1
+   wmw_test(x)$p.value
+  })})
+  
+  expect_equal(mean(p < 0.05), 1, tolerance = 0.001)
+  
+  
+  skip_on_cran()
+  suppressWarnings({p <- replicate(200, 
+  {
+   x <- rnorm(200)
+   x[101:200] <- x[101:200] + 0.5
+   wmw_test(x, h = 2L)$p.value
+  })})
+  
+  expect_equal(mean(p < 0.05), 1, tolerance = 0.001)
+  
+  ## maybe some more tests
+  ## best to be checked graphically:
+  ## hist(p)
 })

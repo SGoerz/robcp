@@ -14,4 +14,4 @@ Maintainer: Sheila Goerz <sheila.goerz@tu-dortmund.de>
 Imports: methods, Rcpp
 LinkingTo: Rcpp
 RoxygenNote: 7.1.1
-Suggests: testthat, MASS, pracma
+Suggests: testthat, MASS, pracma, mvtnorm
