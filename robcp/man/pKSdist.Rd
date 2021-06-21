@@ -27,22 +27,22 @@ For \eqn{t_n(x) < 1}:
 
 \deqn{
 P(t_n(X) \le t_n(x)) = 
-\sqrt{2 * \pi} / t_n(x) * t (1 + t^8(1 + t^{16}(1 + t^{24}(1 + ...))))}
-up to \eqn{t^{8 * k_{max}},
-k_{max} = \lfloor \sqrt{2 - \log(tol)}\rfloor} where \eqn{t = \exp(-\pi^2 / (8*x^2))}
+\frac{\sqrt{2 \pi}}{t_n(x)} t (1 + t^8(1 + t^{16}(1 + t^{24}(1 + ...))))}
+up to \eqn{t^{8 k_{max}},
+k_{max} = \lfloor \sqrt{2 - \log(tol)}\rfloor}, where \eqn{t = \exp(-\pi^2 / (8x^2))}
 
 else:
 
 \deqn{
-P(t_n(X) \le t_n(x)) = 2 * \sum_{k = 1}^{\infty} (-1)^{k - 1} * \exp(-2*k^2*x^2)}
+P(t_n(X) \le t_n(x)) = 2  \sum_{k = 1}^{\infty} (-1)^{k - 1} \exp(-2 k^2 x^2)}
 until
-\eqn{|2 * (-1)^{k - 1} * \exp(-2*k^2*x^2) - 2 * (-1)^{(k-1) - 1} * \exp(-2*(k-1)^2*x^2)| \le tol.
+\eqn{|2 (-1)^{k - 1} \exp(-2 k^2 x^2) - 2 (-1)^{(k-1) - 1}  \exp(-2 (k-1)^2 x^2)| \le tol.
 }
 
 In case of multiple time series, the distribution equals that of the maximum of an \code{p} dimensional squared Bessel bridge. It can be computed by
 
 \deqn{P(t_n(X) \le t_n(x)) = 
-(4 / (\Gamma(p / 2) 2^{p / 2} t_n^p)) \sum_{i = 1}^{\infty} ( ((\gamma_{(p - 2)/2, n})^{p - 2} \exp(-(\gamma_{(p - 2)/2, n})^2 / (2t_n^2))) / (J_{p/2}(\gamma_{(p - 2)/2, n}))^2 )}
+\frac{4}{ \Gamma(p / 2) 2^{p / 2} t_n^p }  \sum_{i = 1}^{\infty}  \frac{(\gamma_{(p - 2)/2, n})^{p - 2} \exp(-(\gamma_{(p - 2)/2, n})^2 / (2t_n^2))}{J_{p/2}(\gamma_{(p - 2)/2, n})^2 }}
 (Kiefer, 1959), where \eqn{J_p} is the Bessel function of first kind and p-th order, \eqn{\Gamma} is the gamma function and \eqn{\gamma_{p, n}} denotes the n-th zero of \eqn{J_p}.
 }
 

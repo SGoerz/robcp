@@ -19,7 +19,7 @@ u_hat(x, b, kFun = "bartlett")
 
 \details{
 Let \eqn{n} be the length of the time series. The Hodges-Lehmann test statistic is then computed as
-\deqn{\frac{\sqrt{n}}{\hat{\sigma}_n} \max_{1 \leq k < n} \hat{u}_{k,n}(x) \frac{k}{n} (1 - \frac{k}{n}) | med\{(x_j - x_i); 1 \leq i \leq k; k+1 \leq j \leq n\} | ,}
+\deqn{\frac{\sqrt{n}}{\hat{\sigma}_n} \max_{1 \leq k < n} \hat{u}_{k,n}(x) \frac{k}{n} \left(1 - \frac{k}{n}\right) | med\{(x_j - x_i); 1 \leq i \leq k; k+1 \leq j \leq n\} | ,}
 where \eqn{\hat{sigma}} is estimated by the square root of \code{\link{lrv}}. By default the long run variance is estimated via overlapping subsampling.
 
 \eqn{\hat{u}_{k,n}(x)} is estimated by \code{u_hat} on data \eqn{\tilde{x}}, where \eqn{med\{(x_j - x_i); 1 \leq i \leq k; k+1 \leq j \leq n\}} was subtracted from x[(k+1):n]. Then \code{u_hat} returns

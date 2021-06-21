@@ -29,7 +29,7 @@ A list of the class "htest" containing the following components:
 }
 
 \details{
-
+...missing...
 }
 
 \author{

@@ -77,7 +77,7 @@ test_that("Wilcoxon-Mann-Whitney change point test is performed correctly",
   suppressWarnings({p <- replicate(200, 
   {
    x <- rnorm(200)
-   x[101:200] <- x[101:200] + 0.5
+   x[101:200] <- x[101:200] + 1
    wmw_test(x, h = 2L)$p.value
   })})
   

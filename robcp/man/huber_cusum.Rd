@@ -38,17 +38,18 @@ Sheila \enc{Görz}{Goerz}
 }
 
 \details{
-The function performs a Huberized CUSUM test. It tests the null hypothesis \eqn{H_0: \boldsymbol{\theta} does not change for x} against the corresponding alternative, where \eqn{\boldsymbol{\theta}} is the parameter vector of interest. \eqn{k} is called a 'change point'. First the data is transformed by a suitable psi-function. To detect changes in location one can apply \code{fun = "HLm"}, \code{"HLg"}, \code{"SLm"} or \code{"SLg"} and the hypothesis pair is
-\deqn{H_0: \mu_1 = ... = \mu_n  vs.}
+The function performs a Huberized CUSUM test. It tests the null hypothesis \eqn{H_0: \boldsymbol{\theta}} does not change for \eqn{x} against the corresponding alternative, where \eqn{\boldsymbol{\theta}} is the parameter vector of interest. \eqn{k} is called a 'change point'. First the data is transformed by a suitable psi-function. To detect changes in location one can apply \code{fun = "HLm"}, \code{"HLg"}, \code{"SLm"} or \code{"SLg"} and the hypothesis pair is
+\deqn{H_0: \mu_1 = ... = \mu_n}
+\deqn{vs.}
 \deqn{H_1: \exists k \in \{1, ..., n-1\}: \mu_k \neq \mu_{k+1}}
 if \eqn{\mu_t = E(X_t)} and \eqn{n} is the length of the time series. For changes in scale \code{fun = "HCm"} is available and for changes in the dependence respectively covariance structure \code{fun = "HCm"}, \code{"HCg"}, \code{"SCm"} and \code{"SCg"} are possible. The hypothesis pair is the same as in the location case, only with \eqn{\mu_i} being replaced by \eqn{\Sigma_i}, \eqn{\Sigma_i = Cov(X_i)}. Exact definitions of the psi-functions can be found in the help page of \code{\link{psi}}. 
 
 Denote by \eqn{Y_1,\ldots,Y_n} the transformed time series. If \eqn{Y_1} is one-dimensional, then the test statistic
-\deqn{V=\max_{k=1,\ldots,n} \frac{1}{\sqrt{n}\sigma} |\sum_{i=1}^k Y_i-\frac{k}{n} \sum_{i=1}^n Y_i|
+\deqn{V_n = \max_{k=1,\ldots,n} \frac{1}{\sqrt{n}\sigma} \left|\sum_{i=1}^k Y_i-\frac{k}{n} \sum_{i=1}^n Y_i\right|
 }
 is calculated, where \eqn{\sigma^2} is an estimator for the long run variance, see the help function of \code{\link{lrv}} for details. \eqn{V} is asymptotically Kolmogorov-Smirnov distributed. If \code{fpc} is \code{TRUE} we use a finite sample correction \eqn{V+0.58/\sqrt{n}} to improve finite sample performance. \cr
 If \eqn{Y[1]} is multivariate, then the test statistic
-\deqn{W=\max_{k=1,\ldots,n} \frac{1}{n}(\sum_{i=1}^k Y_i-\frac{k}{n} \sum_{i=1}^n Y_i)' \Sigma^{-1}(\sum_{i=1}^k Y_i-\frac{k}{n} \sum_{i=1}^n Y_i)
+\deqn{W_n=\max_{k=1,\ldots,n} \frac{1}{n}\left(\sum_{i=1}^k Y_i-\frac{k}{n} \sum_{i=1}^n Y_i\right)' \Sigma^{-1}\left(\sum_{i=1}^k Y_i-\frac{k}{n} \sum_{i=1}^n Y_i\right)
 }
 is computed, where \eqn{\Sigma} is the long run covariance, see also \code{\link{lrv}} for details. \eqn{W} is asymptotically distributed like the maximum of a squared Bessel bridge. We use the identity derived in Kiefer to derive p-values. Like in the one dimensional case if \code{fpc} is \code{TRUE} we use a finite sample correction \eqn{(\sqrt{W}+0.58/\sqrt{n})^2}.
 

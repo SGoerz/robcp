@@ -23,14 +23,14 @@ The long run variance equals \eqn{n} times the asymptotic variance of the arithm
 
 If \code{method = "kernel"}, the long run variance is estimated by a kernel estimator using the bandwidth \eqn{b_n = } \code{control$b_n} and kernel function \eqn{k(x) = } \code{control$kFun}. In the one dimensional case this results in:
 
-\deqn{\hat{\sigma}^2 = (1 / n) \sum_{i = 1}^n (x[i] - mean(x))^2 + (2 / n) \sum_{h = 1}^{n - 1} \sum_{i = 1}^{n - h} (x[i] - mean(x)) * (x[i + h] - mean(x)) * k(h / b_n).}
+\deqn{\hat{\sigma}^2 = \frac{1}{n} \sum_{i = 1}^n (x_i - \bar{x})^2 + \frac{2}{n} \sum_{h = 1}^{n - 1} \sum_{i = 1}^{n - h} (x_i - \bar{x}) (x_{i + h} - \bar{x}) k(h / b_n).}
 When \code{control$gamma0 = TRUE} (default) then if the long run variance is estimated to be smaller than 0, only the autocovariance to lag 0 (= ordinary variance of the data) is returned. The function will then throw a warning.
 
 If \code{x} is a multivariate time series the \eqn{k,l}-element of \eqn{\Sigma} is estimated by
 
-\deqn{\hat{\Sigma}^{(k,l)} = (1 / n) \sum_{i,j = 1}^{n}(x[i]^{(k)} - mean(x)^{(k)}) * (x[j]^{(l)} - mean(x)^{(l)}) * k((i-j) / b_n).}
+\deqn{\hat{\Sigma}^{(k,l)} = \frac{1}{n} \sum_{i,j = 1}^{n}(x_i^{(k)} - \bar{x}^{(k)})  (x_j^{(l)} - \bar{x}^{(l)})  k((i-j) / b_n).}
 
-Default values: \code{b_n} = \eqn{n^(1/3)}, \code{kFun = "bartlett"}
+Default values: \code{b_n} = \eqn{n^{(1/3)}}, \code{kFun = "bartlett"}
 
 For \code{method = "subsampling"} there are an overlapping and a non-overlapping version (parameter \code{control$overlapping}). Also it can be specified, if the observations x were tranformed by their empirical distribution function (parameter \code{control$distr}). Via \code{control$l} the block length \eqn{l} can be controlled.
 

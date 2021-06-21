@@ -25,17 +25,17 @@ Transformed numeric vector or matrix with the same number of rows as \code{y}.
 }
 
 \details{
-Let \eqn{x = (y - Median(y)) / MAD(y)} be the standardized values of a single time series.
+Let \eqn{x = (y - med(y)) / MAD(y)} be the standardized values of a single time series.
 
 Available \eqn{\psi} functions are: \cr
 
 marginal Huber for location: \cr
 \code{fun = "HLm"}. \cr
-\eqn{\psi_{HLm}(x) = k * 1_{x > k} + x * 1_{-k \le x \le k} - k * 1_{x < -k}}. \cr
+\eqn{\psi_{HLm}(x) = k * 1_{\{x > k\}} + x * 1_{\{-k \le x \le k\}} - k * 1_{\{x < -k\}}}. \cr
 
 global Huber for location: \cr
 \code{fun = "HLg"}. \cr
-\eqn{\psi_{HLg}(x) = x * 1_{0 < |x| \le k} + k* x/|x| * 1_{|x| > k}}. \cr
+\eqn{\psi_{HLg}(x) = x * 1_{\{0 < |x| \le k\}} + \frac{k x}{|x|} * 1_{\{|x| > k\}}}. \cr
 
 marginal sign for location: \cr
 \code{fun = "SLm"}. \cr
@@ -43,7 +43,7 @@ marginal sign for location: \cr
 
 global sign for location: \cr
 \code{fun = "SLg"}. \cr
-\eqn{\psi_{SLg}(x) = x / |x| * 1_{|x| > 0}}. \cr
+\eqn{\psi_{SLg}(x) = x / |x| * 1_{\{|x| > 0\}}}. \cr
 
 marginal Huber for covariance: \cr
 \code{fun = "HCm"}. \cr

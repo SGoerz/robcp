@@ -35,7 +35,7 @@ SEXP wilcox(SEXP X, SEXP H)
   PROTECT(MAX = allocVector(REALSXP, 2));
   double *max = REAL(MAX);
   max[0] = 0;
-  
+
   int i, j, k;
   double sum = 0;
   
@@ -46,6 +46,30 @@ SEXP wilcox(SEXP X, SEXP H)
   max[0] = fabs(sum);
   max[1] = 1;
   
+  //***********************
+  
+  for(k = 1; k < n-1; k++)
+  {
+    for(i = 0; i < k; i++)
+    {
+      sum -= hFun(x[i], x[k]);
+    }
+    
+    for(i = k+1; i < n; i++)
+    {
+      sum += hFun(x[k], x[i]);
+    }
+    
+    if(fabs(sum) > max[0])
+    {
+      max[0] = fabs(sum);
+      max[1] = k + 1;
+    }
+  }
+  
+  //***********************
+  
+  /*
   for(k = 1; k < n; k++)
   {
     sum = 0;
@@ -62,6 +86,7 @@ SEXP wilcox(SEXP X, SEXP H)
       max[1] = k + 1;
     }
   }
+  */
   
   max[0] = max[0] / pow(sqrt(n), 3);
   

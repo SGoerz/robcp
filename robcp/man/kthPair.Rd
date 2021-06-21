@@ -18,6 +18,10 @@ kthPair(x, y, k, k2 = NA)
   \item{k2}{Optional second index. \code{k} and \code{k2} must be consecutive. Useful, if X + Y has an even number of elements and the median has to be calculated.}
 }
 
+\details{
+...missing...
+}
+
 \value{
 K-th largest value (numeric).
 }

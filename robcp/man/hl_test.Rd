@@ -28,7 +28,8 @@ A list of the class "htest" containing the following components:
 }
 
 \details{
-
+...missing...
+default values for b_n and b2??
 }
 
 \author{

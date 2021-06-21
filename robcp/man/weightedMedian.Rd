@@ -14,7 +14,7 @@ weightedMedian(x, w)
 Weighted median of x with respect to w.
 }
 \details{
-Here, the median of an even length \eqn{n} of \eqn{x} is defined as \eqn{x_(n/2 + 1)} if \eqn{x_(i)} is the \eqn{i}-th largest element in \eqn{x}.
+Here, the median of an even length \eqn{n} of \eqn{x} is defined as \eqn{x_{(n/2 + 1)}} if \eqn{x_{(i)}} is the \eqn{i}-th largest element in \eqn{x}.
 }
 
 \examples{
