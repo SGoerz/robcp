@@ -19,7 +19,7 @@ huber_cusum(x, fun = "HLm", k, constant = 1.4826, control = list(), fpc = TRUE,
 	\item{constant}{scale factor of the MAD. Default is 1.4826.}
 	\item{control}{a list of control parameters for the estimation of the long run variance (cf. \code{\link{lrv}}).}
 	\item{fpc}{finite population correction (boolean).}
-	\item{tol}{tolerance of the distribution function (numeric), which is used do compute p-values.}
+	\item{tol}{tolerance of the distribution function (numeric), which is used to compute p-values.}
 	\item{...}{further arguments to be passed to \code{\link{CUSUM}}.}
 }
 

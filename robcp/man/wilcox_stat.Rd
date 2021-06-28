@@ -50,5 +50,5 @@ Sheila \enc{Görz}{Goerz}
 x <- c(rnorm(20, 0), rnorm(20, 2))
 
 # Wilcoxon-Mann-Whitney change point test statistic
-wilcox_stat(x, h = 1L control = list(b_n = length(x)^(1/3)))
+wilcox_stat(x, h = 1L, control = list(b_n = length(x)^(1/3)))
 }

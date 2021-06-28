@@ -15,7 +15,7 @@ Performs the Wilcoxon-Mann-Whitney change point test.
 \item{h}{version of the test (integer, 1 or 2)}
 \item{method}{method for estimating the long run variance.}
 \item{control}{a list of control parameters (cf. \code{\link{lrv}}).}
-\item{tol}{tolerance of the distribution function (numeric), which is used do compute p-values.}
+\item{tol}{tolerance of the distribution function (numeric), which is used to compute p-values.}
 }
 
 \value{
