@@ -14,8 +14,8 @@
 ##'        - statistic (numeric)
 ##'        - p.value (numeric)
 
-huber_cusum <- function(x, fun = "HLm", k, constant = 1.4826, control = list(),
-                        fpc = TRUE, tol = 1e-8, ...)
+huber_cusum <- function(x, fun = "HLm", k, constant = 1.4826, method = "kernel",
+                        control = list(), fpc = TRUE, tol = 1e-8, ...)
 {
   ## argument check
   if(is(x, "ts"))
@@ -29,7 +29,8 @@ huber_cusum <- function(x, fun = "HLm", k, constant = 1.4826, control = list(),
   ## end argument check
   
   Dataname <- deparse(substitute(x))
-  stat <- CUSUM(psi(x, fun = fun, k, constant), control = control, ...)
+  stat <- CUSUM(psi(x, fun = fun, k, constant), method = method,
+                control = control, ...)
   location <- attr(stat, "cp-location")
   names(stat) <- "S"
   

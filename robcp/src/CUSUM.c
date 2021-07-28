@@ -65,15 +65,13 @@ SEXP c_cumsum_ma(SEXP Y, SEXP N, SEXP M)
 /* CUSUM: test statistic for a single time series
  * 
  * input: Y (time series; numeric vector)
- *        SIGMA (inverted estimated long run variance; numeric)
  * 
  * output: test statistic (numeric)
  */
-SEXP CUSUM(SEXP Y, SEXP SIGMA)
+SEXP CUSUM(SEXP Y)
 {
   PROTECT(Y);
-  double sigma = *REAL(SIGMA);
-  
+
   SEXP MAX;
   PROTECT(MAX = allocVector(REALSXP, 2));
   double *max = REAL(MAX);
@@ -100,7 +98,7 @@ SEXP CUSUM(SEXP Y, SEXP SIGMA)
       max[1] = i + 1;
     }
   }
-  max[0] /= (sqn * sigma);
+  max[0] /= sqn;
   
   UNPROTECT(2);
   return(MAX);

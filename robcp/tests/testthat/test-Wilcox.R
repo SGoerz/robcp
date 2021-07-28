@@ -9,6 +9,10 @@ test_that("output of wilcox_stat has the correct format",
   expect_equal(length(y), 1)
   
   expect_error(wilcox_stat(x, b = 3L))
+  
+  expect_warning(wilcox_stat(x, h = 1, control = list(distr = FALSE)))
+  
+  expect_error(wilcox_stat(x, h = "a"))
 })
 
 test_that("wilcox_stat returns the correct value", 

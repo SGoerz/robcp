@@ -46,8 +46,6 @@ SEXP wilcox(SEXP X, SEXP H)
   max[0] = fabs(sum);
   max[1] = 1;
   
-  //***********************
-  
   for(k = 1; k < n-1; k++)
   {
     for(i = 0; i < k; i++)
@@ -66,8 +64,6 @@ SEXP wilcox(SEXP X, SEXP H)
       max[1] = k + 1;
     }
   }
-  
-  //***********************
   
   /*
   for(k = 1; k < n; k++)

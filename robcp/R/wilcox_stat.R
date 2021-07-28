@@ -23,22 +23,59 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
   {
     stop("x must be a numeric or integer vector or matrix!")
   }
-  if(!(h %in% 1:2)) 
-  {
-    stop("h must be either 1 or 2!")
-  }
-  
   if(is.null(control$overlapping)) 
   {
     control$overlapping <- FALSE
   }
-  if(is.null(control$distr))
+  if(is.numeric(h))
   {
-    control$distr <- h == 1L
+    if(!(h %in% 1:2)) 
+    {
+      stop("Wrong test version h!")
+      #stop("h must be either 1 or 2!")
+    }
+    if(is.null(control$distr))
+    {
+      control$distr <- h == 1L
+    } else
+    {
+      if(is.logical(control$distr) & 2 - as.numeric(control$distr) != h)
+      {
+        warning("Argument for 'distr' not suitable for test version.")
+      }
+    }
+    if(h == 2L)
+    {
+      res <- .Call("CUSUM", as.numeric(x))
+    } else
+    {
+      res <- .Call("wilcox", as.numeric(x), as.numeric(h))
+    }
+  } else if(is.function(h))
+  {
+    n <- length(x)
+    hVec <- Vectorize(h)
+    res <- sum(hVec(x[1], x[-1]))
+    max <- abs(res)
+    loc <- 1
+    
+    sapply(2:(n-1), function(k)
+    {
+      res <<- res - sum(hVec(x[1:(k-1)], x[k])) + sum(hVec(x[k], x[(k+1):n]))
+      
+      if(abs(res) > max)
+      {
+        max <<- abs(res)
+        loc <<- k
+      }
+    })
+    res[1] <- max
+    res[2] <- loc
+  } else
+  {
+    stop("Invalid argument for h!")
   }
-  ## end argument check
   
-  res <- .Call("wilcox", as.numeric(x), as.numeric(h))
   Tn <- res[1] / sqrt(lrv(x, method = method, control = control))
     
   attr(Tn, "cp-location") <- res[2]

@@ -8,8 +8,8 @@ Huberized CUSUM test
 Performs a CUSUM test on data transformed by \code{\link{psi}}. Depending in the chosen psi-function different types of changes can be detected.
 }
 \usage{
-huber_cusum(x, fun = "HLm", k, constant = 1.4826, control = list(), fpc = TRUE, 
-            tol = 1e-8, ...)
+huber_cusum(x, fun = "HLm", k, constant = 1.4826, method = "kernel",
+            control = list(), fpc = TRUE, tol = 1e-8, ...)
 }
 
 \arguments{
@@ -17,6 +17,7 @@ huber_cusum(x, fun = "HLm", k, constant = 1.4826, control = list(), fpc = TRUE,
   \item{fun}{character string specifying the transformation function \eqn{\psi}, see details.}
   \item{k}{numeric bound used in \code{\link{psi}}.}
 	\item{constant}{scale factor of the MAD. Default is 1.4826.}
+	\item{method}{method for estimating the long run variance.}
 	\item{control}{a list of control parameters for the estimation of the long run variance (cf. \code{\link{lrv}}).}
 	\item{fpc}{finite population correction (boolean).}
 	\item{tol}{tolerance of the distribution function (numeric), which is used to compute p-values.}

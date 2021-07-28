@@ -23,7 +23,7 @@ Let \eqn{n} be the length of the time series. The Hodges-Lehmann test statistic 
 where \eqn{\hat{sigma}} is estimated by the square root of \code{\link{lrv}}. By default the long run variance is estimated via overlapping subsampling.
 
 \eqn{\hat{u}_{k,n}(x)} is estimated by \code{u_hat} on data \eqn{\tilde{x}}, where \eqn{med\{(x_j - x_i); 1 \leq i \leq k; k+1 \leq j \leq n\}} was subtracted from x[(k+1):n]. Then \code{u_hat} returns
-\deqn{\frac{2}{n(n-1)b} \sum_{1 \leq i < j \leq n} kFun((x_i - x_j) / b).}
+\deqn{\frac{2}{n(n-1)b} \sum_{1 \leq i < j \leq n} kFun((\tilde{x}_i - \tilde{x}_j) / b).}
 }
 
 \value{

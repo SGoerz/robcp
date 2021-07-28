@@ -21,6 +21,18 @@ lrv(x, method = "kernel", control = list())
 \details{
 The long run variance equals \eqn{n} times the asymptotic variance of the arithmetic mean of a short range dependent time series, where \eqn{n} is the length of the time series. It is used to standardize tests concering the mean on dependent data.
 
+The \code{control} argument is a list that can supply any of the following components:
+\describe{
+\item{\code{kFun}}{Kernel function (character string). More in 'Notes'.}
+\item{\code{b_n}}{Bandwidth (numeric > 0 and smaller than sample size).}
+\item{\code{gamma0}}{Only use estimated variance if estimated long run variance is < 0? Boolean.}
+\item{\code{l}}{Block length (numeric > 0 and smaller than sample size).}
+\item{\code{overlapping}}{Overlapping subsampling estimation? Boolean.}
+\item{\code{distr}}{Tranform observations by their empirical distribution function? Boolean.}
+\item{\code{B}}{Bootstrap repetitions (integer).}
+\item{\code{seed}}{RNG seed (numeric).}
+}
+
 If \code{method = "kernel"}, the long run variance is estimated by a kernel estimator using the bandwidth \eqn{b_n = } \code{control$b_n} and kernel function \eqn{k(x) = } \code{control$kFun}. In the one dimensional case this results in:
 
 \deqn{\hat{\sigma}^2 = \frac{1}{n} \sum_{i = 1}^n (x_i - \bar{x})^2 + \frac{2}{n} \sum_{h = 1}^{n - 1} \sum_{i = 1}^{n - h} (x_i - \bar{x}) (x_{i + h} - \bar{x}) k(h / b_n).}
@@ -32,7 +44,7 @@ If \code{x} is a multivariate time series the \eqn{k,l}-element of \eqn{\Sigma} 
 
 Default values: \code{b_n} = \eqn{n^{(1/3)}}, \code{kFun = "bartlett"}
 
-For \code{method = "subsampling"} there are an overlapping and a non-overlapping version (parameter \code{control$overlapping}). Also it can be specified, if the observations x were tranformed by their empirical distribution function (parameter \code{control$distr}). Via \code{control$l} the block length \eqn{l} can be controlled.
+For \code{method = "subsampling"} there are an overlapping and a non-overlapping version (parameter \code{control$overlapping}). Also it can be specified if the observations x were transformed by their empirical distribution function (parameter \code{control$distr}). Via \code{control$l} the block length \eqn{l} can be controlled.
 
 If \code{control$overlapping = TRUE} and \code{control$distr = TRUE}:
 \deqn{\hat{\sigma}_n = \frac{\sqrt{\pi}}{\sqrt{2l}(n - l + 1)} \sum_{i = 0}^{n-l} \left| \sum_{j = i+1}^{i+l} (F_n(x_j) - 0.5) \right|.}
@@ -41,10 +53,10 @@ Otherwise, if \code{control$distr = FALSE}, the estimator follows as
 \deqn{\hat{\sigma}^2 = \frac{1}{l (n - l + 1)} \sum_{i = 0}^{n-l} \left( \sum_{j = i + 1}^{i+l} x_j - \frac{l}{n} \sum_{j = 1}^n x_j \right)^2.}
 
 If \code{control$overlapping = FALSE} and \code{control$distr = TRUE}:
-\deqn{\hat{\sigma} = \frac{1}{n/l} \sqrt{\pi/2} \sum_{i = 1}{n/l} \frac{1}{\sqrt{l}} \left| \sum_{j = (i-1)l + 1}^{il} F_n(x_j) - \frac{l}{n} \sum_{j = 1}^n F_n(x_j) \right|}
+\deqn{\hat{\sigma} = \frac{1}{n/l} \sqrt{\pi/2} \sum_{i = 1}{n/l} \frac{1}{\sqrt{l}} \left| \sum_{j = (i-1)l + 1}^{il} F_n(x_j) - \frac{l}{n} \sum_{j = 1}^n F_n(x_j) \right|.}
 
 Otherwise, if \code{control$distr = FALSE}, the estimator follows as
-\deqn{\hat{\sigma}^2 = \frac{1}{n/l} \sum_{i = 1}^{n/l} \frac{1}{l} \left(\sum_{j = (i-1)l + 1}^{il} x_j - \frac{l}{n} \sum_{j = 1}^n x_j\right)^2}
+\deqn{\hat{\sigma}^2 = \frac{1}{n/l} \sum_{i = 1}^{n/l} \frac{1}{l} \left(\sum_{j = (i-1)l + 1}^{il} x_j - \frac{l}{n} \sum_{j = 1}^n x_j\right)^2.}
 
 Default value: \code{l} = ???
 

@@ -54,8 +54,8 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
                  as.numeric(swaps), as.numeric(n), as.numeric(m))
   } else
   {
-    sigma.inv <- sqrt(lrv(x, method = method, control = control))
-    temp <- .Call("CUSUM", as.numeric(x), as.numeric(sigma.inv))
+    sigma <- sqrt(lrv(x, method = method, control = control))
+    temp <- .Call("CUSUM", as.numeric(x)) / sigma
   }
   
   erg <- temp[1]
