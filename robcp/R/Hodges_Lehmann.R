@@ -10,7 +10,7 @@
 ##'@return Test statistic (numeric value) with the attribute cp-location 
 ##'        indicating at which index a change point is most likely. Is an S3 
 ##'        object of the class cpStat        
-HodgesLehmann <- function(x, method = "subsampling", control = list())
+HodgesLehmann <- function(x, b_u, method = "subsampling", control = list())
 {
   ## argument check
   if(is(x, "ts"))
@@ -24,20 +24,16 @@ HodgesLehmann <- function(x, method = "subsampling", control = list())
   }
   ## end argument check
   
-  if(is.null(control$b2))
+  if(missing(b_u))
   {
-    b <- control$b_n
-  } else
-  {
-    b <- control$b2
-    control$b2 <- NULL
+    if(is.null(control$b_n)) stop("b_u is missing!") else b_u <- control$b_n
   }
   
   n <- length(x)
   Mn <- sapply(1:(n-1), function(k)
   {
     medDiff <- medianDiff(x[(k+1):n], x[1:k])
-    u_hat(x - c(rep(0, k), rep(medDiff, n - k)), b) *
+    u_hat(x - c(rep(0, k), rep(medDiff, n - k)), b_u) *
       k / n * (1 - k / n) * abs(medDiff) 
   })
   Tn <- sqrt(n) * max(Mn) / sqrt(lrv(x, method = method, control = control))
@@ -50,13 +46,13 @@ HodgesLehmann <- function(x, method = "subsampling", control = list())
 
 
 ## default values?
-u_hat <- function(x, b, kFun = "bartlett")
+u_hat <- function(x, b_u, kFun = "bartlett")
 {
-  if(b <= 0) 
+  if(b_u <= 0) 
     stop("b must be numeric, greater than 0 and smaller than the length of the time series!")
   
   n <- length(x)
   kFun <- pmatch(kFun, c("bartlett", "FT", "parzen", "QS", "TH", "truncated"))
-  res <- .Call("u_hat", as.numeric(x), as.numeric(b), as.numeric(kFun))
+  res <- .Call("u_hat", as.numeric(x), as.numeric(b_u), as.numeric(kFun))
   return(res)
 }

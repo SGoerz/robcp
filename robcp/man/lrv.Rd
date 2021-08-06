@@ -19,7 +19,7 @@ lrv(x, method = "kernel", control = list())
 }
 
 \details{
-The long run variance equals \eqn{n} times the asymptotic variance of the arithmetic mean of a short range dependent time series, where \eqn{n} is the length of the time series. It is used to standardize tests concering the mean on dependent data.
+The long run variance equals the limit of \eqn{n} times the variance of the arithmetic mean of a short range dependent time series, where \eqn{n} is the length of the time series. It is used to standardize tests concering the mean on dependent data.
 
 The \code{control} argument is a list that can supply any of the following components:
 \describe{
@@ -36,7 +36,7 @@ The \code{control} argument is a list that can supply any of the following compo
 If \code{method = "kernel"}, the long run variance is estimated by a kernel estimator using the bandwidth \eqn{b_n = } \code{control$b_n} and kernel function \eqn{k(x) = } \code{control$kFun}. In the one dimensional case this results in:
 
 \deqn{\hat{\sigma}^2 = \frac{1}{n} \sum_{i = 1}^n (x_i - \bar{x})^2 + \frac{2}{n} \sum_{h = 1}^{n - 1} \sum_{i = 1}^{n - h} (x_i - \bar{x}) (x_{i + h} - \bar{x}) k(h / b_n).}
-When \code{control$gamma0 = TRUE} (default) then if the long run variance is estimated to be smaller than 0, only the autocovariance to lag 0 (= ordinary variance of the data) is returned. The function will then throw a warning.
+When \code{control$gamma0 = TRUE} (default) then negative estimates of the long run variance are replaced by the autocovariance at lag 0 (= ordinary variance of the data). The function will then throw a warning.
 
 If \code{x} is a multivariate time series the \eqn{k,l}-element of \eqn{\Sigma} is estimated by
 
@@ -44,21 +44,24 @@ If \code{x} is a multivariate time series the \eqn{k,l}-element of \eqn{\Sigma} 
 
 Default values: \code{b_n} = \eqn{n^{(1/3)}}, \code{kFun = "bartlett"}
 
-For \code{method = "subsampling"} there are an overlapping and a non-overlapping version (parameter \code{control$overlapping}). Also it can be specified if the observations x were transformed by their empirical distribution function (parameter \code{control$distr}). Via \code{control$l} the block length \eqn{l} can be controlled.
+For \code{method = "subsampling"} there are an overlapping and a non-overlapping version (parameter \code{control$overlapping}). Also it can be specified if the observations x were transformed by their empirical distribution function \eqn{\tilde{F}_n} (parameter \code{control$distr}). Via \code{control$l} the block length \eqn{l} can be controlled.
 
 If \code{control$overlapping = TRUE} and \code{control$distr = TRUE}:
 \deqn{\hat{\sigma}_n = \frac{\sqrt{\pi}}{\sqrt{2l}(n - l + 1)} \sum_{i = 0}^{n-l} \left| \sum_{j = i+1}^{i+l} (F_n(x_j) - 0.5) \right|.}
 
-Otherwise, if \code{control$distr = FALSE}, the estimator follows as
+Otherwise, if \code{control$distr = FALSE}, the estimator is
 \deqn{\hat{\sigma}^2 = \frac{1}{l (n - l + 1)} \sum_{i = 0}^{n-l} \left( \sum_{j = i + 1}^{i+l} x_j - \frac{l}{n} \sum_{j = 1}^n x_j \right)^2.}
 
 If \code{control$overlapping = FALSE} and \code{control$distr = TRUE}:
 \deqn{\hat{\sigma} = \frac{1}{n/l} \sqrt{\pi/2} \sum_{i = 1}{n/l} \frac{1}{\sqrt{l}} \left| \sum_{j = (i-1)l + 1}^{il} F_n(x_j) - \frac{l}{n} \sum_{j = 1}^n F_n(x_j) \right|.}
 
-Otherwise, if \code{control$distr = FALSE}, the estimator follows as
+Otherwise, if \code{control$distr = FALSE}, the estimator is
 \deqn{\hat{\sigma}^2 = \frac{1}{n/l} \sum_{i = 1}^{n/l} \frac{1}{l} \left(\sum_{j = (i-1)l + 1}^{il} x_j - \frac{l}{n} \sum_{j = 1}^n x_j\right)^2.}
 
-Default value: \code{l} = ???
+
+Default values: overlapping = TRUE, the block length is chosen adaptively: 
+\deqn{l_n = \max{\left\{ \left\lceil n^{(1/3)} \left( \frac{2 \rho}{1 - \rho^2} \right)^{(2/3)} \right\rceil, 1 \right\}}}
+where \eqn{\rho} is the Spearman autocorrelation at lag 1.
 
 
 If \code{method = "bootstrap"} a dependent wild bootstrap with the parameters \eqn{B = } \code{control$B}, \eqn{l = } \code{control$l} and \eqn{k(x) = } \code{control$kFun} is performed:

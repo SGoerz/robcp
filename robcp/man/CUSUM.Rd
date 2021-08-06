@@ -27,12 +27,12 @@ Test statistic (numeric value) with the attribute \code{cp-location} indicating 
 }
 
 \details{
-Let n be the length of the time series y. 
+Let n be the length of the time series x. 
 
-In case of a vector the test statistic can be written as \deqn{max_{k = 1, ..., n}\frac{1}{\sqrt{n} \sigma}\left|\sum_{i = 1}^{k} x_i - (k / n) \sum_{i = 1}^n x_i\right|,} where \eqn{\sigma} is the square root of \code{\link{lrv}}.
+In case of a univariate time series the test statistic can be written as \deqn{\max_{k = 1, ..., n}\frac{1}{\sqrt{n} \sigma}\left|\sum_{i = 1}^{k} x_i - (k / n) \sum_{i = 1}^n x_i\right|,} where \eqn{\sigma} is the square root of \code{\link{lrv}}.
 
-In case of a matrix the test statistic follows as
-\deqn{max_{k = 1, ..., n}\frac{1}{n}\left(\sum_{i = 1}^{k} X_i - \frac{k}{n} \sum_{i = 1}^{n} X_i\right)^T \Sigma^{-1} \left(\sum_{i = 1}^{k} X_i - \frac{k}{n} \sum_{i = 1}^{n} X_i\right),} where \eqn{X_i} denotes the i-th row of x and \eqn{\Sigma^{-1}} is the inverse of \code{\link{lrv}}.
+In case of a multivariate time series the test statistic follows as
+\deqn{\max_{k = 1, ..., n}\frac{1}{n}\left(\sum_{i = 1}^{k} X_i - \frac{k}{n} \sum_{i = 1}^{n} X_i\right)^T \Sigma^{-1} \left(\sum_{i = 1}^{k} X_i - \frac{k}{n} \sum_{i = 1}^{n} X_i\right),} where \eqn{X_i} denotes the i-th row of x and \eqn{\Sigma^{-1}} is the inverse of \code{\link{lrv}}.
 }
 
 \seealso{

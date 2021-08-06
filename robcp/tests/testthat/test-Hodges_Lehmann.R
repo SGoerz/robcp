@@ -3,7 +3,7 @@ context("Hodges_Lehmann")
 test_that("output has the correct format", 
 {
   x <- 1:5
-  y <- HodgesLehmann(x, control = list(b_n = 1))
+  y <- HodgesLehmann(x, b_u = 1, control = list(b_n = 1))
   
   # X <- matrix(1:9, ncol = 3)
   # Y <- HodgesLehmann(X)
@@ -34,7 +34,7 @@ test_that("HodgesLehmann computes the correct value",
   l <- 2
   y <- sqrt(5) * 5.44 * u_hat(x - c(0, rep(34, 4)), b) / 
     sqrt(lrv(x, "subsampling", control = list(l = l, overlapping = TRUE, distr = TRUE)))
-  z <- HodgesLehmann(x, control = list(l = l, overlapping = TRUE, distr = TRUE,
+  z <- HodgesLehmann(x, b_u = b, control = list(l = l, overlapping = TRUE, distr = TRUE,
                      b_n = b))
   attributes(z) <- NULL
   
@@ -72,10 +72,15 @@ test_that("Hodges-Lehmann change point test is performed correctly",
   {
    x <- rnorm(200)
    x[101:200] <- x[101:200] + 1
-   hl_test(x, control = list(b_n = 10, b2 = 0.05))$p.value
+   hl_test(x, b_u = 0.05, control = list(b_n = 10))$p.value
   })})
   
   expect_equal(mean(p < 0.05), 1, tolerance = 0.1)
+  
+  # correct change point location
+  x <- rnorm(100)
+  x[50:100] <- x[50:100] + 10
+  expect_equal(attr(hl_test(x, b_u = 0.1)$statistic, "cp-location"), 50, tolerance = 1)
   
   ## maybe some more tests
   ## best to be checked graphically:

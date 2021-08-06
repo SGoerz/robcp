@@ -50,6 +50,13 @@ test_that("wilcox_stat returns the correct value",
   y <- wilcox_stat(x, 2, "subs", list(overlapping = FALSE, distr = FALSE))
   attributes(y) <- NULL
   expect_equal(y, t2)
+  
+  # wmw_test and CUSUM test are equal for h = 2 and the kernel-based long run
+  # variance estimation
+  x <- rnorm(100)
+  y <- wmw_test(x, h = 2, method = "kernel")$statistic
+  attr(y, "names") <- NULL
+  expect_equal(y, CUSUM(x, method = "kernel"))
 })
 
 
@@ -86,6 +93,11 @@ test_that("Wilcoxon-Mann-Whitney change point test is performed correctly",
   })})
   
   expect_equal(mean(p < 0.05), 1, tolerance = 0.001)
+  
+  # correct change point location
+  x <- rnorm(100)
+  x[50:100] <- x[50:100] + 10
+  expect_equal(attr(wmw_test(x)$statistic, "cp-location"), 50, tolerance = 1)
   
   ## maybe some more tests
   ## best to be checked graphically:

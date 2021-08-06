@@ -39,11 +39,11 @@ until
 \eqn{|2 (-1)^{k - 1} \exp(-2 k^2 x^2) - 2 (-1)^{(k-1) - 1}  \exp(-2 (k-1)^2 x^2)| \le tol.
 }
 
-In case of multiple time series, the distribution equals that of the maximum of an \code{p} dimensional squared Bessel bridge. It can be computed by
+In case of multiple time series, the distribution equals that of the maximum of an \code{p} dimensional squared Bessel bridge. It can be computed by (Kiefer, 1959)
 
 \deqn{P(t_n(X) \le t_n(x)) = 
-\frac{4}{ \Gamma(p / 2) 2^{p / 2} t_n^p }  \sum_{i = 1}^{\infty}  \frac{(\gamma_{(p - 2)/2, n})^{p - 2} \exp(-(\gamma_{(p - 2)/2, n})^2 / (2t_n^2))}{J_{p/2}(\gamma_{(p - 2)/2, n})^2 }}
-(Kiefer, 1959), where \eqn{J_p} is the Bessel function of first kind and p-th order, \eqn{\Gamma} is the gamma function and \eqn{\gamma_{p, n}} denotes the n-th zero of \eqn{J_p}.
+\frac{4}{ \Gamma(p / 2) 2^{p / 2} t_n^p }  \sum_{i = 1}^{\infty}  \frac{(\gamma_{(p - 2)/2, n})^{p - 2} \exp(-(\gamma_{(p - 2)/2, n})^2 / (2t_n^2))}{J_{p/2}(\gamma_{(p - 2)/2, n})^2 },}
+where \eqn{J_p} is the Bessel function of first kind and p-th order, \eqn{\Gamma} is the gamma function and \eqn{\gamma_{p, n}} denotes the n-th zero of \eqn{J_p}.
 }
 
 \value{

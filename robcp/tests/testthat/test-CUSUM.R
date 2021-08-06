@@ -75,5 +75,10 @@ test_that("CUSUM test statistic is computed correctly",
   
   expect_equal(res1, Ychol, tolerance = 1e-5)
   expect_equal(res2, Yginv, tolerance = 1e-5)
+  
+  # correct change point location
+  x <- rnorm(100)
+  x[50:100] <- x[50:100] + 10
+  expect_equal(attr(CUSUM(x), "cp-location"), 50, tolerance = 1)
 })
 

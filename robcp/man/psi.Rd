@@ -15,7 +15,7 @@ psi(y, fun = "HLm", k, constant = 1.4826)
 
 \arguments{
 	\item{y}{vector or matrix with each column representing a time series (numeric).}
-	\item{fun}{character string specifiyng the transformation function \eqn{\psi (more in Details)}.}
+	\item{fun}{character string specifying the transformation function \eqn{\psi} (more in Details).}
 	\item{k}{numeric bound used for Huber type psi-functions which determines robustness and efficiency of the test. Default for \code{psi = "HLg"} or \code{"HCg"} is \code{sqrt(qchisq(0.8, df = m)} where \code{m} are the number of time series, and otherwise it is 1.5.}
 	\item{constant}{scale factor of the MAD.}
 }
@@ -25,7 +25,7 @@ Transformed numeric vector or matrix with the same number of rows as \code{y}.
 }
 
 \details{
-Let \eqn{x = (y - med(y)) / MAD(y)} be the standardized values of a single time series.
+Let \eqn{x = \frac{y - med(y)}{MAD(y)}} be the standardized values of a univariate time series.
 
 Available \eqn{\psi} functions are: \cr
 

@@ -12,7 +12,7 @@ Performs the Wilcoxon-Mann-Whitney change point test.
 
 \arguments{
 \item{x}{time series (numeric or ts vector).}
-\item{h}{version of the test (integer, 1 or 2)}
+\item{h}{version of the test (integer, 1L or 2L)}
 \item{method}{method for estimating the long run variance.}
 \item{control}{a list of control parameters (cf. \code{\link{lrv}}).}
 \item{tol}{tolerance of the distribution function (numeric), which is used to compute p-values.}
@@ -29,7 +29,13 @@ A list of the class "htest" containing the following components:
 }
 
 \details{
-...missing...
+The function performs a Wilcoxon-Mann-Whitney change point test. It tests the hypothesis pair
+\deqn{H_0: \mu_1 = ... = \mu_n}
+\deqn{vs.}
+\deqn{H_1: \exists k \in \{1, ..., n-1\}: \mu_k \neq \mu_{k+1}}
+where \eqn{\mu_t = E(X_t)} and \eqn{n} is the length of the time series. \eqn{k} is called a 'change point'. 
+
+The test statistic is computed using \code{\link{wilcox_stat}} and asymptotically follows a Kolmogorov distribution. To derive the p-value, the function \code{\link{pKSdist}} is used. 
 }
 
 \author{
@@ -41,7 +47,7 @@ Dehling, H., et al. "Change-point detection under dependence based on two-sample
 }
 
 \seealso{
-\code{\link{wilcox_stat}}, \code{\link{lrv}}
+\code{\link{wilcox_stat}}, \code{\link{lrv}}, \code{\link{pKSdist}}
 }
 
 \examples{

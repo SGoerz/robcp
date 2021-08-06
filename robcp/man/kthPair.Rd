@@ -15,7 +15,7 @@ kthPair(x, y, k, k2 = NA)
   \item{x}{Numeric vector.}
   \item{y}{Numeric vector.}
   \item{k}{Index of element to be selected. Must be an integer and between 1 and the product of the lengths of x and y.}
-  \item{k2}{Optional second index. \code{k} and \code{k2} must be consecutive. Useful, if X + Y has an even number of elements and the median has to be calculated.}
+  \item{k2}{Optional second index. \code{k} and \code{k2} must be consecutive. Useful, if the number of elements of X + Y is even and the median is to be calculated.}
 }
 
 \details{
