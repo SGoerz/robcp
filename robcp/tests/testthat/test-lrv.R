@@ -8,6 +8,7 @@ test_that("output has the correct format",
   expect_equal(length(y), 1)
   
   expect_error(lrv(x, control = list(b_n = 0)))
+  expect_warning(lrv(x, control = list(kFun = "abc")))
   
   x <- ts(x)
   y <- lrv(x, control = list(b_n = 10))
@@ -34,7 +35,7 @@ test_that("output has the correct format",
 test_that("correct warnings and errors", 
 {
   x <- c(1, -1, 1, -1)
-  expect_warning(lrv(x, control = list(kFun = "FT")))
+  expect_warning(lrv(x, control = list(kFun = "FT", b_u = 1)))
   
   ## other names than in control
   expect_warning(lrv(x, control = list(fun = "TH")))

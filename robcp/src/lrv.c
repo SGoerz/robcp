@@ -313,11 +313,11 @@ SEXP u_hat(SEXP X, SEXP B, SEXP K)
   
   int i, j;
   
-  for(i = 0; i < n; i++)
+  for(i = 0; i < n-1; i++)
   {
     for(j = i+1; j < n; j++)
     {
-      sum[0] += kFun((x[i] - x[j]) / b);
+      sum[0] += kFun((x[j] - x[i]) / b);
     }
   }
   

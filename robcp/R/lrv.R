@@ -14,7 +14,7 @@
 ##'output: long run variance (numeric value) or long run covariance matrix 
 ##'        (numeric matrix with dim. m x m, when m is the number of columns)
 
-lrv <- function(x, method = "kernel", control = list()) #b_n, l, method = "kernel", B, kFun = "FT", ...)
+lrv <- function(x, method = "kernel", control = list())
 {
   ## argument check
   if(is(x, "ts"))
@@ -27,15 +27,16 @@ lrv <- function(x, method = "kernel", control = list()) #b_n, l, method = "kerne
   }
   
   ### ***********
-  con <- list(kFun = "bartlett", B = 1000, b_n = NA, l = NA, ## l = ???
+  con <- list(kFun = "bartlett", B = 1000, b_n = NA, l = NA, 
               gamma0 = TRUE, overlapping = TRUE, distr = TRUE, seed = NA)
   nmsC <- names(con)
   con[(namc <- names(control))] <- control
   if(length(noNms <- namc[!namc %in% nmsC])) 
     warning("unknown names in control: ", paste(noNms, collapse = ", "))
   ### ***********
-  
+
   con$kFun <- pmatch(con$kFun, c("bartlett", "FT", "parzen", "QS", "TH", "truncated"))
+  if(is.na(con$kFun)) warning("This kernel function does not exist. Bartlett kernel is used instead.")
   ## end argument check
   
   
@@ -50,7 +51,7 @@ lrv <- function(x, method = "kernel", control = list()) #b_n, l, method = "kerne
       stop("b_n must be numeric, greater than 0 and smaller than the length of the time series!")
     }
 
-    if(is.na(b_n)) b_n <- n^(1/3)
+    if(is.na(b_n)) b_n <- log(n / 50, 1.8 + m / 40)
     if(b_n > n)
       stop("The bandwidth b_n cannot be larger than the length of the time series!")
     
@@ -91,7 +92,10 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE)
   {
     stop("b_n must be numeric, greater than 0 and smaller than the length of the time series!")
   }
-  if(is.na(b_n)) b_n <- n^(1/3)
+  if(is.na(b_n)) 
+  {
+    b_n <- 0.9 * n^(1/3)
+  }
   
   x_cen <- x - mean(x)
   erg <- .Call("lrv", as.numeric(x_cen), as.numeric(b_n), as.numeric(kFun),
@@ -115,15 +119,18 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE)
 ##'@name lrv
 lrv_subs <- function(x, l, overlapping = TRUE, distr = TRUE)
 {
-  ## default value for l?
-  ## more tests for input of l
+  ## argument check
   if(!is.na(l) && (!is(l, "numeric") || l <= 0))
   {
     stop("l must be numeric and greater than 0!")
   }
   
   n <- length(x)
-  if(missing(l) | is.na(l)) l <- n^(1/3)
+  if(missing(l) | is.na(l)) 
+  {
+    rho <- abs(cor(x[1:(n-1)], x[2:n], method = "spearman"))
+    l <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
+  }
   
   if(distr)
   {
@@ -161,6 +168,7 @@ lrv_dwb <- function(x, l, B, kFun, seed = NA)
 {
   n <- length(x)
   
+  ## argument check
   if(!is.na(l) && (!is.numeric(l) || l < 1 || l > n))
   {
     stop("l must be a positive integer and cannot be larger than the length of x!")
@@ -170,7 +178,7 @@ lrv_dwb <- function(x, l, B, kFun, seed = NA)
   {
     stop("B has to be a positive integer!")
   }
-  if(is.na(B)) B <- 1000#
+  if(is.na(B)) B <- 1000
   if(!(kFun %in% c(1, 3, 4))) 
   {
     warning("Specified kernel function is not supported for the dependet wild bootstrap.
@@ -194,7 +202,8 @@ lrv_dwb <- function(x, l, B, kFun, seed = NA)
   ## set seed
   if(!is.na(seed)) set.seed(seed)
   ## bootstrap samples
-  dwb <- replicate(B, {
+  dwb <- replicate(B, 
+  {
     # eps <- rmvnorm(1, sigma = sigma.ma)
     z <- rnorm(n)
     eps <- sigma.root %*% z

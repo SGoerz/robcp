@@ -15,7 +15,7 @@ Computes the median of the set X - Y. X - Y denotes the set \eqn{\{x - y | x \in
 }
 
 \details{
-...missing...
+Special case of the function \code{\link{kthPair}}.
 }
 
 \author{

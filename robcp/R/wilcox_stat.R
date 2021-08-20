@@ -27,6 +27,9 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
   {
     control$overlapping <- FALSE
   }
+  
+  n <- length(x)
+  
   if(is.numeric(h))
   {
     if(!(h %in% 1:2)) 
@@ -53,7 +56,6 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
     }
   } else if(is.function(h))
   {
-    n <- length(x)
     hVec <- Vectorize(h)
     res <- sum(hVec(x[1], x[-1]))
     max <- abs(res)
@@ -76,10 +78,31 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
     stop("Invalid argument for h!")
   }
   
+  k <- res[2]
+  x.cor <- x
+  x.cor[(k+1):n] <- x.cor[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
+  
+  if(method == "subsampling" & (is.null(control$l) || is.na(control$l)))
+  {
+    rho <- cor(x.cor[-n], x.cor[-1], method = "spearman")
+    control$l <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
+  }
+  
+  if(method == "kernel" & (is.null(control$b_n) || is.na(control$b_n)))
+  {
+    rho <- cor(x.cor[-n], x.cor[-1], method = "spearman")
+    control$b_n <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
+  }
+  
   Tn <- res[1] / sqrt(lrv(x, method = method, control = control))
     
-  attr(Tn, "cp-location") <- res[2]
+  attr(Tn, "cp-location") <- k
   class(Tn) <- "cpStat"
   
   return(Tn)
 }
+
+
+
+
+
