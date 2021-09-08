@@ -96,7 +96,7 @@ double sigma_1(double *x, int n, double b_n, int k)
   case 4: kFun = &kQS; break;
   case 5: kFun = &kTH; break;
   case 6: kFun = &kTruncated; break;
-  default: kFun = &kBartlett; break;
+  default: kFun = &kTH; break;
   }
   
   double var = 0;
@@ -145,7 +145,7 @@ double sigma_2(double x1[], double x2[], int n, double b_n, int k)
   case 4: kFun = &kQS; break;
   case 5: kFun = &kTH; break;
   case 6: kFun = &kTruncated; break;
-  default: kFun = &kBartlett; break;
+  default: kFun = &kTH; break;
   }
   
   double erg = 0;
@@ -308,7 +308,7 @@ SEXP u_hat(SEXP X, SEXP B, SEXP K)
   case 4: kFun = &kQS; break;
   case 5: kFun = &kTH; break;
   case 6: kFun = &kTruncated; break;
-  default: kFun = &kBartlett; break;
+  default: kFun = &kQS; break;
   }
   
   int i, j;

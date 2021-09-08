@@ -54,7 +54,7 @@ test_that("wilcox_stat returns the correct value",
   # wmw_test and CUSUM test are equal for h = 2 and the kernel-based long run
   # variance estimation
   x <- rnorm(100)
-  y <- wmw_test(x, h = 2, method = "kernel")$statistic
+  y <- wmw_test(x, h = 2, method = "kernel", control = list(kFun = "TH"))$statistic
   attr(y, "names") <- NULL
   expect_equal(y, CUSUM(x, method = "kernel"))
 })

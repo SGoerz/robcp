@@ -54,22 +54,14 @@ HodgesLehmann <- function(x, b_u = NA, method = "subsampling", control = list())
   {
     medDiff <- medianDiff(x[(k+1):n], x[1:k])
     x.adj <- x - c(rep(0, k), rep(medDiff, n - k))
-    # diffs <- unlist(sapply(1:(n-1), function(i)
-    # {
-    #   temp <- rep(x.adj[(i+1):n], each = i)
-    #   x.adj[1:i] - temp
-    # }))
     
     u_hat(x.adj, b_u, "QS") *
-      # dens <- density(diffs, n = 1, from = 0, to = 0)
-      # print(paste(k, dens$bw))
-      # dens$y *
       k / n * (1 - k / n) * abs(medDiff) 
   }))
   
   if(is.null(control$l) || is.na(control$l))
   {
-    rho <- cor(x[-n], x[-1], method = "spearman")
+    rho <- cor(x.adj[-n], x.adj[-1], method = "spearman")
     control$l <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
   }
   

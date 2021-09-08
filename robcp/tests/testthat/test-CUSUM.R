@@ -34,8 +34,8 @@ test_that("CUSUM test statistic is computed correctly",
   cy <- CUSUM(y)
   attributes(cy) <- NULL
   
-  expect_equal(cx, max(abs(CUSUM2(x))) / sqrt(lrv(x) * n))
-  expect_equal(cy, max(abs(CUSUM2(y))) / sqrt(lrv(y) * n))
+  expect_equal(cx, max(abs(CUSUM2(x))) / sqrt(lrv(x, control = list(kFun = "TH")) * n))
+  expect_equal(cy, max(abs(CUSUM2(y))) / sqrt(lrv(y, control = list(kFun = "TH")) * n))
   
   m <- 3
   X <- matrix(rnorm(9), ncol = m)

@@ -36,7 +36,7 @@ lrv <- function(x, method = "kernel", control = list())
   ### ***********
 
   con$kFun <- pmatch(con$kFun, c("bartlett", "FT", "parzen", "QS", "TH", "truncated"))
-  if(is.na(con$kFun)) warning("This kernel function does not exist. Bartlett kernel is used instead.")
+  if(is.na(con$kFun)) warning("This kernel function does not exist. Tukey-Hanning kernel is used instead.")
   ## end argument check
   
   

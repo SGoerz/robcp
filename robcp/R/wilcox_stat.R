@@ -79,18 +79,18 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
   }
   
   k <- res[2]
-  x.cor <- x
-  x.cor[(k+1):n] <- x.cor[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
+  x.adj <- x
+  x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
   
   if(method == "subsampling" & (is.null(control$l) || is.na(control$l)))
   {
-    rho <- cor(x.cor[-n], x.cor[-1], method = "spearman")
+    rho <- cor(x.adj[-n], x.adj[-1], method = "spearman")
     control$l <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
   }
   
   if(method == "kernel" & (is.null(control$b_n) || is.na(control$b_n)))
   {
-    rho <- cor(x.cor[-n], x.cor[-1], method = "spearman")
+    rho <- cor(x.adj[-n], x.adj[-1], method = "spearman")
     control$b_n <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
   }
   
