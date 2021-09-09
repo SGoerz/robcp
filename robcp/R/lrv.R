@@ -42,6 +42,7 @@ lrv <- function(x, method = "kernel", control = list())
   
   if(is(x, "matrix"))
   {
+    if(method != "kernel") warning("Only kernel-based estimation of the long run variance is available for multivariate data.")
     m <- ncol(x)
     n <- nrow(x)
     b_n <- con$b_n
@@ -173,7 +174,11 @@ lrv_dwb <- function(x, l, B, kFun, seed = NA)
   {
     stop("l must be a positive integer and cannot be larger than the length of x!")
   }
-  if(is.na(l)) l <- sqrt(n) ##????????????????
+  if(missing(l) | is.na(l)) 
+  {
+    rho <- abs(cor(x[1:(n-1)], x[2:n], method = "spearman"))
+    l <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
+  }
   if(!is.na(B) && (!is.numeric(B) || B < 1)) 
   {
     stop("B has to be a positive integer!")
@@ -188,9 +193,6 @@ lrv_dwb <- function(x, l, B, kFun, seed = NA)
   sigma.ma <- matrix(.Call("gen_matrix", as.numeric(n), as.numeric(l),
                            as.numeric(kFun)), ncol = n)
   
-  # sigma.ma <- as.matrix(dist(0:(n-1), diag = TRUE, upper = TRUE)) / l
-  # sigma.ma <- apply(sigma.ma, 1, K)
-  
   if(!requireNamespace("pracma", quietly = TRUE)) 
   {
     stop("Package \"pracma\" needed for the dependent wild bootstrap to work. Please install it.",
@@ -204,7 +206,6 @@ lrv_dwb <- function(x, l, B, kFun, seed = NA)
   ## bootstrap samples
   dwb <- replicate(B, 
   {
-    # eps <- rmvnorm(1, sigma = sigma.ma)
     z <- rnorm(n)
     eps <- sigma.root %*% z
     x_star <- mean(x) + (x - mean(x)) * eps

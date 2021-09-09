@@ -3,11 +3,11 @@
 \title{Hodges-Lehmann Test for Change Points}
 
 \usage{
-hl_test(x, b_u, method = "subsampling", control = list(), tol = 1e-8)
+hl_test(x, b_u = NA, method = "subsampling", control = list(), tol = 1e-8)
 }
 
 \description{
-Performs the Hodges-Lehmann change point test.
+Performs the two-sample Hodges-Lehmann change point test.
 }
 
 \arguments{
@@ -29,7 +29,7 @@ A list of the class "htest" containing the following components:
 }
 
 \details{
-The function performs a Hodges-Lehmann change point test. It tests the hypothesis pair
+The function performs the two-sample Hodges-Lehmann change point test. It tests the hypothesis pair
 \deqn{H_0: \mu_1 = ... = \mu_n}
 \deqn{vs.}
 \deqn{H_1: \exists k \in \{1, ..., n-1\}: \mu_k \neq \mu_{k+1}}

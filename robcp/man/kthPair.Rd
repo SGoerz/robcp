@@ -19,7 +19,7 @@ kthPair(x, y, k, k2 = NA)
 }
 
 \details{
-...missing...
+A generalized version of the algorithm of Johnson and Mizoguchi (1978), where \eqn{x} and \eqn{y} are allowed to be of different lengths. The optional arguemnt \code{k2} allows the computation of the mean of two consecutive value without running the algorithm twice.
 }
 
 \value{
@@ -40,4 +40,5 @@ x <- rnorm(100)
 y <- runif(100)
 
 kthPair(x, y, 5000)
+kthPair(x, y, 5000, 5001)
 }

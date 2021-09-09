@@ -48,7 +48,7 @@ where \eqn{\mu_t = E(X_t)} and \eqn{n} is the length of the time series. For cha
 Denote by \eqn{Y_1,\ldots,Y_n} the transformed time series. If \eqn{Y_1} is one-dimensional, then the test statistic
 \deqn{V_n = \max_{k=1,\ldots,n} \frac{1}{\sqrt{n}\sigma} \left|\sum_{i=1}^k Y_i-\frac{k}{n} \sum_{i=1}^n Y_i\right|
 }
-is calculated, where \eqn{\sigma^2} is an estimator for the long run variance, see the help function of \code{\link{lrv}} for details. \eqn{V} is asymptotically Kolmogorov-Smirnov distributed. If \code{fpc} is \code{TRUE} we use a finite sample correction \eqn{V+0.58/\sqrt{n}} to improve finite sample performance. (ZITAT PAPER VON ALEXANDER!!) \cr
+is calculated, where \eqn{\sigma^2} is an estimator for the long run variance, see the help function of \code{\link{lrv}} for details. \eqn{V} is asymptotically Kolmogorov-Smirnov distributed. If \code{fpc} is \code{TRUE} we use a finite population correction \eqn{V+0.58/\sqrt{n}} to improve finite sample performance.  \cr
 If \eqn{Y_1} is multivariate, then the test statistic
 \deqn{W_n=\max_{k=1,\ldots,n} \frac{1}{n}\left(\sum_{i=1}^k Y_i-\frac{k}{n} \sum_{i=1}^n Y_i\right)' \Sigma^{-1}\left(\sum_{i=1}^k Y_i-\frac{k}{n} \sum_{i=1}^n Y_i\right)
 }
@@ -62,7 +62,6 @@ The change point location is estimated as the time point \eqn{k} for which the C
 
 Kiefer, J. (1959). "K-sample analogues of the Kolmogorov-Smirnov and Cramer-V. Mises tests", \emph{The Annals of Mathematical Statistics}, 420--447.
 
-ZITAT PAPAER VON ALEXANDER!!
 }
 
 \seealso{

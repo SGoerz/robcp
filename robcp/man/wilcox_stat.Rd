@@ -28,7 +28,8 @@ Let n be the length of \code{x}, i.e. the number of observations.
 
 \eqn{\hat{\sigma}} is estimated by the square root of \code{\link{lrv}}. The denominator corresponds to that in the ordinary CUSUM change point test. 
 
-By default, non-overlapping subsampling is used. If \code{h = 1L}, the default for \code{distr} is \code{TRUE} and otherwise it is \code{FALSE}. 
+By default, non-overlapping subsampling is used. If \code{h = 1L}, the default for \code{distr} is \code{TRUE} and otherwise it is \code{FALSE}. If no block length is supplied, first the time series \eqn{x} is corrected for the estimated change point and Spearman's autocorrelation to lag 1 (\eqn{\rho}) is computed. Then the default block length follows as 
+\deqn{l = \max\left\{\left\lceil n^{1/3} \left( \frac{2\rho}{1 - \rho^2}\right)^{2/3} \right\rceil, 1\right\}.}
 }
 
 \value{
