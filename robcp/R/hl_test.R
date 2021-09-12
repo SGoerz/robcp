@@ -11,7 +11,7 @@
 hl_test <- function(x, b_u = NA, method = "subsampling", control = list(), tol = 1e-8)
 {
   Dataname <- deparse(substitute(x))
-  stat <- HodgesLehmann(x, b_u, method = control$method, control = control)
+  stat <- HodgesLehmann(x, b_u, method = method, control = control)
   location <- attr(stat, "cp-location")
   names(stat) <- "S"
   

@@ -59,15 +59,19 @@ HodgesLehmann <- function(x, b_u = NA, method = "subsampling", control = list())
       k / n * (1 - k / n) * abs(medDiff) 
   }))
   
-  if(is.null(control$l) || is.na(control$l))
+  k <- which.max(Mn)
+  
+  if(method == "subsampling" & (is.null(control$l) || is.na(control$l)))
   {
+    x.adj <- x
+    x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
     rho <- cor(x.adj[-n], x.adj[-1], method = "spearman")
     control$l <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
   }
   
   Tn <- sqrt(n) * max(Mn) / sqrt(lrv(x, method = method, control = control))
   
-  attr(Tn, "cp-location") <- which.max(Mn)
+  attr(Tn, "cp-location") <- k
   class(Tn) <- "cpStat"
   
   return(Tn)

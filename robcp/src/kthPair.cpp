@@ -77,7 +77,7 @@ double kthPair(NumericVector x, NumericVector y, int k, int k2 = NA_INTEGER)
   } else if(k2 <= 0 || k2 > n * m)
   {
     stop("k2 out of bounds");
-  } else if(fabs(k - k2) > 1)
+  } else if(std::abs(k - k2) > 1)
   {
     stop("k and k2 must be consecutive indices!");
   }

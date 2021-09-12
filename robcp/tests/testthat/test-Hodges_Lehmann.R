@@ -55,7 +55,7 @@ test_that("HodgesLehmann computes the correct value",
 test_that("The output of hl_test has the correct format",
 {
   x <- rnorm(10)
-  res <- suppressWarnings(hl_test(x, control = list(b_n = 10)))
+  res <- suppressWarnings(hl_test(x))
   
   expect_equal(class(res), "htest")
   expect_equal(res$alternative, "two-sided")
