@@ -349,7 +349,7 @@ SEXP lrv_subs_nonoverlap(SEXP X, SEXP L, SEXP MEAN, SEXP DISTR)
   int i, j;
   double temp;
   
-  double blocknr = n / l; // ??? wie Runden ???
+  double blocknr = n / l; 
 
   for(i = 1; i <= blocknr; i++)
   {
