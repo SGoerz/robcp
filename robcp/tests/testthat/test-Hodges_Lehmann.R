@@ -3,7 +3,7 @@ context("Hodges_Lehmann")
 test_that("output has the correct format", 
 {
   x <- 1:5
-  y <- HodgesLehmann(x, b_u = 1, control = list(b_n = 1))
+  y <- HodgesLehmann(x, b_u = 1, control = list(b_n = 1, l = 1))
   
   # X <- matrix(1:9, ncol = 3)
   # Y <- HodgesLehmann(X)

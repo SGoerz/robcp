@@ -3,14 +3,17 @@ context("Wilcoxon-Mann-Whitney")
 test_that("output of wilcox_stat has the correct format", 
 {
   x <- 1:5
-  y <- wilcox_stat(x)
+  expect_error(wilcox_stat(x))
+  expect_error(wilcox_stat(x, method = "bootstrap"))
+  
+  y <- wilcox_stat(x, control = list(l = 2))
   
   expect_true(is.numeric(y))
   expect_equal(length(y), 1)
   
   expect_error(wilcox_stat(x, b = 3L))
   
-  expect_warning(wilcox_stat(x, h = 1, control = list(distr = FALSE)))
+  expect_warning(wilcox_stat(x, h = 1, control = list(distr = FALSE, l = 2)))
   
   expect_error(wilcox_stat(x, h = "a"))
 })

@@ -49,7 +49,7 @@ test_that("correct warnings and errors",
   ## methods getting confused
   
   ## kernel functions for bootstrap
-  expect_warning(lrv(x, method = "bootstrap", control = list(kFun = "FT")))
+  expect_warning(lrv(x, method = "bootstrap", control = list(kFun = "FT", l = 1)))
 })
 
 test_that("kernel-based estimation is correctly computed", 

@@ -36,7 +36,11 @@ lrv <- function(x, method = "kernel", control = list())
   ### ***********
 
   con$kFun <- pmatch(con$kFun, c("bartlett", "FT", "parzen", "QS", "TH", "truncated"))
-  if(is.na(con$kFun)) warning("This kernel function does not exist. Tukey-Hanning kernel is used instead.")
+  if(is.na(con$kFun))
+  {
+    warning("This kernel function does not exist. Tukey-Hanning kernel is used instead.")
+    con$kFun <- 5
+  }
   ## end argument check
   
   
@@ -131,6 +135,8 @@ lrv_subs <- function(x, l, overlapping = TRUE, distr = TRUE)
   {
     rho <- abs(cor(x[1:(n-1)], x[2:n], method = "spearman"))
     l <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
+    l <- tryCatch(as.integer(l), error = function(e) stop("Integer overflow in default l estimation. Please specify a value manually."), 
+                  warning = function(w) stop("Integer overflow in default l estimation. Please specify a value manually."))
   }
   
   if(distr)
@@ -178,6 +184,8 @@ lrv_dwb <- function(x, l, B, kFun, seed = NA)
   {
     rho <- abs(cor(x[1:(n-1)], x[2:n], method = "spearman"))
     l <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
+    l <- tryCatch(as.integer(l), error = function(e) stop("Integer overflow in default l estimation. Please specify a value manually."), 
+                  warning = function(w) stop("Integer overflow in default l estimation. Please specify a value manually."))
   }
   if(!is.na(B) && (!is.numeric(B) || B < 1)) 
   {
