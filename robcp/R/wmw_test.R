@@ -8,7 +8,7 @@
 ##'@param method method for estimating the long run variance.
 ##'@param control a list of control parameters.
 ##'@param tol tolerance of the distribution function (numeric), which is used do compute p-values.
-##'@return A list fo the class "htest" containing
+##'@return A list fo the class "htest" 
 wmw_test <- function(x, h = 1L, method = "subsampling", control = list(), tol = 1e-8)
 {
   # ## argument check

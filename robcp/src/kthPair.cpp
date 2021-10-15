@@ -1,5 +1,6 @@
 #include <Rcpp.h>
 #include <vector>
+#include <R_ext/Arith.h>
 using namespace Rcpp;
 
 bool sortcol(const std::vector<double>& v1, const std::vector<double>& v2)
@@ -83,8 +84,8 @@ double kthPair(NumericVector x, NumericVector y, int k, int k2 = NA_INTEGER)
   }
 
   NumericVector temp(2);
-  temp[0] = NA_REAL;
-  temp[1] = NA_REAL;
+  temp[0] = R_NaReal;
+  temp[1] = R_NaReal;
 
   std::sort(x.begin(), x.end());
   std::sort(y.begin(), y.end());
@@ -138,7 +139,7 @@ double kthPair(NumericVector x, NumericVector y, int k, int k2 = NA_INTEGER)
     // P: border after values; Q: border before value
     
     j = std::min(n-1, Lb[n-1]);
-    //j = 0;
+    
     for(i = n-1; i >= 0; i--)
     {
       while(j < m && x[i] + y[j] > am) j++;
@@ -151,40 +152,6 @@ double kthPair(NumericVector x, NumericVector y, int k, int k2 = NA_INTEGER)
       while(j >= 0 && x[i]  + y[j] < am) j--;
       Q[i] = j + 1;
     }
-    
-    
-    /*
-    for(i = 0; i < n; i++)
-    {
-      
-      if(Lb[i] == m || x[i] + y[Lb[i]] <= am)
-      //if(x[i] + y[0] <= am) 
-      {
-        P[i] = Lb[i] - 1;
-        //P[i] = -1;
-      } else
-      {
-        j = Lb[i] + 1;
-        //j = 1;
-        while(j < m && x[i] + y[j] > am) j++;
-        P[i] = j - 1;
-      } 
-      
-      if(Rb[i] == -1 || x[i] + y[Rb[i]] >= am)
-      //if(x[i] + y[m - 1] >= am) 
-      {
-        Q[i] = Rb[i] + 1;
-        //Q[i] = m;
-      } else
-      {
-        j = Rb[i] - 1;
-        //j = m - 2;
-        while(j >= 0 && x[i] + y[j] < am) j--;
-        Q[i] = j + 1;
-      }
-       
-    }
-    */
     
     sum1 = 0;
     sum2 = 0;
@@ -199,22 +166,19 @@ double kthPair(NumericVector x, NumericVector y, int k, int k2 = NA_INTEGER)
     
     // check in which set to search
     if(k <= sum1 || k2 <= sum1)
-    //if(k <= sum1)
     {
       for(i = 0; i < n; i++)
       {
         Rb[i] = P[i];
       }
-    } else if(k > sum2 || k2 > sum2)//if(k > sum2)
+    } else if(k > sum2 || k2 > sum2)
     {
       for(i = 0; i < n; i++)
       {
         Lb[i] = Q[i];
       }
-    } /*else 
-    {
-      return am;
-    }*/
+    } 
+    
     if(k > sum1 && k <= sum2)
     {
       temp[0] = am;
@@ -276,7 +240,6 @@ double kthPair(NumericVector x, NumericVector y, int k, int k2 = NA_INTEGER)
   }
   
   return (temp[0] + temp[1]) / 2;
-  
   //return wA[l - k + L];
 }
 

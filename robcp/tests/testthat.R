@@ -1,4 +1,4 @@
 library(testthat)
-library(robcp)
+#library(robcp)
 
 test_check("robcp")
