@@ -9,7 +9,8 @@
 ##'@param control a list of control parameters.
 ##'@param tol tolerance of the distribution function (numeric), which is used do compute p-values.
 ##'@return A list fo the class "htest" containing
-wmw_test <- function(x, h = 1L, method = "subsampling", control = list(), tol = 1e-8)
+wmw_test <- function(x, h = 1L, method = "subsampling", control = list(), tol = 1e-8, 
+                     p1, p2)
 {
   # ## argument check
   # if(is(x, "ts"))
@@ -23,7 +24,7 @@ wmw_test <- function(x, h = 1L, method = "subsampling", control = list(), tol = 
   # ## end argument check
   
   Dataname <- deparse(substitute(x))
-  stat <- wilcox_stat(x, h = h, method = method, control = control)
+  stat <- wilcox_stat(x, h = h, method = method, control = control, p1 = p1, p2 = p2)
   location <- attr(stat, "cp-location")
   names(stat) <- "S"
   

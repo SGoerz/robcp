@@ -11,7 +11,7 @@
 ##'        indicating at which index a change point is most likely. Is an S3
 ##'        object of the class cpStat
 
-wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
+wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list(), p1, p2)
 {
   ## argument check
   if(is(x, "ts"))
@@ -78,21 +78,18 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
     stop("Invalid argument for h!")
   }
   
-  k <- res[2]
-  x.adj <- x
-  x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
-  
-  if(method == "subsampling" & (is.null(control$l) || is.na(control$l)))
+  if((method == "subsampling" & (is.null(control$l) || is.na(control$l))) | 
+     (method == "kernel" & (is.null(control$b_n) || is.na(control$b_n))))
   {
+    k <- res[2]
+    x.adj <- x
+    x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
     rho <- cor(x.adj[-n], x.adj[-1], method = "spearman")
-    control$l <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
+    
+    control$l <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)
+    control$b_n <- control$l
   }
   
-  if(method == "kernel" & (is.null(control$b_n) || is.na(control$b_n)))
-  {
-    rho <- cor(x.adj[-n], x.adj[-1], method = "spearman")
-    control$b_n <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
-  }
   
   Tn <- res[1] / sqrt(lrv(x, method = method, control = control))
     

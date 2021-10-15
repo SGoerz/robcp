@@ -10,7 +10,7 @@
 ##'        at which index a change point is most likely
 ##'        -> class "cpStat"
 
-CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", ...)
+CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", p1, p2, ...)
 {
   ## argument check
   if(is(x, "ts"))
@@ -65,13 +65,8 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
       x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
       rho <- cor(x.adj[-n], x.adj[-1], method = "spearman")
       
-      if(method == "kernel")
-      {
-        control$b_n <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
-      } else if(method == "subsampling")
-      {
-        control$l <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
-      }
+      control$b_n <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)
+      control$l <- control$b_n
     }
     
     if(method == "kernel" & (is.null(control$kFun) || is.na(control$kFun)))
