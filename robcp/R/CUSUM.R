@@ -10,7 +10,7 @@
 ##'        at which index a change point is most likely
 ##'        -> class "cpStat"
 
-CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", ...)
+CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", p1, p2, ...)
 {
   ## argument check
   if(is(x, "ts"))
