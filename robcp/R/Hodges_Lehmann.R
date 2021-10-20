@@ -36,6 +36,11 @@ HodgesLehmann <- function(x, b_u = NA, method = "subsampling", control = list())
   ## determine b_u adaptively
   if(is.na(b_u))
   {
+    # diffs <- unlist(sapply(1:(n-1), function(i)
+    # {
+    #   x.adj[(i+1):n] - x.adj[i]
+    # }))
+    
     diffs <- unlist(sapply(1:(n-1), function(i)
     {
       temp <- rep(x.adj[(i+1):n], each = i)
@@ -78,7 +83,7 @@ HodgesLehmann <- function(x, b_u = NA, method = "subsampling", control = list())
 }
 
 
-## default values?
+
 u_hat <- function(x, b_u, kFun = "QS")
 {
   if(b_u <= 0) 

@@ -24,7 +24,7 @@ wmw_test <- function(x, h = 1L, method = "subsampling", control = list(), tol = 
   # ## end argument check
   
   Dataname <- deparse(substitute(x))
-  stat <- wilcox_stat(x, h = h, method = method, control = control, p1, p2)
+  stat <- wilcox_stat(x, h = h, method = method, control = control, p1 = p1, p2 = p2)
   location <- attr(stat, "cp-location")
   names(stat) <- "S"
   
