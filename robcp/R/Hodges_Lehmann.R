@@ -38,12 +38,17 @@ HodgesLehmann <- function(x, b_u = NA, method = "subsampling", control = list())
   {
     diffs <- unlist(sapply(1:(n-1), function(i)
     {
-      temp <- rep(x.adj[(i+1):n], each = i)
-      x.adj[1:i] - temp
+      x.adj[(i+1):n] - x[i]
     }))
     
+    # diffs <- unlist(sapply(1:(n-1), function(i)
+    # {
+    #   temp <- rep(x.adj[(i+1):n], each = i)
+    #   x.adj[1:i] - temp
+    # }))
+    
     ## sometimes diffs is too large
-    b_u <- tryCatch(bw.SJ(diffs), error = function(e) bw.nrd0(diffs))
+    b_u <- tryCatch(bw.nrd0(diffs), error = function(e) bw.nrd0(diffs))
   }
   
   ## first Mn
