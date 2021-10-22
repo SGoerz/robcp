@@ -26,6 +26,7 @@ HodgesLehmann <- function(x, b_u = NA, method = "subsampling", control = list())
   {
     stop("x must consist of at least 2 observations!")
   }
+  method <- match.arg(method, c("subsampling", "kernel", "bootstrap"))
   ## end argument check
   n <- length(x)
   

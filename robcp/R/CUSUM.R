@@ -22,6 +22,7 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
   {
     stop("x must be a numeric or integer vector or matrix!")
   }
+  method <- match.arg(method, c("subsampling", "kernel", "bootstrap"))
   ## end argument check
   
   
