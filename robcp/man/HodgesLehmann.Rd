@@ -50,5 +50,5 @@ Dehling, H., Fried, R., and Wendler, M. "A robust method for shift detection in 
 x <- c(rnorm(20, 0), rnorm(20, 2))
 
 # Hodges-Lehmann change point test statistic
-HodgesLehmann(x, b_u = 0.01)
+\donttest{HodgesLehmann(x, b_u = 0.01)}
 }

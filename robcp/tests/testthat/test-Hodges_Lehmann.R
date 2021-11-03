@@ -2,6 +2,8 @@ context("Hodges_Lehmann")
 
 test_that("output has the correct format", 
 {
+  skip_on_os(os = "solaris")
+  
   x <- 1:5
   y <- HodgesLehmann(x, b_u = 1, control = list(b_n = 1, l = 1))
   
@@ -17,6 +19,8 @@ test_that("output has the correct format",
 
 test_that("u_hat computes the correct value",
 {
+  skip_on_os(os = "solaris")
+  
   x <- rnorm(5)
   expect_error(u_hat(x, -2, kFun = "FT"))
   
@@ -29,6 +33,8 @@ test_that("u_hat computes the correct value",
 
 test_that("HodgesLehmann computes the correct value",
 {
+  skip_on_os("solaris")
+  
   x <- c(14, 49, 50, 47, 28)
   b <- 3
   l <- 2
@@ -50,10 +56,10 @@ test_that("HodgesLehmann computes the correct value",
   expect_equal(z, y)
 })
 
-
-
 test_that("The output of hl_test has the correct format",
 {
+  skip_on_os(os = "solaris")
+  
   x <- rnorm(10)
   res <- suppressWarnings(hl_test(x))
   
@@ -64,8 +70,10 @@ test_that("The output of hl_test has the correct format",
 
 test_that("Hodges-Lehmann change point test is performed correctly", 
 {
-  ## simulation might run too long
+  skip_on_os(os = "solaris")
   skip_on_cran()
+  
+  ## simulation might run too long
   suppressWarnings({p <- replicate(200, 
   {
    x <- rnorm(200)

@@ -2,6 +2,8 @@ context("kth Pair")
 
 test_that("Output of kthPair and medianDiff is of the correct format", 
 {
+  skip_on_os(os = "solaris")
+  
   expect_error(kthPair(1:3, 1:3, 0))
   expect_error(kthPair(1:3, 1:3, 10))
   
@@ -14,6 +16,8 @@ test_that("Output of kthPair and medianDiff is of the correct format",
 
 test_that("kthPair returns the correct value",
 {
+  skip_on_os(os = "solaris")
+  
   x <- rnorm(10)
   y <- runif(10)
   
@@ -31,6 +35,8 @@ test_that("kthPair returns the correct value",
 
 test_that("medianDiff returns the correct value",
 {
+  skip_on_os(os = "solaris")
+  
   x <- sample(1:100, replace = TRUE)
   
   expect_equal(medianDiff(x, 1), median(x - 1))

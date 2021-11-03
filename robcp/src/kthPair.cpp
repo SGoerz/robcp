@@ -23,7 +23,7 @@ double weightedMedian(NumericVector x, IntegerVector w)
 {
   int n = w.size();
   
-  if(n != x.size()) stop("x and w need to have the same length!");
+  if(n != x.size()) Rcpp::stop("x and w need to have the same length!");
   int i, l;
   
   bool allPos = true;
@@ -31,7 +31,7 @@ double weightedMedian(NumericVector x, IntegerVector w)
   {
     if(w[i] < 0) allPos = false;
   }
-  if(!allPos) stop("Negative weights supplied!");
+  if(!allPos) Rcpp::stop("Negative weights supplied!");
   
   int med = 0;
   
@@ -71,7 +71,7 @@ double kthPair(NumericVector x, NumericVector y, int k, int k2 = NA_INTEGER)
   int n = x.size();
   int m = y.size();
   
-  if(k <= 0 || k > n * m) stop("k out of bounds");
+  if(k <= 0 || k > n * m) Rcpp::stop("k out of bounds");
   if(IntegerVector::is_na(k2))
   {
     k2 = k;
@@ -80,7 +80,7 @@ double kthPair(NumericVector x, NumericVector y, int k, int k2 = NA_INTEGER)
     stop("k2 out of bounds");
   } else if(std::abs(k - k2) > 1)
   {
-    stop("k and k2 must be consecutive indices!");
+    Rcpp::stop("k and k2 must be consecutive indices!");
   }
 
   NumericVector temp(2);
