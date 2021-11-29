@@ -29,49 +29,66 @@ HodgesLehmann <- function(x, b_u = NA, method = "subsampling", control = list())
   ## end argument check
   n <- length(x)
   
-  ## first iteration (k == 1)
-  medDiff <- medianDiff(x[2:n], x[1])
-  x.adj <- x - c(0, rep(medDiff, n - 1))
-  
-  ## determine b_u adaptively
-  if(is.na(b_u))
-  {
-    diffs <- unlist(sapply(1:(n-1), function(i)
-    {
-      x.adj[(i+1):n] - x[i]
-    }))
-    
-    # diffs <- unlist(sapply(1:(n-1), function(i)
-    # {
-    #   temp <- rep(x.adj[(i+1):n], each = i)
-    #   x.adj[1:i] - temp
-    # }))
-    
-    ## sometimes diffs is too large
-    b_u <- bw.nrd0(x)
-  }
-  
-  ## first Mn
-  Mn <- u_hat(x.adj, b_u, "QS") * (n-1) / n^2 * abs(medDiff)
+  # ## first iteration (k == 1)
+  # medDiff <- medianDiff(x[2:n], x[1])
+  # x.adj <- x - c(0, rep(medDiff, n - 1))
+  # 
+  # ## determine b_u adaptively
+  # if(is.na(b_u))
+  # {
+  #   diffs <- unlist(sapply(1:(n-1), function(i)
+  #   {
+  #     x.adj[(i+1):n] - x.adj[i]
+  #   }))
+  # 
+  #   b_u <- bw.SJ(diffs)
+  #   
+  #   # diffs <- unlist(sapply(1:(n-1), function(i)
+  #   # {
+  #   #   temp <- rep(x.adj[(i+1):n], each = i)
+  #   #   x.adj[1:i] - temp
+  #   # }))
+  #   # 
+  #   # # sometimes diffs is too large
+  #   # b_u <- tryCatch(bw.SJ(diffs), error = function(e) bw.nrd0(diffs))
+  # }
+  # 
+  # ## first Mn
+  # Mn <- u_hat(x.adj, b_u, "QS") * (n-1) / n^2 * abs(medDiff)
   
   ## next Mn's
-  Mn <- c(Mn, sapply(2:(n-1), function(k)
+  Mn <- sapply(1:(n-1), function(k)
   {
     medDiff <- medianDiff(x[(k+1):n], x[1:k])
     x.adj <- x - c(rep(0, k), rep(medDiff, n - k))
+    #x.adj <- x - c(rep(median(x[1:k]), k), rep(median(x[(k+1):n]), n - k))
     
-    u_hat(x.adj, b_u, "QS") *
-      k / n * (1 - k / n) * abs(medDiff) 
-  }))
+    diffs <- rep(x.adj, each = n) - as.numeric(x.adj)
+    diffs[which(diffs == 0)] = NA
+    
+    #diffs <- rep(x.adj[1:k], each = n - k) - as.numeric(x.adj[(k+1):n])
+    
+    #dens <- u_hat(x.adj, b_u, "QS") 
+    dens <- density(diffs, na.rm = TRUE, from = 0, to = 0, n = 1, 
+                    bw = "SJ")$y
+    
+    dens * k / n * (1 - k / n) * abs(medDiff)
+  })
   
   k <- which.max(Mn)
   
-  if(method == "subsampling" & (is.null(control$l) || is.na(control$l)))
+  if((method == "subsampling" & (is.null(control$l) || is.na(control$l))) | 
+     (method == "kernel" & (is.null(control$b_n) || is.na(control$b_n))) | 
+     (method == "bootstrap" & (is.null(control$l) || is.na(control$l))))
   {
+    n <- length(x)
     x.adj <- x
-    x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
-    rho <- cor(x.adj[-n], x.adj[-1], method = "spearman")
-    control$l <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
+    #x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
+    rho <- abs(cor(x.adj[-n], x.adj[-1], method = "spearman"))
+    
+    param <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)
+    control$b_n <- min(param, n-1)
+    control$l <- control$b_n
   }
   
   Tn <- sqrt(n) * max(Mn) / sqrt(lrv(x, method = method, control = control))
