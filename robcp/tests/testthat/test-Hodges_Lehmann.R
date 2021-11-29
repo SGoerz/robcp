@@ -14,22 +14,22 @@ test_that("output has the correct format",
   # expect_true(is.numeric(Y))
   expect_equal(length(y), 1)
   # expect_equal(length(Y), 1)
-  expect_error(HodgesLehmann(x, b_n = 0))
+  expect_error(HodgesLehmann(x, b_u = 0))
 })
 
-test_that("u_hat computes the correct value",
-{
-  skip_on_os(os = "solaris")
-  
-  x <- rnorm(5)
-  expect_error(u_hat(x, -2, kFun = "FT"))
-  
-  b <- 2
-  y <- abs(apply(combn(x, 2), 2, diff) / b)
-  y <- ifelse(y > 1, 1, y)
-  y <- sum(1 - y)
-  expect_equal(2 / (5 * 4 * b) * y * 2 / 3, u_hat(x, b, kFun = "bartlett"))
-})
+# test_that("u_hat computes the correct value",
+# {
+#   skip_on_os(os = "solaris")
+#   
+#   x <- rnorm(5)
+#   expect_error(u_hat(x, -2, kFun = "FT"))
+#   
+#   b <- 2
+#   y <- abs(apply(combn(x, 2), 2, diff) / b)
+#   y <- ifelse(y > 1, 1, y)
+#   y <- sum(1 - y)
+#   expect_equal(2 / (5 * 4 * b) * y * 2 / 3, u_hat(x, b, kFun = "bartlett"))
+# })
 
 test_that("HodgesLehmann computes the correct value",
 {

@@ -10,7 +10,7 @@
 ##'@return Test statistic (numeric value) with the attribute cp-location 
 ##'        indicating at which index a change point is most likely. Is an S3 
 ##'        object of the class cpStat        
-HodgesLehmann <- function(x, b_u = NA, method = "subsampling", control = list())
+HodgesLehmann <- function(x, b_u = "SJ", method = "subsampling", control = list())
 {
   ## argument check
   if(is(x, "ts"))
@@ -56,22 +56,13 @@ HodgesLehmann <- function(x, b_u = NA, method = "subsampling", control = list())
   # ## first Mn
   # Mn <- u_hat(x.adj, b_u, "QS") * (n-1) / n^2 * abs(medDiff)
   
-  ## next Mn's
   Mn <- sapply(1:(n-1), function(k)
   {
     medDiff <- medianDiff(x[(k+1):n], x[1:k])
     x.adj <- x - c(rep(0, k), rep(medDiff, n - k))
     #x.adj <- x - c(rep(median(x[1:k]), k), rep(median(x[(k+1):n]), n - k))
     
-    diffs <- rep(x.adj, each = n) - as.numeric(x.adj)
-    diffs[which(diffs == 0)] = NA
-    
-    #diffs <- rep(x.adj[1:k], each = n - k) - as.numeric(x.adj[(k+1):n])
-    
-    #dens <- u_hat(x.adj, b_u, "QS") 
-    dens <- density(diffs, na.rm = TRUE, from = 0, to = 0, n = 1, 
-                    bw = "SJ")$y
-    
+    dens <- u_hat(x.adj, b_u)
     dens * k / n * (1 - k / n) * abs(medDiff)
   })
   
@@ -85,6 +76,11 @@ HodgesLehmann <- function(x, b_u = NA, method = "subsampling", control = list())
     x.adj <- x
     #x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
     rho <- abs(cor(x.adj[-n], x.adj[-1], method = "spearman"))
+    
+    #### change this?? ####
+    p1 <- 1/3
+    p2 <- 2/3
+    ####
     
     param <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)
     control$b_n <- min(param, n-1)
@@ -100,15 +96,24 @@ HodgesLehmann <- function(x, b_u = NA, method = "subsampling", control = list())
 }
 
 
-## default values?
-u_hat <- function(x, b_u, kFun = "QS")
+u_hat <- function(x, b_u = "SJ")
 {
-  if(b_u <= 0) 
-    stop("b must be numeric, greater than 0 and smaller than the length of the time series!")
-  
   n <- length(x)
-  kFun <- pmatch(kFun, c("bartlett", "FT", "parzen", "QS", "TH", "truncated",
-                         "Gaussian"))
-  res <- .Call("u_hat", as.numeric(x), as.numeric(b_u), as.numeric(kFun))
-  return(res)
+  diffs <- rep(x, each = n) - as.numeric(x)
+  diffs[which(diffs == 0)] = NA
+  
+  return(density(diffs, na.rm = TRUE, from = 0, to = 0, n = 1, bw = b_u)$y)
 }
+
+# ## outdated?
+# u_hat <- function(x, b_u, kFun = "QS")
+# {
+#   if(b_u <= 0) 
+#     stop("b must be numeric, greater than 0 and smaller than the length of the time series!")
+#   
+#   n <- length(x)
+#   kFun <- pmatch(kFun, c("bartlett", "FT", "parzen", "QS", "TH", "truncated",
+#                          "Gaussian"))
+#   res <- .Call("u_hat", as.numeric(x), as.numeric(b_u), as.numeric(kFun))
+#   return(res)
+# }

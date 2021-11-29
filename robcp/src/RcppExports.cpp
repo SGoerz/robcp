@@ -5,6 +5,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // weightedMedian
 double weightedMedian(NumericVector x, IntegerVector w);
 RcppExport SEXP _robcp_weightedMedian(SEXP xSEXP, SEXP wSEXP) {
@@ -44,7 +49,6 @@ RcppExport SEXP lrv_subs_nonoverlap(SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP lrv_subs_overlap(SEXP, SEXP, SEXP);
 RcppExport SEXP pKSdist(SEXP, SEXP);
 RcppExport SEXP psi(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP u_hat(SEXP, SEXP, SEXP);
 RcppExport SEXP wilcox(SEXP, SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
@@ -62,7 +66,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"lrv_subs_overlap",    (DL_FUNC) &lrv_subs_overlap,    3},
     {"pKSdist",             (DL_FUNC) &pKSdist,             2},
     {"psi",                 (DL_FUNC) &psi,                 7},
-    {"u_hat",               (DL_FUNC) &u_hat,               3},
     {"wilcox",              (DL_FUNC) &wilcox,              2},
     {NULL, NULL, 0}
 };
