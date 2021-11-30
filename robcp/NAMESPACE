@@ -54,3 +54,5 @@ export(wilcox_stat)
 export(hl_test)
 
 export(wmw_test)
+
+export(shift_cusum)
