@@ -55,4 +55,6 @@ export(hl_test)
 
 export(wmw_test)
 
-export(shift_cusum)
+export(scale_stat)
+
+export(scale_cusum)

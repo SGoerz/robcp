@@ -215,17 +215,17 @@ SEXP MD(SEXP X, SEXP CUMMED, SEXP N)
   double *cummed = REAL(CUMMED);
   
   SEXP RES; 
-  PROTECT(RES = allocVector(REALSXP, n));
+  PROTECT(RES = allocVector(REALSXP, n-1));
   double *res = REAL(RES);
 
   int i, k;
   
-  for(k = 0; k < n; k++)
+  for(k = 1; k < n; k++)
   {
-    res[k] = 0;
-    for(i = 0; i < k; i++)
+    res[k-1] = 0;
+    for(i = 0; i <= k; i++)
     {
-      res[k] += fabs(x[i] - cummed[k]);
+      res[k-1] += fabs(x[i] - cummed[k]);
     }
   }
   
@@ -245,12 +245,12 @@ SEXP GMD(SEXP X, SEXP N)
   
   int i, j, k;
   
-  for(k = 0; k < n; k++)
+  for(k = 1; k < n; k++)
   {
     res[k] = 0;
-    for(i = 0; i < k - 1; i++)
+    for(i = 0; i < k; i++)
     {
-      for(j = i + 1; j < k; i++)
+      for(j = i + 1; j <= k; i++)
       {
         res[k] += fabs(x[i] - x[j]);
       }
