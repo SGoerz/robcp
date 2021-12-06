@@ -1,15 +1,15 @@
-context("Hodges_Lehmann")
+context("Scale test")
 
 test_that("Output of scale_stat has the correct format", 
 {
   x <- 1:5
-  y <- shift_stat(x)
+  y <- scale_stat(x)
   
   expect_true(is.numeric(y))
   expect_equal(length(y), 1)
   
-  expect_error(shift_stat(x, version = "a"))
-  expect_error(shift_stat(1))
+  expect_error(scale_stat(x, version = "a"))
+  expect_error(scale_stat(1))
 })
 
 
@@ -19,31 +19,32 @@ test_that("scale_stat is computed correctly",
   b_n <- 2
   
   # empVar:
-  y <-  5.44 / sqrt(5) / sqrt(lrv(x, "kernel", control = list(b_n = b_n)))
+  y <-  5034.6 / sqrt(5) / sqrt(lrv(x^2, "kernel", control = list(b_n = b_n)))
   z <- scale_stat(x, version = "empVar", control = list(b_n = b_n))
   attributes(z) <- NULL
   expect_equal(z, y)
   
   # MD:
-  y <-  5.44 / sqrt(5) / sqrt(lrv(x, "kernel", control = list(b_n = b_n)))
+  y <-  49 / sqrt(5) / sqrt(lrv(x, "kernel", control = list(b_n = b_n)))
   z <- scale_stat(x, version = "MD", control = list(b_n = b_n))
   attributes(z) <- NULL
   expect_equal(z, y)
   
   # GMD:
-  y <-  5.44 / sqrt(5) / sqrt(lrv(x, "kernel", control = list(b_n = b_n)))
+  y <-  30.4 / sqrt(5 * lrv(x, "kernel", control = list(b_n = b_n)))
   z <- scale_stat(x, version = "GMD", control = list(b_n = b_n))
   attributes(z) <- NULL
   expect_equal(z, y)
   
   # MAD:
-  y <-  5.44 / sqrt(5) / sqrt(lrv(x, "kernel", control = list(b_n = b_n)))
-  z <- scale_stat(x, version = "MAD", control = list(b_n = b_n))
+  y <-  27 / sqrt(5) / sqrt(lrv(x, "kernel", control = list(b_n = b_n)))
+  z <- scale_stat(x, version = "MAD", constant = 1, control = list(b_n = b_n))
   attributes(z) <- NULL
   expect_equal(z, y)
   
   # QBeta:
-  y <-  5.44 / sqrt(5) / sqrt(lrv(x, "kernel", control = list(b_n = b_n)))
+  x <- c(6, 2, 1, 10, 5, 0)
+  y <-  4 / sqrt(6) / sqrt(lrv(x, "kernel", control = list(b_n = b_n)))
   z <- scale_stat(x, version = "QBeta", control = list(b_n = b_n))
   attributes(z) <- NULL
   expect_equal(z, y)

@@ -240,20 +240,19 @@ SEXP GMD(SEXP X, SEXP N)
   double *x = REAL(X);
 
   SEXP RES; 
-  PROTECT(RES = allocVector(REALSXP, n));
+  PROTECT(RES = allocVector(REALSXP, n-1));
   double *res = REAL(RES);
   
   int i, j, k;
   
-  for(k = 1; k < n; k++)
+  res[0] = fabs(x[0] - x[1]);
+  
+  for(k = 2; k < n; k++)
   {
-    res[k] = 0;
+    res[k-1] = res[k-2];
     for(i = 0; i < k; i++)
     {
-      for(j = i + 1; j <= k; i++)
-      {
-        res[k] += fabs(x[i] - x[j]);
-      }
+      res[k-1] += fabs(x[i] - x[k]);
     }
   }
   

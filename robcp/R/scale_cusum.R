@@ -44,32 +44,33 @@ scale_stat <- function(x, version = "empVar", method = "kernel",
     {
       require(cumstats)
       y <- cummedian(x)
-      res <- .Call("MD", as.numeric(x), as.numeric(y), as.numeric(n))
-      stat <- res / (2:n) - res[n-1] / n
+      res <- .Call("MD", as.numeric(x), as.numeric(y), as.numeric(n)) / (1:(n-1))
+      stat <- res - res[n-1]
     } else if(version == "GMD")
     {
-      res <- .Call("GMD", as.numeric(x), as.numeric(n))
-      stat <- res / ((2:n)^2) - res[n-1] / (n^2)
+      res <- .Call("GMD", as.numeric(x), as.numeric(n)) / ((1:(n-1)) * (2:n)) * 2
     } else if(version == "MAD")
     {
-      y <- sapply(2:n, function(k) mad(x[1:k]), constant = constant)
-      stat <- y - y[n-1]
-    } else if(version == "QAlpha")
+      res <- sapply(2:n, function(k) mad(x[1:k], constant = constant))
+    } else if(version == "QBeta")
     {
-      stat <- sapply(1:(n-1), function(k)
+      sorted <- x[1]
+      res <- sapply(2:n, function(k)
       {
-        a <- floor(k * (n - k) * (1 - beta))
-        kthPair(x[1:k], -x[1:k], a)
+        sorted <<- sort(c(sorted, x[k]), decreasing = TRUE)
+        a <- ceiling(k * (k - 1) / 2 * (1 - beta))
+        # a <- floor(k * (k - 1) / 2 * (1 - beta)) + 1
+        kthPair(sorted[1:(k-1)], -sorted[2:k], a)
       })
     } else
     {
-      stop("Supplied version not supported.")
+      stop("version not supported.")
     }
     
+    stat <- res - res[n-1]
     stat <- 2:n * abs(stat)
-    print(stat)
     k <- which.max(stat) + 1
-    res <- max(2:n * abs(stat)) / sqrt(n) / lrv(x, method = method, control = control)
+    res <- max(stat) / sqrt(n * lrv(x, method = method, control = control))
     
     attr(res, "cp-location") <- as.integer(k)
     class(res) <- "cpStat"
@@ -77,6 +78,14 @@ scale_stat <- function(x, version = "empVar", method = "kernel",
     return(res)
   } 
 }
+
+f <- function(k, a)
+{
+  ceiling(k * (k - 1) / 2 * (1 - a))
+}
+
+f(2, 0.1)
+
 
 ## Scale change test
 
