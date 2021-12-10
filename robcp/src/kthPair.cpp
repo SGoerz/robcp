@@ -23,7 +23,7 @@ double weightedMedian(NumericVector x, IntegerVector w)
 {
   int n = w.size();
   
-  if(n != x.size()) stop("x and w need to have the same length!");
+  if(n != x.size()) Rcpp::stop("x and w need to have the same length!");
   int i, l;
   
   bool allPos = true;
@@ -31,7 +31,7 @@ double weightedMedian(NumericVector x, IntegerVector w)
   {
     if(w[i] < 0) allPos = false;
   }
-  if(!allPos) stop("Negative weights supplied!");
+  if(!allPos) Rcpp::stop("Negative weights supplied!");
   
   int med = 0;
   
@@ -66,12 +66,15 @@ double weightedMedian(NumericVector x, IntegerVector w)
 //'       - k (index of element to choose; integer; 1 <= k <= n * m)
 //'
 // [[Rcpp::export]]
-double kthPair(NumericVector x, NumericVector y, int k, int k2 = NA_INTEGER)
+double kthPair(NumericVector x1, NumericVector y1, int k, int k2 = NA_INTEGER)
 {
+  NumericVector x = clone(x1);
+  NumericVector y = clone(y1);
+  
   int n = x.size();
   int m = y.size();
   
-  if(k <= 0 || k > n * m) stop("k out of bounds");
+  if(k <= 0 || k > n * m) Rcpp::stop("k out of bounds");
   if(IntegerVector::is_na(k2))
   {
     k2 = k;
@@ -80,7 +83,7 @@ double kthPair(NumericVector x, NumericVector y, int k, int k2 = NA_INTEGER)
     stop("k2 out of bounds");
   } else if(std::abs(k - k2) > 1)
   {
-    stop("k and k2 must be consecutive indices!");
+    Rcpp::stop("k and k2 must be consecutive indices!");
   }
 
   NumericVector temp(2);
@@ -243,3 +246,41 @@ double kthPair(NumericVector x, NumericVector y, int k, int k2 = NA_INTEGER)
   //return wA[l - k + L];
 }
 
+
+// [[Rcpp::export]]
+NumericVector QBeta(NumericVector x1, double beta)
+{
+  NumericVector x = clone(x1);
+  int n = x.size();
+  NumericVector out(n-1);
+  
+  int k, i, a;
+  double temp;
+  
+  for(k = 2; k <= n; k++)
+  {
+    i = k - 1;
+    while(i > 0 && x[i] > x[i-1])
+    {
+      temp = x[i]; 
+      x[i] = x[i-1];
+      x[i-1] = temp;
+      i--;
+    }
+    
+    a = (int) std::ceil(k * (k - 1) * (1 - beta) / 2.0);
+    
+    NumericVector y1(k-1); 
+    NumericVector y2(k-1);
+    
+    for(i = 0; i < k-1; i++)
+    {
+      y1[i] = x[i];
+      y2[i] = -x[i+1];
+    }
+    
+    out[k-2] = kthPair(y1, y2, a);
+  }
+  
+  return out;
+}

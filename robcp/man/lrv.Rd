@@ -42,7 +42,7 @@ Default values: \code{b_n} = \eqn{\log_{1.8 + m / 40}(n / 50)}, \code{kFun = "ba
 
 If \code{method = "kernel"}, the long run variance is estimated by a kernel estimator using the bandwidth \eqn{b_n = } \code{control$b_n} and kernel function \eqn{k(x) = } \code{control$kFun}. In the one dimensional case this results in:
 
-\deqn{\hat{\sigma}^2 = \frac{1}{n} \sum_{i = 1}^n (x_i - \bar{x})^2 + \frac{2}{n} \sum_{h = 1}^{n - 1} \sum_{i = 1}^{n - h} (x_i - \bar{x}) (x_{i + h} - \bar{x}) k(h / b_n).}
+\deqn{\hat{\sigma}^2 = \frac{1}{n} \sum_{i = 1}^n (x_i - \bar{x})^2 + \frac{2}{n} \sum_{h = 1}^{b_n} \sum_{i = 1}^{n - h} (x_i - \bar{x}) (x_{i + h} - \bar{x}) k(h / b_n).}
 When \code{control$gamma0 = TRUE} (default) then negative estimates of the long run variance are replaced by the autocovariance at lag 0 (= ordinary variance of the data). The function will then throw a warning.
 Default values: \code{b_n} = \eqn{0.9 n^{1/3}}, \code{kFun = "bartlett"}.
 

@@ -2,6 +2,8 @@ context("Hodges_Lehmann")
 
 test_that("output has the correct format", 
 {
+  skip_on_os(os = "solaris")
+  
   x <- 1:5
   y <- HodgesLehmann(x, b_u = 1, control = list(b_n = 1, l = 1))
   
@@ -12,23 +14,27 @@ test_that("output has the correct format",
   # expect_true(is.numeric(Y))
   expect_equal(length(y), 1)
   # expect_equal(length(Y), 1)
-  expect_error(HodgesLehmann(x, b_n = 0))
+  expect_error(HodgesLehmann(x, b_u = 0))
 })
 
-test_that("u_hat computes the correct value",
-{
-  x <- rnorm(5)
-  expect_error(u_hat(x, -2, kFun = "FT"))
-  
-  b <- 2
-  y <- abs(apply(combn(x, 2), 2, diff) / b)
-  y <- ifelse(y > 1, 1, y)
-  y <- sum(1 - y)
-  expect_equal(2 / (5 * 4 * b) * y * 2 / 3, u_hat(x, b, kFun = "bartlett"))
-})
+# test_that("u_hat computes the correct value",
+# {
+#   skip_on_os(os = "solaris")
+#   
+#   x <- rnorm(5)
+#   expect_error(u_hat(x, -2, kFun = "FT"))
+#   
+#   b <- 2
+#   y <- abs(apply(combn(x, 2), 2, diff) / b)
+#   y <- ifelse(y > 1, 1, y)
+#   y <- sum(1 - y)
+#   expect_equal(2 / (5 * 4 * b) * y * 2 / 3, u_hat(x, b, kFun = "bartlett"))
+# })
 
 test_that("HodgesLehmann computes the correct value",
 {
+  skip_on_os("solaris")
+  
   x <- c(14, 49, 50, 47, 28)
   b <- 3
   l <- 2
@@ -50,10 +56,10 @@ test_that("HodgesLehmann computes the correct value",
   expect_equal(z, y)
 })
 
-
-
 test_that("The output of hl_test has the correct format",
 {
+  skip_on_os(os = "solaris")
+  
   x <- rnorm(10)
   res <- suppressWarnings(hl_test(x))
   
@@ -64,8 +70,10 @@ test_that("The output of hl_test has the correct format",
 
 test_that("Hodges-Lehmann change point test is performed correctly", 
 {
-  ## simulation might run too long
+  skip_on_os(os = "solaris")
   skip_on_cran()
+  
+  ## simulation might run too long
   suppressWarnings({p <- replicate(200, 
   {
    x <- rnorm(200)

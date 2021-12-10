@@ -3,7 +3,7 @@
 \title{Hodges-Lehmann Test for Change Points}
 
 \usage{
-hl_test(x, b_u = NA, method = "subsampling", control = list(), tol = 1e-8)
+hl_test(x, b_u = "SJ", method = "subsampling", control = list(), tol = 1e-8)
 }
 
 \description{

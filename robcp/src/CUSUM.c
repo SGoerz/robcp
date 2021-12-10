@@ -3,6 +3,16 @@
 #include <Rinternals.h>
 #include <Rmath.h>
 #include <stdlib.h>
+#include <stdio.h>
+
+int comp(const void *elem1, const void *elem2) 
+{
+  int f = *((int*)elem1);
+  int s = *((int*)elem2);
+  if (f > s) return  1;
+  if (f < s) return -1;
+  return 0;
+}
 
 //** code for the computation of cumulative sums **//
 
@@ -58,7 +68,6 @@ SEXP c_cumsum_ma(SEXP Y, SEXP N, SEXP M)
   UNPROTECT(1);
   return X;
 }
-
 
 //** computes the test statistic for the CUSUM change point test **//
 
@@ -196,4 +205,57 @@ SEXP CUSUM_ma(SEXP Y, SEXP SIGMA, SEXP SWAPS, SEXP N, SEXP M)
   
   UNPROTECT(4);
   return MAX;
+}
+
+
+SEXP MD(SEXP X, SEXP CUMMED, SEXP N)
+{
+  double n = *REAL(N);
+  double *x = REAL(X);
+  double *cummed = REAL(CUMMED);
+  
+  SEXP RES; 
+  PROTECT(RES = allocVector(REALSXP, n-1));
+  double *res = REAL(RES);
+
+  int i, k;
+  
+  for(k = 1; k < n; k++)
+  {
+    res[k-1] = 0;
+    for(i = 0; i <= k; i++)
+    {
+      res[k-1] += fabs(x[i] - cummed[k]);
+    }
+  }
+  
+  UNPROTECT(1);
+  return RES;
+}
+
+
+SEXP GMD(SEXP X, SEXP N)
+{
+  double n = *REAL(N);
+  double *x = REAL(X);
+
+  SEXP RES; 
+  PROTECT(RES = allocVector(REALSXP, n-1));
+  double *res = REAL(RES);
+  
+  int i, k;
+  
+  res[0] = fabs(x[0] - x[1]);
+  
+  for(k = 2; k < n; k++)
+  {
+    res[k-1] = res[k-2];
+    for(i = 0; i < k; i++)
+    {
+      res[k-1] += fabs(x[i] - x[k]);
+    }
+  }
+  
+  UNPROTECT(1);
+  return RES;
 }

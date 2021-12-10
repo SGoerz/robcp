@@ -8,11 +8,10 @@
 ##'@param control a list of control parameters.
 ##'@param tol tolerance of the distribution function (numeric), which is used do compute p-values.
 ##'@return A list fo the class "htest" containing
-hl_test <- function(x, b_u = NA, method = "subsampling", control = list(), tol = 1e-8, 
-                    p1, p2)
+hl_test <- function(x, b_u = "SJ", method = "subsampling", control = list(), tol = 1e-8)
 {
   Dataname <- deparse(substitute(x))
-  stat <- HodgesLehmann(x, b_u, method = method, control = control, p1 = p1, p2 = p2)
+  stat <- HodgesLehmann(x, b_u, method = method, control = control)
   location <- attr(stat, "cp-location")
   names(stat) <- "S"
   

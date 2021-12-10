@@ -71,6 +71,23 @@ double kTruncated(double x)
   return 1;
 }
 
+// smoothed flat top kernel
+double kSFT(double x)
+{
+  if(fabs(x) < 1) return pow(1 - 4 * pow(fabs(x) - 0.5, 2), 2);
+  return 0;
+}
+
+// Epanechnikov kernel
+double kEpanechnikov(double x)
+{
+  if(fabs(x) < 1) 
+  {
+    return 3 * (1 - x * x) / 4;
+  }
+  return 0;
+}
+
 
 //*************** kernel-bases long run variance estimation ******************//
 
@@ -96,6 +113,8 @@ double sigma_1(double *x, int n, double b_n, int k)
   case 4: kFun = &kQS; break;
   case 5: kFun = &kTH; break;
   case 6: kFun = &kTruncated; break;
+  case 7: kFun = &kSFT; break;
+  case 8: kFun = &kEpanechnikov; break;
   default: kFun = &kTH; break;
   }
   
@@ -145,6 +164,8 @@ double sigma_2(double x1[], double x2[], int n, double b_n, int k)
   case 4: kFun = &kQS; break;
   case 5: kFun = &kTH; break;
   case 6: kFun = &kTruncated; break;
+  case 7: kFun = &kSFT; break;
+  case 8: kFun = &kEpanechnikov; break;
   default: kFun = &kTH; break;
   }
   
@@ -450,6 +471,90 @@ SEXP lrv_subs_overlap(SEXP X, SEXP L, SEXP DISTR)
   }
   
 
+  UNPROTECT(1);
+  return SUM;
+}
+
+
+SEXP MAD_f(SEXP X, SEXP N, SEXP M, SEXP V, SEXP H, SEXP K)
+{
+  SEXP SUM;
+  PROTECT(SUM = allocVector(REALSXP, 1));
+  double *sum = REAL(SUM);
+  sum[0] = 0;
+  
+  double *x = REAL(X);
+  int n = *REAL(N);
+  double m = *REAL(M);
+  double v = *REAL(V);
+  double h = *REAL(H);
+  int k = *REAL(K);
+  double (*kFun)(double);
+  
+  switch(k)
+  {
+  case 1: kFun = &kBartlett; break;
+  case 2: kFun = &kFT; break;
+  case 3: kFun = &kParzen; break;
+  case 4: kFun = &kQS; break;
+  case 5: kFun = &kTH; break;
+  case 6: kFun = &kTruncated; break;
+  case 7: kFun = &kSFT; break;
+  case 8: kFun = &kEpanechnikov; break;
+  default: kFun = &kQS; break;
+  }
+  
+  int i;
+  
+  for(i = 0; i < n; i++)
+  {
+    sum[0] += kFun((fabs(x[i] - m) - v) / h);
+  }
+  sum[0] /= (n * h);
+  
+  UNPROTECT(1);
+  return SUM;
+}
+
+
+SEXP QBeta_u(SEXP X, SEXP N, SEXP V, SEXP H, SEXP K)
+{
+  SEXP SUM;
+  PROTECT(SUM = allocVector(REALSXP, 1));
+  double *sum = REAL(SUM);
+  sum[0] = 0;
+  
+  double *x = REAL(X);
+  int n = *REAL(N);
+  double v = *REAL(V);
+  double h = *REAL(H);
+  int k = *REAL(K);
+  double (*kFun)(double);
+  
+  switch(k)
+  {
+  case 1: kFun = &kBartlett; break;
+  case 2: kFun = &kFT; break;
+  case 3: kFun = &kParzen; break;
+  case 4: kFun = &kQS; break;
+  case 5: kFun = &kTH; break;
+  case 6: kFun = &kTruncated; break;
+  case 7: kFun = &kSFT; break;
+  case 8: kFun = &kEpanechnikov; break;
+  default: kFun = &kQS; break;
+  }
+  
+  int i, j;
+  for(j = 1; j < n; j++)
+  {
+    for(i = 0; i < j; i++)
+    {
+      sum[0] += kFun((abs(x[i] - x[j]) - v) / h);
+    }
+  }
+  
+  sum[0] = sum[0] * 2 / (n * (n - 1) * h);
+  
   UNPROTECT(1);
   return SUM;
 }
