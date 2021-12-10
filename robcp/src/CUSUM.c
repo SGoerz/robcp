@@ -243,7 +243,7 @@ SEXP GMD(SEXP X, SEXP N)
   PROTECT(RES = allocVector(REALSXP, n-1));
   double *res = REAL(RES);
   
-  int i, j, k;
+  int i, k;
   
   res[0] = fabs(x[0] - x[1]);
   

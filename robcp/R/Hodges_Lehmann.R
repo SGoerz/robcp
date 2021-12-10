@@ -10,8 +10,7 @@
 ##'@return Test statistic (numeric value) with the attribute cp-location 
 ##'        indicating at which index a change point is most likely. Is an S3 
 ##'        object of the class cpStat        
-HodgesLehmann <- function(x, b_u = "SJ", method = "subsampling", control = list(), 
-                          p1, p2)
+HodgesLehmann <- function(x, b_u = "SJ", method = "subsampling", control = list())
 {
   ## argument check
   if(is(x, "ts"))
