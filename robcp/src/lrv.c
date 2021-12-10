@@ -440,6 +440,7 @@ SEXP lrv_subs_overlap(SEXP X, SEXP L, SEXP DISTR)
   {
     temp += x[j];
   }
+
   if(distr == 1)
   {
     sum[0] += fabs(temp - l * 0.5);
@@ -451,7 +452,7 @@ SEXP lrv_subs_overlap(SEXP X, SEXP L, SEXP DISTR)
   for(i = 1; i <= n - l; i++)
   {
     temp = temp - x[i - 1] + x[i + l - 1];
-    
+
     if(distr == 1)
     {
       sum[0] += fabs(temp - l * 0.5);

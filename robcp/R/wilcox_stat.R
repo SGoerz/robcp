@@ -11,7 +11,7 @@
 ##'        indicating at which index a change point is most likely. Is an S3
 ##'        object of the class cpStat
 
-wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
+wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list(), p1, p2)
 {
   ## argument check
   if(is(x, "ts"))
@@ -27,6 +27,7 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
   {
     control$overlapping <- FALSE
   }
+  method <- match.arg(method, c("subsampling", "kernel", "bootstrap"))
   
   n <- length(x)
   
@@ -81,23 +82,17 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
   k <- res[2]
   
   if((method == "subsampling" & (is.null(control$l) || is.na(control$l))) | 
-     (method == "kernel" & (is.null(control$b_n) || is.na(control$b_n))))
+     (method == "kernel" & (is.null(control$b_n) || is.na(control$b_n))) | 
+     (method == "bootstrap" & (is.null(control$l) || is.na(control$l))))
   {
     n <- length(x)
     x.adj <- x
     x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
     rho <- cor(x.adj[-n], x.adj[-1], method = "spearman")
     
-    param <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
-    param <- min(param, n-1)
-    
-    if(method == "kernel")
-    {
-      control$b_n <- param
-    } else if(method == "subsampling")
-    {
-      control$l <- param
-    }
+    param <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)
+    control$b_n <- min(param, n-1)
+    control$l <- control$b_n
   }
   
   Tn <- res[1] / sqrt(lrv(x, method = method, control = control))

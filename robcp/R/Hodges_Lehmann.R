@@ -10,7 +10,8 @@
 ##'@return Test statistic (numeric value) with the attribute cp-location 
 ##'        indicating at which index a change point is most likely. Is an S3 
 ##'        object of the class cpStat        
-HodgesLehmann <- function(x, b_u = "SJ", method = "subsampling", control = list())
+HodgesLehmann <- function(x, b_u = "SJ", method = "subsampling", control = list(), 
+                          p1, p2)
 {
   ## argument check
   if(is(x, "ts"))
@@ -30,6 +31,11 @@ HodgesLehmann <- function(x, b_u = "SJ", method = "subsampling", control = list(
   {
     control$distr <- TRUE
   }
+  if(is.null(control$overlapping)) 
+  {
+    control$overlapping <- TRUE
+  }
+  method <- match.arg(method, c("subsampling", "kernel", "bootstrap"))
   ## end argument check
   n <- length(x)
   
@@ -66,7 +72,15 @@ HodgesLehmann <- function(x, b_u = "SJ", method = "subsampling", control = list(
     x.adj <- x - c(rep(0, k), rep(medDiff, n - k))
     #x.adj <- x - c(rep(median(x[1:k]), k), rep(median(x[(k+1):n]), n - k))
     
-    dens <- u_hat(x.adj, b_u)
+    diffs <- rep(x.adj, each = n) - as.numeric(x.adj)
+    diffs[which(diffs == 0)] = NA
+    
+    #diffs <- rep(x.adj[1:k], each = n - k) - as.numeric(x.adj[(k+1):n])
+
+    #dens <- u_hat(x.adj, b_u, "QS") 
+    dens <- density(diffs, na.rm = TRUE, from = 0, to = 0, n = 1, 
+                    bw = "SJ")$y
+    
     dens * k / n * (1 - k / n) * abs(medDiff)
   })
   
@@ -81,24 +95,18 @@ HodgesLehmann <- function(x, b_u = "SJ", method = "subsampling", control = list(
     #x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
     rho <- abs(cor(x.adj[-n], x.adj[-1], method = "spearman"))
     
-    #### change this?? ####
-    p1 <- 1/3
-    p2 <- 2/3
-    ####
-    
     param <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)
     control$b_n <- min(param, n-1)
     control$l <- control$b_n
   }
-  
+
   Tn <- sqrt(n) * max(Mn) / sqrt(lrv(x, method = method, control = control))
-  
+
   attr(Tn, "cp-location") <- k
   class(Tn) <- "cpStat"
 
   return(Tn)
 }
-
 
 u_hat <- function(x, b_u = "SJ")
 {

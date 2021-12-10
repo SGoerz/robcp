@@ -10,7 +10,7 @@
 ##'        at which index a change point is most likely
 ##'        -> class "cpStat"
 
-CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", ...)
+CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", p1, p2, ...)
 {
   ## argument check
   if(is(x, "ts"))
@@ -22,6 +22,7 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
   {
     stop("x must be a numeric or integer vector or matrix!")
   }
+  method <- match.arg(method, c("subsampling", "kernel", "bootstrap"))
   ## end argument check
   
   
@@ -57,7 +58,8 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
     temp <- .Call("CUSUM", as.numeric(x))
     
     if((method == "subsampling" & (is.null(control$l) || is.na(control$l))) | 
-       (method == "kernel" & (is.null(control$b_n) || is.na(control$b_n))))
+       (method == "kernel" & (is.null(control$b_n) || is.na(control$b_n))) | 
+       (method == "bootstrap" & (is.null(control$l) || is.na(control$l))))
     {
       n <- length(x)
       k <- temp[2]
