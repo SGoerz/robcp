@@ -26,6 +26,10 @@ HodgesLehmann <- function(x, b_u = "SJ", method = "subsampling", control = list(
   {
     stop("x must consist of at least 2 observations!")
   }
+  if(is.null(control$distr) || is.na(control$distr)) 
+  {
+    control$distr <- TRUE
+  }
   ## end argument check
   n <- length(x)
   
@@ -67,7 +71,7 @@ HodgesLehmann <- function(x, b_u = "SJ", method = "subsampling", control = list(
   })
   
   k <- which.max(Mn)
-  
+
   if((method == "subsampling" & (is.null(control$l) || is.na(control$l))) | 
      (method == "kernel" & (is.null(control$b_n) || is.na(control$b_n))) | 
      (method == "bootstrap" & (is.null(control$l) || is.na(control$l))))
@@ -91,7 +95,7 @@ HodgesLehmann <- function(x, b_u = "SJ", method = "subsampling", control = list(
   
   attr(Tn, "cp-location") <- k
   class(Tn) <- "cpStat"
-  
+
   return(Tn)
 }
 

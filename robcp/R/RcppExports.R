@@ -25,3 +25,7 @@ kthPair <- function(x1, y1, k, k2 = NA_integer_) {
     .Call('_robcp_kthPair', PACKAGE = 'robcp', x1, y1, k, k2)
 }
 
+QBeta <- function(x1, beta) {
+    .Call('_robcp_QBeta', PACKAGE = 'robcp', x1, beta)
+}
+

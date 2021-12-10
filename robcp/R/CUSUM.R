@@ -68,13 +68,8 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
       param <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
       param <- min(param, n-1)
 
-      if(method == "kernel")
-      {
-        control$b_n <- param
-      } else if(method == "subsampling")
-      {
-        control$l <- param
-      }
+      control$b_n <- param
+      control$l <- param
     }
     
     if(method == "kernel" & (is.null(control$kFun) || is.na(control$kFun)))

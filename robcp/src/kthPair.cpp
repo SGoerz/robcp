@@ -246,3 +246,41 @@ double kthPair(NumericVector x1, NumericVector y1, int k, int k2 = NA_INTEGER)
   //return wA[l - k + L];
 }
 
+
+// [[Rcpp::export]]
+NumericVector QBeta(NumericVector x1, double beta)
+{
+  NumericVector x = clone(x1);
+  int n = x.size();
+  NumericVector out(n-1);
+  
+  int k, i, a;
+  double temp;
+  
+  for(k = 2; k <= n; k++)
+  {
+    i = k - 1;
+    while(i > 0 && x[i] > x[i-1])
+    {
+      temp = x[i]; 
+      x[i] = x[i-1];
+      x[i-1] = temp;
+      i--;
+    }
+    
+    a = (int) std::ceil(k * (k - 1) * (1 - beta) / 2.0);
+    
+    NumericVector y1(k-1); 
+    NumericVector y2(k-1);
+    
+    for(i = 0; i < k-1; i++)
+    {
+      y1[i] = x[i];
+      y2[i] = -x[i+1];
+    }
+    
+    out[k-2] = kthPair(y1, y2, a);
+  }
+  
+  return out;
+}
