@@ -6,7 +6,6 @@
 diverses/
 /robcp/src/*.o
 *.pdf
-robcp.Rproj
 *.dll
 /Paper
 *.tar.gz
