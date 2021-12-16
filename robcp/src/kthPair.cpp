@@ -268,7 +268,7 @@ NumericVector QBeta(NumericVector x1, double beta)
       i--;
     }
     
-    a = (int) std::ceil(k * (k - 1) * (1 - beta) / 2.0);
+    a = (int) std::floor(k * (k - 1) * (1 - beta) / 2.0) + 1;
     
     NumericVector y1(k-1); 
     NumericVector y2(k-1);

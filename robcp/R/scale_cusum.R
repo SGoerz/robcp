@@ -93,6 +93,7 @@ scale_stat <- function(x, version = "empVar", control = list(),
     }
     
     control$var <- res[n-1]
+    control$version <- version
     
     stat <- res - res[n-1]
     stat <- 2:n * abs(stat)

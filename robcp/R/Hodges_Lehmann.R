@@ -10,7 +10,8 @@
 ##'@return Test statistic (numeric value) with the attribute cp-location 
 ##'        indicating at which index a change point is most likely. Is an S3 
 ##'        object of the class cpStat        
-HodgesLehmann <- function(x, b_u = "SJ", method = "subsampling", control = list())
+HodgesLehmann <- function(x, b_u = "nrd0", method = "subsampling", control = list(), 
+                          p1, p2)
 {
   ## argument check
   if(is(x, "ts"))
@@ -78,7 +79,7 @@ HodgesLehmann <- function(x, b_u = "SJ", method = "subsampling", control = list(
 
     #dens <- u_hat(x.adj, b_u, "QS") 
     dens <- density(diffs, na.rm = TRUE, from = 0, to = 0, n = 1, 
-                    bw = "SJ")$y
+                    bw = b_u)$y
     
     dens * k / n * (1 - k / n) * abs(medDiff)
   })
@@ -112,6 +113,8 @@ u_hat <- function(x, b_u = "SJ")
   n <- length(x)
   diffs <- rep(x, each = n) - as.numeric(x)
   diffs[which(diffs == 0)] = NA
+  
+  print(b_u)
   
   return(density(diffs, na.rm = TRUE, from = 0, to = 0, n = 1, bw = b_u)$y)
 }
