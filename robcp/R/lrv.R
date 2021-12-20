@@ -128,7 +128,7 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
       x_cen <- as.numeric(abs(x - m) <= v) - 0.5
     } else if(version == "QBeta")
     {
-      x_cen <- sapply(x, function(xi) sum(as.numeric(abs(x - xi) <= v))) - m
+      x_cen <- sapply(x, function(xi) mean(as.numeric(abs(x - xi) <= v))) - m
     } else
     {
       stop("version not supported.")
@@ -137,6 +137,8 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
   {
     x_cen <- x - mean(x)
   }
+  
+  browser()
   
   erg <- .Call("lrv", as.numeric(x_cen), as.numeric(b_n), as.numeric(kFun),
                PACKAGE = "robcp")

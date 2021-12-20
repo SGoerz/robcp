@@ -91,7 +91,7 @@ scale_stat <- function(x, version = "empVar", control = list(),
     {
       stop("version not supported.")
     }
-    
+
     control$var <- res[n-1]
     control$version <- version
     
