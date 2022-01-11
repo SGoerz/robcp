@@ -147,6 +147,21 @@ test_that("kernel-based estimation for the scale is correctly computed",
     sum(as.numeric(abs(x - xi) <= v))) - beta, b_n) * 4 / qbeta_u)
 })
 
+test_that("kernel-based estimation for Spearman's rho is computed correctly", 
+{
+  x <- matrix(c(80, 23, 74, 93, 39, 48, 26, 77), ncol = 2)
+  
+  res1 <- 144 * 75 / 16^3
+  res2 <- 144 * (75/16^3 - 50/16^3)
+  res3 <- 144 * (75/16^3 - 50/16^3 - 4/3 * 73/16^3)
+  res4 <- 144 * (75/16^3 - 50/16^3 - 146/16^3 - 121/16^3)
+  
+  expect_equal(lrv(x, control = list(b_n = 1, kFun = "FT", version = "rho")), res1)
+  expect_equal(lrv(x, control = list(b_n = 2, kFun = "FT", version = "rho")), res2)
+  expect_equal(lrv(x, control = list(b_n = 3, kFun = "FT", version = "rho")), res3)
+  expect_equal(lrv(x, control = list(b_n = 4, kFun = "FT", version = "rho")), res4)
+})
+
 test_that("subsampling estimation is correctly computed", 
 {
   n <- 100

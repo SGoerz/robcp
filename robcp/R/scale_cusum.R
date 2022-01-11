@@ -5,7 +5,6 @@
 ##'@description Computes the test statistic for CUSUM-based tests on scale changes.
 ##'@param x time series (numeric or ts vector).
 ##'@param version variance estimation method. One of "empVar", "MD", "GMD", "MAD", "QBeta".
-##'@param method method for estimating the long run variance.
 ##'@param control a list of control parameters.
 ##'@param constant scale factor for the MAD.
 ##'@param beta quantile of the distribution function of all absolute pairwise differences used in \code{version = "QBeta"}.
@@ -51,20 +50,26 @@ scale_stat <- function(x, version = "empVar", control = list(),
   
   ## end argument check
   
+  control$version <- version
+  
   if(version == "empVar")
   {
     control$mean <- mean(x)
     control$var <- var(x)
-    
+
     temp <- .Call("CUSUM", as.numeric(x^2))
-    res <- temp[1] / sqrt(lrv(x, method = "scale_kernel", control = control))
+    res <- temp[1] / sqrt(lrv(x, method = "kernel", control = control))
     k <- temp[2]
   } else 
   {
     if(version == "MD")
     {
-      require(cumstats)
-      y <- cummedian(x)
+      if(!requireNamespace("cumstats", quietly = TRUE)) 
+      {
+        stop("Package \"cumstats\" needed for the dependent wild bootstrap to work. Please install it.",
+             call. = FALSE)
+      }
+      y <- cumstats::cummedian(x)
       res <- .Call("MD", as.numeric(x), as.numeric(y), as.numeric(n)) / (1:(n-1))
 
       control$mean <- median(x)
@@ -86,19 +91,20 @@ scale_stat <- function(x, version = "empVar", control = list(),
       #   # a <- floor(k * (k - 1) / 2 * (1 - beta)) + 1
       #   kthPair(sorted[1:(k-1)], -sorted[2:k], a)
       # })
+      
       control$mean <- beta
-    } else
+    } else 
     {
       stop("version not supported.")
     }
 
     control$var <- res[n-1]
-    control$version <- version
+    control$distr <- FALSE
     
     stat <- res - res[n-1]
     stat <- 2:n * abs(stat)
     k <- which.max(stat) + 1
-    res <- max(stat) / sqrt(n * lrv(x, method = "scale_kernel", control = control))
+    res <- max(stat) / sqrt(n * lrv(x, method = "kernel", control = control))
   } 
   attr(res, "cp-location") <- as.integer(k)
   class(res) <- "cpStat"
@@ -106,12 +112,6 @@ scale_stat <- function(x, version = "empVar", control = list(),
   return(res)
 }
 
-f <- function(k, a)
-{
-  ceiling(k * (k - 1) / 2 * (1 - a))
-}
-
-f(2, 0.1)
 
 
 ## Scale change test
@@ -121,7 +121,6 @@ f(2, 0.1)
 ##'@description Performs the CUSUM-based test on changes in the scale.
 ##'@param x time series (numeric or ts vector).
 ##'@param version variance estimation method. One of "empVar", "MD", "GMD", "MAD", "QBeta".
-##'@param method method for estimating the long run variance.
 ##'@param control a list of control parameters.
 ##'@param constant scale factor for the MAD.
 ##'@param beta quantile of the distribution function of all absolute pairwise differences used in \code{version = "QBeta"}.
@@ -150,9 +149,3 @@ scale_cusum <- function(x, version = "empVar", control = list(),
   return(erg)
 }
 
-f <- function(n, alpha) 
-{
-  sapply(1:n, function(k) floor(k * (n - k) * (1 - alpha)))
-}
-
-f(5, 0.5)

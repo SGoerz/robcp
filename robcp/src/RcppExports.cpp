@@ -58,6 +58,7 @@ RcppExport SEXP gen_matrix(SEXP, SEXP, SEXP);
 RcppExport SEXP GMD(SEXP, SEXP);
 RcppExport SEXP lrv(SEXP, SEXP, SEXP);
 RcppExport SEXP lrv_matrix(SEXP, SEXP, SEXP, SEXP, SEXP);
+RcppExport SEXP lrv_rho(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP lrv_subs_nonoverlap(SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP lrv_subs_overlap(SEXP, SEXP, SEXP);
 RcppExport SEXP MAD_f(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -80,6 +81,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"GMD",                 (DL_FUNC) &GMD,                 2},
     {"lrv",                 (DL_FUNC) &lrv,                 3},
     {"lrv_matrix",          (DL_FUNC) &lrv_matrix,          5},
+    {"lrv_rho",             (DL_FUNC) &lrv_rho,             6},
     {"lrv_subs_nonoverlap", (DL_FUNC) &lrv_subs_nonoverlap, 4},
     {"lrv_subs_overlap",    (DL_FUNC) &lrv_subs_overlap,    3},
     {"MAD_f",               (DL_FUNC) &MAD_f,               6},

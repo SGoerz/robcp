@@ -29,7 +29,7 @@ lrv <- function(x, method = "kernel", control = list())
   ### ***********
   con <- list(kFun = "bartlett", B = 1000, b_n = NA, l = NA, 
               gamma0 = TRUE, overlapping = TRUE, distr = FALSE, seed = NA, 
-              version = "empVar", mean = 0, var = 1)
+              version = NA, mean = 0, var = 1)
   nmsC <- names(con)
   con[(namc <- names(control))] <- control
   if(length(noNms <- namc[!namc %in% nmsC])) 
@@ -43,7 +43,6 @@ lrv <- function(x, method = "kernel", control = list())
     con$kFun <- 5
   }
   ## end argument check
-  
   
   if(is(x, "matrix"))
   {
@@ -61,21 +60,34 @@ lrv <- function(x, method = "kernel", control = list())
     if(b_n > n)
       stop("The bandwidth b_n cannot be larger than the length of the time series!")
     
-    x_cen <- apply(x, 2, function(x) x - mean(x))
+    if(!is.na(con$version))
+    {
+      if(con$version == "rho")
+      {
+        rks <- 1 - apply(x, 2, rank) / n
+        erg <- .Call("lrv_rho", as.numeric(rks), as.numeric(n), as.numeric(m), 
+                     as.numeric(b_n), as.numeric(con$kFun),
+                     as.numeric(mean(apply(rks, 1, prod))^2))
+      } else
+      {
+        stop("Version not supported!")
+      }
+    } else
+    {
+      x_cen <- apply(x, 2, function(x) x - mean(x))
     
-    erg <- .Call("lrv_matrix", as.numeric(x_cen), as.numeric(n), as.numeric(m),
-                 as.numeric(b_n), as.numeric(con$kFun),
-                 PACKAGE = "robcp")
+      erg <- .Call("lrv_matrix", as.numeric(x_cen), as.numeric(n), as.numeric(m),
+                   as.numeric(b_n), as.numeric(con$kFun),
+                   PACKAGE = "robcp")
     
-    erg <- matrix(erg, ncol = m)
+      erg <- matrix(erg, ncol = m)
+    }
   } else
   {
     method <- match.arg(method, c("subsampling", "kernel", "scale_kernel", "bootstrap"))
     erg <- switch(method, 
            "kernel" = lrv_kernel(x, con$b_n, con$kFun, con$gamma0, con$distr,
-                                 FALSE, con$version, con$mean, con$var), 
-           "scale_kernel" = lrv_kernel(x, con$b_n, con$kFun, con$gamma0, FALSE, 
-                                       TRUE, con$version, con$mean, con$var),
+                                 con$version, con$mean, con$var),
            "subsampling" = lrv_subs(x, con$l, con$overlapping, con$distr), 
            "bootstrap" = lrv_dwb(x, con$l, con$B, con$kFun, con$seed))
   }
@@ -95,7 +107,7 @@ lrv <- function(x, method = "kernel", control = list())
 ##'               
 ##'@name lrv
 lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
-                       scale = FALSE, version = "empVar", m = 0, v = 1)
+                       version = NA, m = 0, v = 1)
 {
   n <- length(x)
   if(!is.na(b_n) && (!is(b_n, "numeric") || b_n <= 0 || b_n > n))
@@ -112,7 +124,7 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
     x <- ecdf(x)(x)
   }
   
-  if(scale)
+  if(!is.na(version))
   {
     if(version == "empVar")
     {
@@ -129,7 +141,7 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
     } else if(version == "QBeta")
     {
       x_cen <- sapply(x, function(xi) mean(as.numeric(abs(x - xi) <= v))) - m
-    } else
+    } else 
     {
       stop("version not supported.")
     }
@@ -138,7 +150,7 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
     x_cen <- x - mean(x)
   }
   
-  browser()
+  #browser()
   
   erg <- .Call("lrv", as.numeric(x_cen), as.numeric(b_n), as.numeric(kFun),
                PACKAGE = "robcp")

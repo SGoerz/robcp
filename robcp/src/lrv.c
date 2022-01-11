@@ -261,6 +261,83 @@ SEXP lrv_matrix(SEXP Y, SEXP N, SEXP M, SEXP BN, SEXP K)
 }
 
 
+SEXP lrv_rho(SEXP Y, SEXP N, SEXP M, SEXP BN, SEXP K, SEXP MEAN)
+{
+  SEXP X = duplicate(Y);
+  PROTECT(X);
+  double *x = REAL(X);
+  
+  int n = *REAL(N);
+  int m = *REAL(M);
+  double b_n = *REAL(BN);
+  int k = *REAL(K);
+  double mean = *REAL(MEAN);
+  
+  SEXP ERG;
+  PROTECT(ERG = allocVector(REALSXP, 1));
+  double *erg = REAL(ERG);
+  
+  
+  int i, j, h;
+  
+  double (*kFun)(double);
+  
+  switch(k)
+  {
+  case 1: kFun = &kBartlett; break;
+  case 2: kFun = &kFT; break;
+  case 3: kFun = &kParzen; break;
+  case 4: kFun = &kQS; break;
+  case 5: kFun = &kTH; break;
+  case 6: kFun = &kTruncated; break;
+  case 7: kFun = &kSFT; break;
+  case 8: kFun = &kEpanechnikov; break;
+  default: kFun = &kTH; break;
+  }
+  
+  double var = 0;
+  double temp = 0;
+  double temp2;
+  double temp3;
+
+  for(i = 0; i < n; i++)
+  {
+    temp3 = 1;
+    for(j = 0; j < m; j++)
+    {
+      temp3 *= x[n * j + i] * x[n * j + i];
+    }
+    
+    var += temp3;
+  }
+  var /= n;
+  var -= mean; 
+  
+  for(h = 1; h < b_n; h++)
+  {
+    temp2 = 0;
+    for(i = 0; i < (n - h); i++)
+    {
+      temp3 = 1;
+      for(j = 0; j < m; j++)
+      {
+        temp3 *= x[n * j + i] * x[n * j + i + h];
+      }
+      
+      temp2 += temp3;
+    }
+    temp2 /= n;
+    temp += (temp2 - mean) * kFun(h / b_n);
+  }
+  
+  erg[0] = (var + 2 * temp) * pow(2, 2 * m) * pow((m + 1) / (pow(2, m) - m - 1), 2);
+  
+  
+  UNPROTECT(2);
+  return ERG;
+}
+
+
 //********************* for dependent wild bootstrap *************************//
 
 // gen_matrix: generate matrix for the dependent wild bootstrap

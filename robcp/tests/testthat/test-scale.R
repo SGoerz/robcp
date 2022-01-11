@@ -19,16 +19,15 @@ test_that("scale_stat is computed correctly",
   b_n <- 2
   
   # empVar:
-  y <-  5034.6 / sqrt(5 * lrv(x, "scale_kernel", 
-                                    control = list(b_n = b_n, mean = mean(x), 
-                                                   var = var(x), kFun = "SFT")))
+  y <-  5034.6 / sqrt(5 * lrv(x,control = list(b_n = b_n, mean = mean(x),
+                                               var = var(x), kFun = "SFT", 
+                                               version = "empVar")))
   z <- scale_stat(x, version = "empVar", control = list(b_n = b_n))
   attributes(z) <- NULL
   expect_equal(z, y)
   
   # MD:
-  y <-  49 / sqrt(5 * lrv(x, "scale_kernel",
-                                control = list(b_n = b_n, mean = median(x), kFun = "SFT",
+  y <-  49 / sqrt(5 * lrv(x, control = list(b_n = b_n, mean = median(x), kFun = "SFT",
                                                var = mean(abs(x - median(x))) * 5 / 4, 
                                                version = "MD")))
   z <- scale_stat(x, version = "MD", control = list(b_n = b_n))
@@ -125,15 +124,15 @@ test_that("CUSUM test for changes in the scale is performed correctly",
   {
     x <- rnorm(200)
     x[101:200] <- x[101:200] * 3
-    scale_cusum(x, version = "QBeta", control = list(b_n = 10))$p.value
+    scale_cusum(x, version = "QBeta", control = list(b_n = 10), beta = 0.9)$p.value
   })})
   
   expect_equal(mean(p < 0.05), 1, tolerance = 0.1)
   
   # correct change point location
   x <- rnorm(100)
-  x[50:100] <- x[50:100] + 10
-  expect_equal(attr(hl_test(x, b_u = 0.1)$statistic, "cp-location"), 50, tolerance = 1)
+  x[50:100] <- x[50:100] * 3
+  expect_equal(attr(scale_cusum(x, version = "empVar")$statistic, "cp-location"), 50, tolerance = 1)
   
   ## maybe some more tests
   ## best to be checked graphically:
