@@ -94,6 +94,11 @@ HodgesLehmann <- function(x, b_u = "SJ", method = "subsampling", control = list(
     #x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
     rho <- abs(cor(x.adj[-n], x.adj[-1], method = "spearman"))
     
+    #####
+    p1 <- 1/3
+    p2 <- 2/3
+    #####
+    
     param <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)
     control$b_n <- min(param, n-1)
     control$l <- control$b_n

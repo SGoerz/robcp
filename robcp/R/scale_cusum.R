@@ -25,7 +25,8 @@ scale_stat <- function(x, version = "empVar", control = list(),
   {
     stop("x must be a numeric or integer vector or matrix!")
   }
-  if(length(x) < 2)
+  n <- length(x)
+  if(n < 2)
   {
     stop("x must consist of at least 2 observations!")
   }
@@ -33,16 +34,16 @@ scale_stat <- function(x, version = "empVar", control = list(),
   {
     control$kFun <- "SFT"
   }
-  n <- length(x)
   if(is.null(control$b_n) || is.na(control$b_n))
   {
+    if(n < 5) stop("For automatic bandwidth selection x must consist of at least 6 observations!")
     rho <- abs(acf(x, plot = FALSE)[[1]][, , 1])
     kappa <- max(5, sqrt(log10(n)))
     i <- 1
     cond <- 2 * sqrt(log10(n) / n)
     repeat
     {
-      if(max(rho[i:(kappa+i)]) <= cond) break
+      if(kappa + i > n || max(rho[i:(kappa+i)]) <= cond) break
       i <- i + 1
     }
     control$b_n <- i - 1

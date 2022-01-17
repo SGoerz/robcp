@@ -36,7 +36,9 @@ lrv <- function(x, method = "kernel", control = list())
     warning("unknown names in control: ", paste(noNms, collapse = ", "))
   ### ***********
 
-  con$kFun <- pmatch(con$kFun, c("bartlett", "FT", "parzen", "QS", "TH", "truncated", "SFT", "Epanechnikov"))
+  con$kFun <- pmatch(con$kFun, c("bartlett", "FT", "parzen", "QS", "TH", 
+                                 "truncated", "SFT", "Epanechnikov", 
+                                 "quadratic"))
   if(is.na(con$kFun))
   {
     warning("This kernel function does not exist. Tukey-Hanning kernel is used instead.")
@@ -68,6 +70,14 @@ lrv <- function(x, method = "kernel", control = list())
         erg <- .Call("lrv_rho", as.numeric(rks), as.numeric(n), as.numeric(m), 
                      as.numeric(b_n), as.numeric(con$kFun),
                      as.numeric(mean(apply(rks, 1, prod))^2))
+      } else if(con$version == "tau")
+      {
+        f1 <- .Call("trafo_tau", as.numeric(x), as.numeric(n)) / n
+        psi <- 4 * f1 - 2 * ecdf(x[, 1])(x[, 1]) - 2 * ecdf(x[, 2])(x[, 2]) + 
+          1 - con$var
+        
+        erg <- 4 * .Call("lrv", as.numeric(psi), as.numeric(con$b_n), as.numeric(con$kFun), 
+              PACKAGE = "robcp")
       } else
       {
         stop("Version not supported!")
@@ -150,8 +160,6 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
     x_cen <- x - mean(x)
   }
   
-  #browser()
-  
   erg <- .Call("lrv", as.numeric(x_cen), as.numeric(b_n), as.numeric(kFun),
                PACKAGE = "robcp")
 
@@ -161,18 +169,22 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
     erg <- (n - 1) / n * var(x)
   }
   
-  if(version == "GMD")
+  if(!is.na(version))
   {
-    erg <- erg * 4
-  } else if(version == "MAD")
-  {
-    erg <- erg / .Call("MAD_f", as.numeric(x), as.numeric(n), as.numeric(m), 
-                       as.numeric(v), as.numeric(IQR(x) * n^(-1/3)), as.numeric(8))
-  } else if(version == "QBeta")
-  {
-    erg <- erg * 4 / .Call("QBeta_u", as.numeric(x), as.numeric(n), as.numeric(v), 
-                           as.numeric(IQR(x) * n^(-1/3)), as.numeric(8))
+    if(version == "GMD")
+    {
+      erg <- erg * 4
+    } else if(version == "MAD")
+    {
+      erg <- erg / .Call("MAD_f", as.numeric(x), as.numeric(n), as.numeric(m), 
+                         as.numeric(v), as.numeric(IQR(x) * n^(-1/3)), as.numeric(8))
+    } else if(version == "QBeta")
+    {
+      erg <- erg * 4 / .Call("QBeta_u", as.numeric(x), as.numeric(n), as.numeric(v), 
+                             as.numeric(IQR(x) * n^(-1/3)), as.numeric(8))
+    }
   }
+  
   if(distr)
   {
     erg <- erg * sqrt(pi / 2)
@@ -202,6 +214,7 @@ lrv_subs <- function(x, l, overlapping = TRUE, distr = TRUE)
   if(missing(l) | is.na(l)) 
   {
     rho <- abs(cor(x[1:(n-1)], x[2:n], method = "spearman"))
+    if(rho == 1) stop("Correlation estimated to be 1. Please specify l manually.")
     l <- min(max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1), n)
     l <- tryCatch(as.integer(l), error = function(e) stop("Integer overflow in default l estimation. Please specify a value manually."), 
                   warning = function(w) stop("Integer overflow in default l estimation. Please specify a value manually."))

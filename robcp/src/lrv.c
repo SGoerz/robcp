@@ -88,6 +88,16 @@ double kEpanechnikov(double x)
   return 0;
 }
 
+// quadratic kernel
+double kQuadratic(double x)
+{
+  if(fabs(x) < 1)
+  {
+    return pow((1 - x * x), 2);
+  }
+  return 0;
+}
+
 
 //*************** kernel-bases long run variance estimation ******************//
 
@@ -115,6 +125,7 @@ double sigma_1(double *x, int n, double b_n, int k)
   case 6: kFun = &kTruncated; break;
   case 7: kFun = &kSFT; break;
   case 8: kFun = &kEpanechnikov; break;
+  case 9: kFun = &kQuadratic; break;
   default: kFun = &kTH; break;
   }
   
@@ -166,6 +177,7 @@ double sigma_2(double x1[], double x2[], int n, double b_n, int k)
   case 6: kFun = &kTruncated; break;
   case 7: kFun = &kSFT; break;
   case 8: kFun = &kEpanechnikov; break;
+  case 9: kFun = &kQuadratic; break;
   default: kFun = &kTH; break;
   }
   
@@ -292,6 +304,7 @@ SEXP lrv_rho(SEXP Y, SEXP N, SEXP M, SEXP BN, SEXP K, SEXP MEAN)
   case 6: kFun = &kTruncated; break;
   case 7: kFun = &kSFT; break;
   case 8: kFun = &kEpanechnikov; break;
+  case 9: kFun = &kQuadratic; break;
   default: kFun = &kTH; break;
   }
   
@@ -334,6 +347,30 @@ SEXP lrv_rho(SEXP Y, SEXP N, SEXP M, SEXP BN, SEXP K, SEXP MEAN)
   
   
   UNPROTECT(2);
+  return ERG;
+}
+
+SEXP trafo_tau(SEXP X, SEXP N)
+{
+  double *x = REAL(X);
+  int n = *REAL(N);
+  
+  SEXP ERG;
+  PROTECT(ERG = allocVector(REALSXP, n));
+  double *erg = REAL(ERG);
+  
+  int i, j; 
+  
+  for(i = 0; i < n; i++)
+  {
+    erg[i] = 0;
+    for(j = 0; j < n; j++)
+    {
+      if(x[j] <= x[i] && x[n + j] <= x[n + i]) erg[i]++;
+    }
+  }
+  
+  UNPROTECT(1);
   return ERG;
 }
 
@@ -578,6 +615,7 @@ SEXP MAD_f(SEXP X, SEXP N, SEXP M, SEXP V, SEXP H, SEXP K)
   case 6: kFun = &kTruncated; break;
   case 7: kFun = &kSFT; break;
   case 8: kFun = &kEpanechnikov; break;
+  case 9: kFun = &kQuadratic; break;
   default: kFun = &kQS; break;
   }
   
@@ -618,6 +656,7 @@ SEXP QBeta_u(SEXP X, SEXP N, SEXP V, SEXP H, SEXP K)
   case 6: kFun = &kTruncated; break;
   case 7: kFun = &kSFT; break;
   case 8: kFun = &kEpanechnikov; break;
+  case 9: kFun = &kQuadratic; break;
   default: kFun = &kQS; break;
   }
   

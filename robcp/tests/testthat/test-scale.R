@@ -2,7 +2,7 @@ context("Scale test")
 
 test_that("Output of scale_stat has the correct format", 
 {
-  x <- 1:5
+  x <- 1:6
   y <- scale_stat(x)
   
   expect_true(is.numeric(y))
@@ -35,7 +35,7 @@ test_that("scale_stat is computed correctly",
   expect_equal(z, y)
   
   # GMD:
-  y <-  30.4 / sqrt(5 * lrv(x, "scale_kernel", 
+  y <-  30.4 / sqrt(5 * lrv(x, "kernel", 
                             control = list(b_n = b_n, mean = 0, kFun = "SFT",
                                            var = sum(sapply(2:5, function(j) sum(abs(x[j] - x[1:(j-1)])))) / 10, 
                                            version = "GMD")))
@@ -44,7 +44,7 @@ test_that("scale_stat is computed correctly",
   expect_equal(z, y)
   
   # MAD:
-  y <-  27 / sqrt(5 * lrv(x, "scale_kernel", 
+  y <-  27 / sqrt(5 * lrv(x, "kernel", 
                           control = list(b_n = b_n, mean = median(x), 
                                          var = mad(x, constant = 1), version = "MAD")))
   z <- scale_stat(x, version = "MAD", constant = 1, control = list(b_n = b_n))
@@ -54,7 +54,7 @@ test_that("scale_stat is computed correctly",
   # QBeta:
   x <- c(6, 2, 1, 10, 5, 0)
   beta <- 0.9
-  y <-  12 / sqrt(6 * lrv(x, "scale_kernel", control = list(version = "QBeta",
+  y <-  12 / sqrt(6 * lrv(x, "kernel", control = list(version = "QBeta",
                               kFun = "SFT", b_n = b_n, mean = beta, var = 9)))
   z <- scale_stat(x, version = "QBeta", control = list(b_n = b_n), beta = beta)
   attributes(z) <- NULL

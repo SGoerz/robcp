@@ -59,6 +59,6 @@ export(scale_stat)
 
 export(scale_cusum)
 
-export(rho_stat)
+export(cor_stat)
 
-export(rho_cusum)
+export(cor_cusum)

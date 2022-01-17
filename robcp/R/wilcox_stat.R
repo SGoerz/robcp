@@ -11,7 +11,7 @@
 ##'        indicating at which index a change point is most likely. Is an S3
 ##'        object of the class cpStat
 
-wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list(), p1, p2)
+wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
 {
   ## argument check
   if(is(x, "ts"))
@@ -89,6 +89,11 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list(), p1,
     x.adj <- x
     x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
     rho <- cor(x.adj[-n], x.adj[-1], method = "spearman")
+    
+    #####
+    p1 <- 1/3
+    p2 <- 2/3
+    #####
     
     param <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)
     control$b_n <- min(param, n-1)
