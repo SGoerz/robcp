@@ -80,37 +80,26 @@ SEXP c_cumsum_ma(SEXP Y, SEXP N, SEXP M)
 SEXP CUSUM(SEXP Y)
 {
   PROTECT(Y);
-
-  SEXP MAX;
-  PROTECT(MAX = allocVector(REALSXP, 2));
-  double *max = REAL(MAX);
-  max[0] = 0;
-  // change point location
-  max[1] = 1;
-  
   int n = length(Y);
-  
+
+  SEXP RES;
+  PROTECT(RES = allocVector(REALSXP, n));
+  double *res = REAL(RES);
+  // change point location
+
   double sqn = sqrt(n);
   double *csum = REAL(c_cumsum(Y));
   double sumN = csum[n - 1] / n;
-  double temp;
   
   int i;
   
   for(i = 0; i < n; i++)
   {
-    temp = fabs(csum[i] - (i + 1) * sumN);
-    
-    if(temp > max[0])
-    {
-      max[0] = temp; 
-      max[1] = i + 1;
-    }
+    res[i] = fabs(csum[i] - (i + 1) * sumN) / sqn;
   }
-  max[0] /= sqn;
-  
+
   UNPROTECT(2);
-  return(MAX);
+  return(RES);
 }
 
 

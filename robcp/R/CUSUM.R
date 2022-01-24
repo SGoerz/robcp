@@ -56,13 +56,13 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
   } else
   {
     temp <- .Call("CUSUM", as.numeric(x))
+    k <- which.max(temp)
     
     if((method == "subsampling" & (is.null(control$l) || is.na(control$l))) | 
        (method == "kernel" & (is.null(control$b_n) || is.na(control$b_n))) | 
        (method == "bootstrap" & (is.null(control$l) || is.na(control$l))))
     {
       n <- length(x)
-      k <- temp[2]
       x.adj <- x
       x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
       rho <- cor(x.adj[-n], x.adj[-1], method = "spearman")
@@ -80,15 +80,17 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
     }
     
     sigma <- sqrt(lrv(x, method = method, control = control))
-    temp[1] <- temp[1] / sigma
+    temp <- temp / sigma
   }
   
-  erg <- temp[1]
-  attr(erg, "cp-location") <- as.integer(temp[2])
+  erg <- max(temp)
+  attr(erg, "cp-location") <- k
+  attr(erg, "data") <- ts(x)
   attr(erg, "lrv-estimation") <- method
   attr(erg, "sigma") <- sigma
   if(method == "kernel") attr(erg, "b_n") <- control$b_n else
     attr(erg, "l") <- control$l
+  attr(erg, "teststat") <- ts(temp)
   
   class(erg) <- "cpStat"
   
@@ -107,3 +109,20 @@ print.cpStat <- function(x, ...)
   return(invisible(x))
 }
 
+
+plot.cpStat <- function(x, ylim, xaxt, ...)
+{
+  data <- attr(x, "teststat")
+  if(missing(ylim)) ylim <- c(min(c(data, 1.358)), max(c(data, 1.358)))
+  if(missing(xaxt)) xaxt <- "n"
+  plot(data, ylim = ylim, xaxt = "n", ...)
+  k <- attr(x, "cp-location")
+  abline(v = k, col = "blue")
+  
+  ticks <- axTicks(1)
+  ticks <- ticks[abs(ticks - k) / length(data) >= 0.05]
+  axis(1, ticks)
+  axis(1, k, col.axis = "blue", col.ticks = "blue", tick = TRUE)
+  abline(h = 1.358, col = "red")
+  return(invisible(NULL))
+}
