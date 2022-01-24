@@ -85,6 +85,10 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
   
   erg <- temp[1]
   attr(erg, "cp-location") <- as.integer(temp[2])
+  attr(erg, "lrv-estimation") <- method
+  attr(erg, "sigma") <- sigma
+  if(method == "kernel") attr(erg, "b_n") <- control$b_n else
+    attr(erg, "l") <- control$l
   
   class(erg) <- "cpStat"
   

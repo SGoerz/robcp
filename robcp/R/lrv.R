@@ -77,7 +77,7 @@ lrv <- function(x, method = "kernel", control = list())
            "scale_kernel" = lrv_kernel(x, con$b_n, con$kFun, con$gamma0, FALSE, 
                                        TRUE, con$version, con$mean, con$var),
            "subsampling" = lrv_subs(x, con$l, con$overlapping, con$distr), 
-           "bootstrap" = lrv_dwb(x, con$l, con$B, con$kFun, con$seed))
+           "bootstrap" = lrv_dwb(x, con$l, con$B, con$kFun, con$seed, con$distr))
   }
   
   return(erg)
@@ -224,7 +224,7 @@ lrv_subs <- function(x, l, overlapping = TRUE, distr = TRUE)
 ##'       seed (start for random number generator)
 ##'       
 ##'@name lrv
-lrv_dwb <- function(x, l, B, kFun, seed = NA)
+lrv_dwb <- function(x, l, B, kFun, seed = NA, distr = FALSE)
 {
   n <- length(x)
   
@@ -249,6 +249,11 @@ lrv_dwb <- function(x, l, B, kFun, seed = NA)
   {
     warning("Specified kernel function is not supported for the dependet wild bootstrap.
              Bartlett kernel is used.")
+  }
+  
+  if(distr)
+  {
+    x <- ecdf(x)(x)
   }
   
   sigma.ma <- matrix(.Call("gen_matrix", as.numeric(n), as.numeric(l),
