@@ -11,7 +11,7 @@
 ##'        indicating at which index a change point is most likely. Is an S3
 ##'        object of the class cpStat
 
-wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list(), p1, p2)
+wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
 {
   ## argument check
   if(is(x, "ts"))
@@ -53,7 +53,7 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list(), p1,
       res <- .Call("CUSUM", as.numeric(x))
     } else
     {
-      res <- .Call("wilcox", as.numeric(x), as.numeric(h))
+      res <- .Call("wilcox", as.numeric(x))
     }
   } else if(is.function(h))
   {
@@ -79,7 +79,7 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list(), p1,
     stop("Invalid argument for h!")
   }
   
-  k <- res[2]
+  k <- which.max(res)
   
   if((method == "subsampling" & (is.null(control$l) || is.na(control$l))) | 
      (method == "kernel" & (is.null(control$b_n) || is.na(control$b_n))) | 
@@ -90,16 +90,28 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list(), p1,
     x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
     rho <- cor(x.adj[-n], x.adj[-1], method = "spearman")
     
+    #####
+    p1 <- 0.25
+    p2 <- 0.8
+    #####
+    
     param <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)
     control$b_n <- min(param, n-1)
     control$l <- control$b_n
   }
   
-  Tn <- res[1] / sqrt(lrv(x, method = method, control = control))
+  sigma <- sqrt(lrv(x, method = method, control = control))
+  Tn <- max(res) / sigma
     
   attr(Tn, "cp-location") <- k
+  attr(Tn, "data") <- ts(x)
+  attr(Tn, "lrv-estimation") <- method
+  attr(Tn, "sigma") <- sigma
+  if(method == "kernel") attr(Tn, "b_n") <- control$b_n else
+    attr(Tn, "l") <- control$l
+  attr(Tn, "teststat") <- ts(res / sigma)
   class(Tn) <- "cpStat"
-  
+
   return(Tn)
 }
 

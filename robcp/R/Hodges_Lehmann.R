@@ -95,14 +95,27 @@ HodgesLehmann <- function(x, b_u = "nrd0", method = "subsampling", control = lis
     #x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
     rho <- abs(cor(x.adj[-n], x.adj[-1], method = "spearman"))
     
+    #####
+    p1 <- 1/3
+    p2 <- 2/3
+    #####
+    
     param <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)
     control$b_n <- min(param, n-1)
     control$l <- control$b_n
   }
 
-  Tn <- sqrt(n) * max(Mn) / sqrt(lrv(x, method = method, control = control))
+  sigma <- sqrt(lrv(x, method = method, control = control))
+  Mn <- sqrt(n) * Mn / sigma
+  Tn <- max(Mn)
 
   attr(Tn, "cp-location") <- k
+  attr(Tn, "data") <- ts(x)
+  attr(Tn, "lrv-estimation") <- method
+  attr(Tn, "sigma") <- sigma
+  if(method == "kernel") attr(Tn, "b_n") <- control$b_n else
+    attr(Tn, "l") <- control$l
+  attr(Tn, "teststat") <- ts(Mn)
   class(Tn) <- "cpStat"
 
   return(Tn)

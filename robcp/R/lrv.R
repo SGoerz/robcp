@@ -29,21 +29,22 @@ lrv <- function(x, method = "kernel", control = list())
   ### ***********
   con <- list(kFun = "bartlett", B = 1000, b_n = NA, l = NA, 
               gamma0 = TRUE, overlapping = TRUE, distr = FALSE, seed = NA, 
-              version = "empVar", mean = 0, var = 1)
+              version = NA, mean = 0, var = 1)
   nmsC <- names(con)
   con[(namc <- names(control))] <- control
   if(length(noNms <- namc[!namc %in% nmsC])) 
     warning("unknown names in control: ", paste(noNms, collapse = ", "))
   ### ***********
 
-  con$kFun <- pmatch(con$kFun, c("bartlett", "FT", "parzen", "QS", "TH", "truncated", "SFT", "Epanechnikov"))
+  con$kFun <- pmatch(con$kFun, c("bartlett", "FT", "parzen", "QS", "TH", 
+                                 "truncated", "SFT", "Epanechnikov", 
+                                 "quadratic"))
   if(is.na(con$kFun))
   {
     warning("This kernel function does not exist. Tukey-Hanning kernel is used instead.")
     con$kFun <- 5
   }
   ## end argument check
-  
   
   if(is(x, "matrix"))
   {
@@ -61,21 +62,42 @@ lrv <- function(x, method = "kernel", control = list())
     if(b_n > n)
       stop("The bandwidth b_n cannot be larger than the length of the time series!")
     
-    x_cen <- apply(x, 2, function(x) x - mean(x))
+    if(!is.na(con$version))
+    {
+      if(con$version == "rho")
+      {
+        rks <- 1 - apply(x, 2, rank) / n
+        erg <- .Call("lrv_rho", as.numeric(rks), as.numeric(n), as.numeric(m), 
+                     as.numeric(b_n), as.numeric(con$kFun),
+                     as.numeric(mean(apply(rks, 1, prod))^2))
+      } else if(con$version == "tau")
+      {
+        f1 <- .Call("trafo_tau", as.numeric(x), as.numeric(n)) / n
+        psi <- 4 * f1 - 2 * ecdf(x[, 1])(x[, 1]) - 2 * ecdf(x[, 2])(x[, 2]) + 
+          1 - con$var
+        
+        erg <- 4 * .Call("lrv", as.numeric(psi), as.numeric(con$b_n), as.numeric(con$kFun), 
+              PACKAGE = "robcp")
+      } else
+      {
+        stop("Version not supported!")
+      }
+    } else
+    {
+      x_cen <- apply(x, 2, function(x) x - mean(x))
     
-    erg <- .Call("lrv_matrix", as.numeric(x_cen), as.numeric(n), as.numeric(m),
-                 as.numeric(b_n), as.numeric(con$kFun),
-                 PACKAGE = "robcp")
+      erg <- .Call("lrv_matrix", as.numeric(x_cen), as.numeric(n), as.numeric(m),
+                   as.numeric(b_n), as.numeric(con$kFun),
+                   PACKAGE = "robcp")
     
-    erg <- matrix(erg, ncol = m)
+      erg <- matrix(erg, ncol = m)
+    }
   } else
   {
     method <- match.arg(method, c("subsampling", "kernel", "scale_kernel", "bootstrap"))
     erg <- switch(method, 
            "kernel" = lrv_kernel(x, con$b_n, con$kFun, con$gamma0, con$distr,
-                                 FALSE, con$version, con$mean, con$var), 
-           "scale_kernel" = lrv_kernel(x, con$b_n, con$kFun, con$gamma0, FALSE, 
-                                       TRUE, con$version, con$mean, con$var),
+                                 con$version, con$mean, con$var),
            "subsampling" = lrv_subs(x, con$l, con$overlapping, con$distr), 
            "bootstrap" = lrv_dwb(x, con$l, con$B, con$kFun, con$seed, con$distr))
   }
@@ -95,7 +117,7 @@ lrv <- function(x, method = "kernel", control = list())
 ##'               
 ##'@name lrv
 lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
-                       scale = FALSE, version = "empVar", m = 0, v = 1)
+                       version = NA, m = 0, v = 1)
 {
   n <- length(x)
   if(!is.na(b_n) && (!is(b_n, "numeric") || b_n <= 0 || b_n > n))
@@ -112,7 +134,7 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
     x <- ecdf(x)(x)
   }
   
-  if(scale)
+  if(!is.na(version))
   {
     if(version == "empVar")
     {
@@ -128,8 +150,8 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
       x_cen <- as.numeric(abs(x - m) <= v) - 0.5
     } else if(version == "QBeta")
     {
-      x_cen <- sapply(x, function(xi) sum(as.numeric(abs(x - xi) <= v))) - m
-    } else
+      x_cen <- sapply(x, function(xi) mean(as.numeric(abs(x - xi) <= v))) - m
+    } else 
     {
       stop("version not supported.")
     }
@@ -147,18 +169,22 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
     erg <- (n - 1) / n * var(x)
   }
   
-  if(version == "GMD")
+  if(!is.na(version))
   {
-    erg <- erg * 4
-  } else if(version == "MAD")
-  {
-    erg <- erg / .Call("MAD_f", as.numeric(x), as.numeric(n), as.numeric(m), 
-                       as.numeric(v), as.numeric(IQR(x) * n^(-1/3)), as.numeric(8))
-  } else if(version == "QBeta")
-  {
-    erg <- erg * 4 / .Call("QBeta_u", as.numeric(x), as.numeric(n), as.numeric(v), 
-                           as.numeric(IQR(x) * n^(-1/3)), as.numeric(8))
+    if(version == "GMD")
+    {
+      erg <- erg * 4
+    } else if(version == "MAD")
+    {
+      erg <- erg / .Call("MAD_f", as.numeric(x), as.numeric(n), as.numeric(m), 
+                         as.numeric(v), as.numeric(IQR(x) * n^(-1/3)), as.numeric(8))
+    } else if(version == "QBeta")
+    {
+      erg <- erg * 4 / .Call("QBeta_u", as.numeric(x), as.numeric(n), as.numeric(v), 
+                             as.numeric(IQR(x) * n^(-1/3)), as.numeric(8))
+    }
   }
+  
   if(distr)
   {
     erg <- erg * sqrt(pi / 2)
@@ -188,6 +214,7 @@ lrv_subs <- function(x, l, overlapping = TRUE, distr = TRUE)
   if(missing(l) | is.na(l)) 
   {
     rho <- abs(cor(x[1:(n-1)], x[2:n], method = "spearman"))
+    if(rho == 1) stop("Correlation estimated to be 1. Please specify l manually.")
     l <- min(max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1), n)
     l <- tryCatch(as.integer(l), error = function(e) stop("Integer overflow in default l estimation. Please specify a value manually."), 
                   warning = function(w) stop("Integer overflow in default l estimation. Please specify a value manually."))

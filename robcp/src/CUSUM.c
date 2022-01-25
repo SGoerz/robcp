@@ -75,7 +75,7 @@ SEXP c_cumsum_ma(SEXP Y, SEXP N, SEXP M)
  * 
  * input: Y (time series; numeric vector)
  * 
- * output: test statistic (numeric)
+ * output: test statistic (numeric vector)
  */
 SEXP CUSUM(SEXP Y)
 {
@@ -85,8 +85,6 @@ SEXP CUSUM(SEXP Y)
   SEXP RES;
   PROTECT(RES = allocVector(REALSXP, n));
   double *res = REAL(RES);
-  // change point location
-
   double sqn = sqrt(n);
   double *csum = REAL(c_cumsum(Y));
   double sumN = csum[n - 1] / n;
@@ -116,7 +114,7 @@ SEXP CUSUM(SEXP Y)
  *        N (length of time series; integer)
  *        M (dimension of time series; integer)
  *        
- * output: test statistic (numeric) 
+ * output: test statistic (numeric vector) 
  */
 SEXP CUSUM_ma(SEXP Y, SEXP SIGMA, SEXP SWAPS, SEXP N, SEXP M)
 {
@@ -135,14 +133,11 @@ SEXP CUSUM_ma(SEXP Y, SEXP SIGMA, SEXP SWAPS, SEXP N, SEXP M)
   double *csum = REAL(c_cumsum_ma(Y, N, M));
   
   double temp[m];
-  double maxCand, temp2;
+  double temp2;
   
-  SEXP MAX; 
-  PROTECT(MAX = allocVector(REALSXP, 2));
-  double *max = REAL(MAX);
-  max[0] = 0;
-  // change point location
-  max[1] = 1;
+  SEXP RES; 
+  PROTECT(RES = allocVector(REALSXP, n));
+  double *res = REAL(RES);
   
   int i, j, k, index;
   
@@ -167,33 +162,27 @@ SEXP CUSUM_ma(SEXP Y, SEXP SIGMA, SEXP SWAPS, SEXP N, SEXP M)
       }
     }
     
-    maxCand = 0;
-    
+    res[i] = 0;
+
     for(j = 0; j < m; j++)
     {
       for(k = j; k < m; k++)
       {
         if(j == k)
         {
-          maxCand += temp[j]*temp[j] * sigma[j + j * m];
+          res[i] += temp[j]*temp[j] * sigma[j + j * m];
         }
         else
         {
-          maxCand += 2 * (temp[j]*temp[k] * sigma[k + j * m]);
+          res[i] += 2 * (temp[j]*temp[k] * sigma[k + j * m]);
         }
       }
     }
-    maxCand /= n;
-    
-    if(maxCand > max[0]) 
-    {
-      max[0] = maxCand;
-      max[1] = i + 1;
-    }
+    res[i] /= n;
   }
   
   UNPROTECT(4);
-  return MAX;
+  return RES;
 }
 
 

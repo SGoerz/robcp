@@ -38,6 +38,9 @@ TO DO
 \author{
 Sheila \enc{Görz}{Goerz}
 }
+\references{
+Gerstenberger, C., Vogel, D., and Wendler, M. (2020). Tests for scale changes based on pairwise differences. Journal of the American Statistical Association, 115(531), 1336-1348.
+}
 
 \seealso{
 \code{\link{medianDiff}}, \code{\link{lrv}}

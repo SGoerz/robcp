@@ -60,3 +60,7 @@ export(wmw_test)
 export(scale_stat)
 
 export(scale_cusum)
+
+export(cor_stat)
+
+export(cor_cusum)
