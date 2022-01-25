@@ -81,12 +81,10 @@ SEXP CUSUM(SEXP Y)
 {
   PROTECT(Y);
   int n = length(Y);
-  
+
   SEXP RES;
   PROTECT(RES = allocVector(REALSXP, n));
   double *res = REAL(RES);
-  // change point location
-  
   double sqn = sqrt(n);
   double *csum = REAL(c_cumsum(Y));
   double sumN = csum[n - 1] / n;
@@ -97,7 +95,7 @@ SEXP CUSUM(SEXP Y)
   {
     res[i] = fabs(csum[i] - (i + 1) * sumN) / sqn;
   }
-  
+
   UNPROTECT(2);
   return(RES);
 }

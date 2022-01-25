@@ -80,7 +80,7 @@ test_that("CUSUM test for changes in the scale is performed correctly",
   {
     x <- rnorm(200)
     x[101:200] <- x[101:200] * 3
-    scale_cusum(x, control = list(b_n = 10))$p.value
+    scale_cusum(x, control = list(b_n = NA))$p.value
   })})
   
   expect_equal(mean(p < 0.05), 1, tolerance = 0.01)
@@ -91,7 +91,7 @@ test_that("CUSUM test for changes in the scale is performed correctly",
   {
     x <- rnorm(200)
     x[101:200] <- x[101:200] * 3
-    scale_cusum(x, version = "MD", control = list(b_n = 10))$p.value
+    scale_cusum(x, version = "MD", control = list(b_n = NA))$p.value
   })})
   
   expect_equal(mean(p < 0.05), 1, tolerance = 0.01)
@@ -117,7 +117,6 @@ test_that("CUSUM test for changes in the scale is performed correctly",
   })})
 
   expect_equal(mean(p < 0.05), 1, tolerance = 0.01)
-  
   
   # QBeta:
   suppressWarnings({p <- replicate(200, 
