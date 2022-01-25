@@ -58,9 +58,10 @@ scale_stat <- function(x, version = "empVar", control = list(),
     control$mean <- mean(x)
     control$var <- var(x)
 
-    temp <- .Call("CUSUM", as.numeric(x^2))
-    res <- temp[1] / sqrt(lrv(x, method = "kernel", control = control))
-    k <- temp[2]
+    stat <- .Call("CUSUM", as.numeric(x^2))
+    sigma <-  sqrt(lrv(x, method = "kernel", control = control))
+    res <- max(stat) / sigma
+    k <- which.max(stat)
   } else 
   {
     if(version == "MD")
@@ -105,9 +106,17 @@ scale_stat <- function(x, version = "empVar", control = list(),
     stat <- res - res[n-1]
     stat <- 2:n * abs(stat)
     k <- which.max(stat) + 1
-    res <- max(stat) / sqrt(n * lrv(x, method = "kernel", control = control))
+    sigma <- sqrt(n * lrv(x, method = "kernel", control = control))
+    res <- max(stat) / sigma
   } 
+  
   attr(res, "cp-location") <- as.integer(k)
+  attr(res, "data") <- ts(x)
+  attr(res, "lrv-estimation") <- "kernel"
+  attr(res, "sigma") <- sigma
+  attr(res, "b_n") <- control$b_n 
+  attr(res, "kFun") <- control$kFun
+  attr(res, "teststat") <- ts(stat / sigma)
   class(res) <- "cpStat"
   
   return(res)

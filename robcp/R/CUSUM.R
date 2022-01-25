@@ -53,6 +53,7 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
     
     temp <- .Call("CUSUM_ma", as.numeric(x), as.numeric(sigma.inv), 
                   as.numeric(swaps), as.numeric(n), as.numeric(m))
+    k <- which.max(temp)
   } else
   {
     temp <- .Call("CUSUM", as.numeric(x))
@@ -114,7 +115,10 @@ print.cpStat <- function(x, ...)
   return(invisible(x))
 }
 
-
+##'plot.cpStat: plot method for change point statistics
+##'             plots the trajectory of the test statistic process with a red 
+##'             line indicating the critical value (alpha = 0.05) and a blue 
+##'             line indicating the most probable change point location
 plot.cpStat <- function(x, ylim, xaxt, ...)
 {
   data <- attr(x, "teststat")
@@ -129,5 +133,6 @@ plot.cpStat <- function(x, ylim, xaxt, ...)
   axis(1, ticks)
   axis(1, k, col.axis = "blue", col.ticks = "blue", tick = TRUE)
   abline(h = 1.358, col = "red")
+  
   return(invisible(NULL))
 }

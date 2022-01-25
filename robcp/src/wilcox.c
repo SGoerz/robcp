@@ -6,35 +6,20 @@
 
 //** Wilcoxon-Mann-Whitney test **//
 
-double h1(double x1, double x2)
+double hFun(double x1, double x2)
 {
   if(x1 < x2) return 0.5;
   else return -0.5;
 }
 
-double h2(double x1, double x2)
-{
-  return x1 - x2;
-}
-
-SEXP wilcox(SEXP X, SEXP H)
+SEXP wilcox(SEXP X)
 {
   int n = length(X);
   double *x = REAL(X);
-  int h = *REAL(H);
   
-  double (*hFun)(double, double);
-  switch(h)
-  {
-  case 1: hFun = &h1; break;
-  case 2: hFun = &h2; break;
-  default: hFun = &h1; break;
-  }
-  
-  SEXP MAX;
-  PROTECT(MAX = allocVector(REALSXP, 2));
-  double *max = REAL(MAX);
-  max[0] = 0;
+  SEXP RES;
+  PROTECT(RES = allocVector(REALSXP, n-1));
+  double *res = REAL(RES);
 
   int i, j, k;
   double sum = 0;
@@ -43,9 +28,8 @@ SEXP wilcox(SEXP X, SEXP H)
   {
     sum += hFun(x[0], x[j]);
   }
-  max[0] = fabs(sum);
-  max[1] = 1;
-  
+  res[0] = fabs(sum) / pow(sqrt(n), 3);
+
   for(k = 1; k < n-1; k++)
   {
     for(i = 0; i < k; i++)
@@ -58,11 +42,7 @@ SEXP wilcox(SEXP X, SEXP H)
       sum += hFun(x[k], x[i]);
     }
     
-    if(fabs(sum) > max[0])
-    {
-      max[0] = fabs(sum);
-      max[1] = k + 1;
-    }
+    res[k] = fabs(sum) / pow(sqrt(n), 3);
   }
   
   /*
@@ -84,8 +64,6 @@ SEXP wilcox(SEXP X, SEXP H)
   }
   */
   
-  max[0] = max[0] / pow(sqrt(n), 3);
-  
   UNPROTECT(1);
-  return MAX;
+  return RES;
 }

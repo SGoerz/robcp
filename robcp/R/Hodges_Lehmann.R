@@ -104,9 +104,17 @@ HodgesLehmann <- function(x, b_u = "SJ", method = "subsampling", control = list(
     control$l <- control$b_n
   }
 
-  Tn <- sqrt(n) * max(Mn) / sqrt(lrv(x, method = method, control = control))
+  sigma <- sqrt(lrv(x, method = method, control = control))
+  Mn <- sqrt(n) * Mn / sigma
+  Tn <- max(Mn)
 
   attr(Tn, "cp-location") <- k
+  attr(Tn, "data") <- ts(x)
+  attr(Tn, "lrv-estimation") <- method
+  attr(Tn, "sigma") <- sigma
+  if(method == "kernel") attr(Tn, "b_n") <- control$b_n else
+    attr(Tn, "l") <- control$l
+  attr(Tn, "teststat") <- ts(Mn)
   class(Tn) <- "cpStat"
 
   return(Tn)

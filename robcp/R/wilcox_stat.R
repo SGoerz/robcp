@@ -53,7 +53,7 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
       res <- .Call("CUSUM", as.numeric(x))
     } else
     {
-      res <- .Call("wilcox", as.numeric(x), as.numeric(h))
+      res <- .Call("wilcox", as.numeric(x))
     }
   } else if(is.function(h))
   {
@@ -79,7 +79,7 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
     stop("Invalid argument for h!")
   }
   
-  k <- res[2]
+  k <- which.max(res)
   
   if((method == "subsampling" & (is.null(control$l) || is.na(control$l))) | 
      (method == "kernel" & (is.null(control$b_n) || is.na(control$b_n))) | 
@@ -91,8 +91,8 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
     rho <- cor(x.adj[-n], x.adj[-1], method = "spearman")
     
     #####
-    p1 <- 1/3
-    p2 <- 2/3
+    p1 <- 0.25
+    p2 <- 0.8
     #####
     
     param <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)
@@ -100,11 +100,18 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
     control$l <- control$b_n
   }
   
-  Tn <- res[1] / sqrt(lrv(x, method = method, control = control))
+  sigma <- sqrt(lrv(x, method = method, control = control))
+  Tn <- max(res) / sigma
     
   attr(Tn, "cp-location") <- k
+  attr(Tn, "data") <- ts(x)
+  attr(Tn, "lrv-estimation") <- method
+  attr(Tn, "sigma") <- sigma
+  if(method == "kernel") attr(Tn, "b_n") <- control$b_n else
+    attr(Tn, "l") <- control$l
+  attr(Tn, "teststat") <- ts(res / sigma)
   class(Tn) <- "cpStat"
-  
+
   return(Tn)
 }
 

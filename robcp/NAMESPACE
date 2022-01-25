@@ -3,6 +3,8 @@ useDynLib(robcp)
 
 S3method(print, cpStat)
 
+S3method(plot, cpStat)
+
 
 import(stats)
  

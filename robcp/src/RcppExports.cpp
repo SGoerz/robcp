@@ -68,7 +68,7 @@ RcppExport SEXP psi(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP QBeta_u(SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP tau(SEXP, SEXP, SEXP);
 RcppExport SEXP trafo_tau(SEXP, SEXP);
-RcppExport SEXP wilcox(SEXP, SEXP);
+RcppExport SEXP wilcox(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
     {"_robcp_weightedMedian", (DL_FUNC) &_robcp_weightedMedian, 2},
@@ -93,7 +93,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"QBeta_u",             (DL_FUNC) &QBeta_u,             5},
     {"tau",                 (DL_FUNC) &tau,                 3},
     {"trafo_tau",           (DL_FUNC) &trafo_tau,           2},
-    {"wilcox",              (DL_FUNC) &wilcox,              2},
+    {"wilcox",              (DL_FUNC) &wilcox,              1},
     {NULL, NULL, 0}
 };
 
