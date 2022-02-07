@@ -10,8 +10,7 @@
 ##'@return Test statistic (numeric value) with the attribute cp-location 
 ##'        indicating at which index a change point is most likely. Is an S3 
 ##'        object of the class cpStat        
-HodgesLehmann <- function(x, b_u = "nrd0", method = "subsampling", control = list(), 
-                          p1, p2)
+HodgesLehmann <- function(x, b_u = "nrd0", method = "subsampling", control = list())
 {
   ## argument check
   if(is(x, "ts"))
@@ -101,7 +100,9 @@ HodgesLehmann <- function(x, b_u = "nrd0", method = "subsampling", control = lis
     #####
     
     param <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)
-    control$b_n <- min(param, n-1)
+    param <- min(param, n-1)
+    if(is.na(param)) param <- 1
+    control$b_n <- param
     control$l <- control$b_n
   }
 
@@ -111,10 +112,10 @@ HodgesLehmann <- function(x, b_u = "nrd0", method = "subsampling", control = lis
 
   attr(Tn, "cp-location") <- k
   attr(Tn, "data") <- ts(x)
-  attr(Tn, "lrv-estimation") <- method
+  attr(Tn, "lrv-method") <- method
   attr(Tn, "sigma") <- sigma
-  if(method == "kernel") attr(Tn, "b_n") <- control$b_n else
-    attr(Tn, "l") <- control$l
+  if(method == "kernel") attr(Tn, "param") <- control$b_n else
+    attr(Tn, "param") <- control$l
   attr(Tn, "teststat") <- ts(Mn)
   class(Tn) <- "cpStat"
 

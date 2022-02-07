@@ -9,19 +9,9 @@
 ##'@param control a list of control parameters.
 ##'@param tol tolerance of the distribution function (numeric), which is used do compute p-values.
 ##'@return A list fo the class "htest" containing
-wmw_test <- function(x, h = 1L, method = "subsampling", control = list(), tol = 1e-8)
+wmw_test <- function(x, h = 1L, method = "subsampling", control = list(), 
+                     tol = 1e-8, plot = FALSE)
 {
-  # ## argument check
-  # if(is(x, "ts"))
-  # {
-  #   class(x) <- "numeric"
-  # }
-  # if(!(is(x, "matrix") || is(x, "numeric") || is(x, "integer")))
-  # {
-  #   stop("x must be a numeric or integer vector or matrix!")
-  # }
-  # ## end argument check
-  
   Dataname <- deparse(substitute(x))
   stat <- wilcox_stat(x, h = h, method = method, control = control)
   location <- attr(stat, "cp-location")
@@ -30,7 +20,12 @@ wmw_test <- function(x, h = 1L, method = "subsampling", control = list(), tol = 
   erg <- list(alternative = "two-sided", method = "Wilcoxon-Mann-Whitney change point test",
               data.name = Dataname, statistic = stat,
               p.value = 1 - pKSdist(stat, tol), 
-              cp.location = location)
+              cp.location = location, 
+              lrv = list(method = attr(stat, "lrv-method"), 
+                         param = attr(stat, "param"), 
+                         value = attr(stat, "sigma")))
+  
+  if(plot) plot(stat)
   
   class(erg) <- "htest"
   return(erg)

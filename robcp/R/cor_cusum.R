@@ -23,12 +23,7 @@ cor_stat <- function(x, version = "rho", control = list())
   # {
   #   stop("x must be a numeric or integer vector or matrix!")
   # }
-  # if(length(x) < 2)
-  # {
-  #   stop("x must consist of at least 2 observations!")
-  # }
-  # 
-  # 
+
   n <- nrow(x)
   
   ## end argument check
@@ -72,9 +67,16 @@ cor_stat <- function(x, version = "rho", control = list())
   stat <- res - tail(res, 1)
   stat <- (n - length(res) + 1):n * abs(stat)
   k <- which.max(stat) + 1
-  res <- max(stat) / sqrt(n * lrv(x, method = "kernel", control = control))
+  sigma <- sqrt(n * lrv(x, method = "kernel", control = control))
+  res <- max(stat) / sigma
    
   attr(res, "cp-location") <- as.integer(k)
+  attr(res, "data") <- ts(x)
+  attr(res, "lrv-estimation") <- "kernel"
+  attr(res, "sigma") <- sigma
+  attr(res, "b_n") <- control$b_n 
+  attr(res, "kFun") <- control$kFun
+  attr(res, "teststat") <- ts(stat / sigma)
   class(res) <- "cpStat"
   
   return(res)
@@ -89,8 +91,8 @@ cor_stat <- function(x, version = "rho", control = list())
 ##'@param fpc finite population correction (boolean).
 ##'@param tol tolerance of the distribution function (numeric), which is used do compute p-values.
 ##'@return A list fo the class "htest"
-
-cor_cusum <- function(x, version = "rho", control = list(), fpc = TRUE, tol = 1e-8)
+cor_cusum <- function(x, version = "rho", control = list(), fpc = TRUE, 
+                      tol = 1e-8, plot = FALSE)
 {
   Dataname <- deparse(substitute(x))
   
@@ -103,7 +105,12 @@ cor_cusum <- function(x, version = "rho", control = list(), fpc = TRUE, tol = 1e
   erg <- list(alternative = "two-sided", method = "CUSUM test for changes in the correlation",
               data.name = Dataname, statistic = stat,
               p.value = 1 - pKSdist(stat, tol), 
-              cp.location = location)
+              cp.location = location, 
+              lrv = list(method = attr(stat, "lrv-method"), 
+                         param = attr(stat, "param"), 
+                         value = attr(stat, "sigma")))
+  
+  if(plot) plot(stat)
   
   class(erg) <- "htest"
   return(erg)

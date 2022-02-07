@@ -10,7 +10,7 @@
 ##'        at which index a change point is most likely
 ##'        -> class "cpStat"
 
-CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", p1, p2, ...)
+CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", ...)
 {
   ## argument check
   if(is(x, "ts"))
@@ -68,8 +68,14 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
       x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
       rho <- cor(x.adj[-n], x.adj[-1], method = "spearman")
       
+      ###
+      p1 <- 1/3
+      p2 <- 2/3
+      ###
+      
       param <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)
       param <- min(param, n-1)
+      if(is.na(param)) param <- 1
       
       control$b_n <- param
       control$l <- param
@@ -87,10 +93,10 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
   erg <- max(temp)
   attr(erg, "cp-location") <- k
   attr(erg, "data") <- ts(x)
-  attr(erg, "lrv-estimation") <- method
+  attr(erg, "lrv-method") <- method
   attr(erg, "sigma") <- sigma
-  if(method == "kernel") attr(erg, "b_n") <- control$b_n else
-    attr(erg, "l") <- control$l
+  if(method == "kernel") attr(erg, "param") <- control$b_n else
+    attr(erg, "param") <- control$l
   attr(erg, "teststat") <- ts(temp)
   
   class(erg) <- "cpStat"
@@ -101,7 +107,6 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
 ##'print.cpStat: print method for change point statistics
 ##'              prints the value of the test statistic and add the most likely
 ##'              change point location
-##'@name CUSUM
 print.cpStat <- function(x, ...)
 {
   loc <- attr(x, "cp-location")

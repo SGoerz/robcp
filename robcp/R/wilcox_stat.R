@@ -96,7 +96,9 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
     #####
     
     param <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)
-    control$b_n <- min(param, n-1)
+    param <- min(param, n-1)
+    if(is.na(param)) param <- 1
+    control$b_n <- param
     control$l <- control$b_n
   }
   
@@ -105,10 +107,10 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
     
   attr(Tn, "cp-location") <- k
   attr(Tn, "data") <- ts(x)
-  attr(Tn, "lrv-estimation") <- method
+  attr(Tn, "lrv-method") <- method
   attr(Tn, "sigma") <- sigma
-  if(method == "kernel") attr(Tn, "b_n") <- control$b_n else
-    attr(Tn, "l") <- control$l
+  if(method == "kernel") attr(Tn, "param") <- control$b_n else
+    attr(Tn, "param") <- control$l
   attr(Tn, "teststat") <- ts(res / sigma)
   class(Tn) <- "cpStat"
 

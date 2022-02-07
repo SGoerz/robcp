@@ -75,7 +75,7 @@ test_that("CUSUM test for changes in the scale is performed correctly",
     e <- rbind(e0, e1)
     x <- matrix(numeric(N * 2), ncol = 2)
     x[1, ] <- e[1, ]
-    t(sapply(2:N, function(i) x[i, ] <<- e[i, ] + theta %*% e[i-1, ]))
+    invisible(sapply(2:N, function(i) x[i, ] <<- e[i, ] + theta %*% e[i-1, ]))
     
     x <- x[-(1:m), ]
     cor_cusum(x, "rho")$p.value
@@ -95,7 +95,7 @@ test_that("CUSUM test for changes in the scale is performed correctly",
     x <- matrix(numeric(N * 2), ncol = 2)
     x[1, ] <- e[1, ]
     # AR(1):
-    t(sapply(2:N, function(i) x[i, ] <<- 0.8 * x[i-1, ] + e[i, ]))
+    invisible(sapply(2:N, function(i) x[i, ] <<- 0.8 * x[i-1, ] + e[i, ]))
     
     x <- x[-(1:m), ]
     cor_cusum(x, version = "tau")$p.value

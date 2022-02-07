@@ -15,7 +15,8 @@
 ##'        - p.value (numeric)
 
 huber_cusum <- function(x, fun = "HLm", k, constant = 1.4826, method = "kernel",
-                        control = list(), fpc = TRUE, tol = 1e-8, p1, p2, ...)
+                        control = list(), fpc = TRUE, tol = 1e-8,
+                        plot = FALSE, ...)
 {
   # ## argument check
   # if(is(x, "ts"))
@@ -30,7 +31,7 @@ huber_cusum <- function(x, fun = "HLm", k, constant = 1.4826, method = "kernel",
   
   Dataname <- deparse(substitute(x))
   stat <- CUSUM(psi(x, fun = fun, k, constant), method = method,
-                control = control, p1 = p1, p2 = p2, ...)
+                control = control, ...)
   location <- attr(stat, "cp-location")
   names(stat) <- "S"
   
@@ -42,20 +43,24 @@ huber_cusum <- function(x, fun = "HLm", k, constant = 1.4826, method = "kernel",
     
     if(fpc) stat <- (sqrt(stat) + 1.46035 / sqrt(2 * pi) / sqrt(nrow(x)))^2
     
-    erg <- list(alternative = "two-sided", method = "Huberized CUSUM test",
-                data.name = Dataname, statistic = stat,
-                p.value = 1 - pBessel(stat, h), 
-                cp.location = location)
+    pval <- 1 - pBessel(stat, h)
+    
   }
   else
   {
     if(fpc) stat <- stat + 1.46035 / sqrt(2 * pi) / sqrt(length(x))
-    
-    erg <- list(alternative = "two-sided", method = "Huberized CUSUM test",
-                data.name = Dataname, statistic = stat,
-                p.value = 1 - pKSdist(stat, tol), 
-                cp.location = location)
+    pval <- 1 - pKSdist(stat, tol)
   }
+  
+  if(plot) plot(stat)
+  
+  erg <- list(alternative = "two-sided", method = "Huberized CUSUM test",
+              data.name = Dataname, statistic = stat,
+              p.value = pval, 
+              cp.location = location, 
+              lrv = list(method = attr(stat, "lrv-method"), 
+                         param = attr(stat, "param"), 
+                         value = attr(stat, "sigma")))
   
   class(erg) <- "htest"
   return(erg)
