@@ -54,9 +54,9 @@ test_that("scale_stat is computed correctly",
   # QBeta:
   x <- c(6, 2, 1, 10, 5, 0)
   beta <- 0.9
-  y <-  12 / sqrt(6 * lrv(x, "kernel", control = list(version = "QBeta",
+  y <-  12 / sqrt(6 * lrv(x, "kernel", control = list(version = "Qalpha",
                               kFun = "SFT", b_n = b_n, mean = beta, var = 9)))
-  z <- scale_stat(x, version = "QBeta", control = list(b_n = b_n), beta = beta)
+  z <- scale_stat(x, version = "Qalpha", control = list(b_n = b_n), alpha = beta)
   attributes(z) <- NULL
   expect_equal(z, y)
 })
@@ -70,6 +70,8 @@ test_that("Output of scale_cusum has the correct format",
   expect_equal(class(res), "htest")
   expect_equal(res$alternative, "two-sided")
   expect_equal(res$method, "CUSUM test for scale changes")
+  
+  testStructure(scale_cusum, "kernel")
 })
 
 
@@ -118,12 +120,15 @@ test_that("CUSUM test for changes in the scale is performed correctly",
 
   expect_equal(mean(p < 0.05), 1, tolerance = 0.01)
   
-  # QBeta:
+  # Qalpha:
   suppressWarnings({p <- replicate(200, 
   {
+    i <<- i+1
+    set.seed(i)
     x <- rnorm(200)
     x[101:200] <- x[101:200] * 3
-    scale_cusum(x, version = "QBeta", control = list(b_n = 10), beta = 0.9)$p.value
+    scale_cusum(x, version = "Qalpha", method = "bootstrap", control = list(l = 10),
+                alpha = 0.9, tol = 1e-3)$p.value
   })})
   
   expect_equal(mean(p < 0.05), 1, tolerance = 0.1)

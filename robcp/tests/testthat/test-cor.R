@@ -46,6 +46,17 @@ test_that("Output of cor_cusum has the correct format",
   expect_equal(class(res), "htest")
   expect_equal(res$alternative, "two-sided")
   expect_equal(res$method, "CUSUM test for changes in the correlation")
+  
+  x <- matrix(rnorm(100), ncol = 2)
+  y <- cor_cusum(x)
+  
+  expect_true(is.list(y))
+  expect_true(is(y$lrv, "list"))
+  expect_equal(class(y), "htest")
+  
+  expect_true(all(c("alternative", "method", "data.name", "statistic", "p.value",
+                    "cp.location", "lrv") %in% names(y)))
+  expect_true(all(c("method", "param", "value") %in% names(y$lrv)))
 })
 
 test_that("CUSUM test for changes in the scale is performed correctly", 

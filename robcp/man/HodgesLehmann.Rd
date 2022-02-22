@@ -19,7 +19,7 @@ u_hat(x, b_u)
 \details{
 Let \eqn{n} be the length of the time series. The Hodges-Lehmann test statistic is then computed as
 \deqn{\frac{\sqrt{n}}{\hat{\sigma}_n} \max_{1 \leq k < n} \hat{u}_{k,n}(0) \frac{k}{n} \left(1 - \frac{k}{n}\right) | med\{(x_j - x_i); 1 \leq i \leq k; k+1 \leq j \leq n\} | ,}
-where \eqn{\hat{\sigma}} is estimated by the square root of \code{\link{lrv}}. By default the long run variance is estimated via overlapping subsampling with an adequate block length: first the time series \eqn{x} is corrected for the estimated change point and Spearman's autocorrelation to lag 1 (\eqn{\rho}) is computed. Then the default block length follows as 
+where \eqn{\hat{\sigma}} is the estimated long run variance, computed by the square root of \code{\link{lrv}}. By default the long run variance is estimated via overlapping subsampling with an adequate block length: first the time series \eqn{x} is corrected for the estimated change point and Spearman's autocorrelation to lag 1 (\eqn{\rho}) is computed. Then the default block length follows as 
 \deqn{l = \max\left\{\left\lceil n^{1/3} \left( \frac{2\rho}{1 - \rho^2}\right)^{2/3} \right\rceil, 1\right\}.}
 
 NEEDS TO BE CHANGED:

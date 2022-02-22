@@ -148,7 +148,7 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
     } else if(version == "MAD")
     {
       x_cen <- as.numeric(abs(x - m) <= v) - 0.5
-    } else if(version == "QBeta")
+    } else if(version == "Qalpha")
     {
       x_cen <- sapply(x, function(xi) mean(as.numeric(abs(x - xi) <= v))) - m
     } else 
@@ -178,9 +178,9 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
     {
       erg <- erg / .Call("MAD_f", as.numeric(x), as.numeric(n), as.numeric(m), 
                          as.numeric(v), as.numeric(IQR(x) * n^(-1/3)), as.numeric(8))
-    } else if(version == "QBeta")
+    } else if(version == "Qalpha")
     {
-      erg <- erg * 4 / .Call("QBeta_u", as.numeric(x), as.numeric(n), as.numeric(v), 
+      erg <- erg * 4 / .Call("Qalpha_u", as.numeric(x), as.numeric(n), as.numeric(v), 
                              as.numeric(IQR(x) * n^(-1/3)), as.numeric(8))
     }
   }

@@ -15,6 +15,10 @@ test_that("output has the correct format",
   expect_equal(length(y), 1)
   # expect_equal(length(Y), 1)
   # expect_error(HodgesLehmann(x, b_u = 0))
+  
+  testStructure(hl_test, "kernel")
+  testStructure(hl_test, "subsampling")
+  testStructure(hl_test, "bootstrap")
 })
 
 # test_that("u_hat computes the correct value",

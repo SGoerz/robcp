@@ -31,16 +31,27 @@ scale_cusum(x, version = "empVar", method = "kernel", control = list(), constant
 
 \value{
 A list of the class "htest" containing the following components:
-  \item{statistic}{value of the test statistic (numeric).}
+  \item{statistic}{return value of the function \code{\link{scale_stat}}.}
   \item{p.value}{p-value (numeric).}
   \item{alternative}{alternative hypothesis (character string).}
   \item{method}{name of the performed test (character string).}
   \item{cp.location}{index of the estimated change point location (integer).}
   \item{data.name}{name of the data (character string).}
+  
+Plus if \code{method = "kernel"}:
+\item{lrv}{list containing the compontents \code{method}, \code{param} and \code{value}.}
+else if \code{method = "bootstrap"}:
+\item{......................}{.................................................................}
 }
 
 \details{
-TO DO
+The function performs a CUSUM-type test on changes in the scale. Formally, the hypothesis pair 
+\deqn{H_0: \sigma^2_2 = ... = \sigma_n^2}
+\deqn{vs.}
+\deqn{H_1: \exists k \in \{2, ..., n_1\}: \sigma^2_k \neq \sigma^2_{k+1}}
+where \eqn{\sigma^2_t = Var(X_t)} and \eqn{n} is the length of the time series. \eqn{k} is called a 'change point'. The hypotheses do not include \eqn{\sigma^2_1} since then the variance of one single observation would need to be estimated. 
+
+The test statistic is computed using \code{\link{scale_stat}} and in the case of \code{method = "kernel"} asymptotically follows a Kolmogorov distribution. To derive the p-value, the function \code{\link{pKSdist}} is used.
 }
 
 \references{
@@ -54,9 +65,18 @@ Sheila \enc{Görz}{Goerz}
 }
 
 \seealso{
-\code{\link{scale_stat}}, \code{\link{medianDiff}}, \code{\link{lrv}}, \code{\link{pKSdist}}
+\code{\link{scale_stat}}, \code{\link{lrv}}, \code{\link{pKSdist}}, \code{\link{Qalpha}}
 }
 
 \examples{
-TO DO
+x <- arima.sim(list(ar = 0.5), 100)
+
+# under H_0:
+scale_cusum(x)
+scale_cusum(x, "MD")
+
+# under the alternative:
+x[51:100] <- x[51:100] * 3
+scale_cusum(x)
+scale_cusum(x, "MD")
 }

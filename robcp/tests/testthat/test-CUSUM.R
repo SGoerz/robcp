@@ -29,13 +29,15 @@ test_that("CUSUM test statistic is computed correctly",
     return(numerator)
   }
   
-  cx <- CUSUM(x)
+  cx <- CUSUM(x, control = list(b_n = 2))
   attributes(cx) <- NULL
-  cy <- CUSUM(y)
+  cy <- CUSUM(y, control = list(b_n = 2))
   attributes(cy) <- NULL
   
-  expect_equal(cx, max(abs(CUSUM2(x))) / sqrt(lrv(x, control = list(kFun = "TH")) * n))
-  expect_equal(cy, max(abs(CUSUM2(y))) / sqrt(lrv(y, control = list(kFun = "TH")) * n))
+  expect_equal(cx, max(abs(CUSUM2(x))) / 
+                 sqrt(lrv(x, control = list(kFun = "TH", b_n = 2)) * n))
+  expect_equal(cy, max(abs(CUSUM2(y))) / 
+                 sqrt(lrv(y, control = list(kFun = "TH", b_n = 2)) * n))
   
   m <- 3
   X <- matrix(rnorm(9), ncol = m)

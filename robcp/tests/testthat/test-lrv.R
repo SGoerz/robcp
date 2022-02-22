@@ -77,7 +77,7 @@ test_that("kernel-based estimation is correctly computed",
 
 test_that("kernel-based estimation for the scale is correctly computed", 
 {
-  x <- rnorm(5)
+  x <- arima.sim(list(ar = 0.5), 5)
   b_n <- 3
   
   ft <- 1:(b_n-1) / b_n
@@ -129,10 +129,10 @@ test_that("kernel-based estimation for the scale is correctly computed",
   
   expect_equal(y, lrvTest(as.numeric(abs(x - m) <= v) - 0.5, b_n) / mad_f)
   
-  # QBeta:
+  # Qalpha:
   beta <- 0.5
   v <- 34
-  y <- lrv(x, "kernel", control = list(mean = beta, var = v, version = "QBeta", 
+  y <- lrv(x, "kernel", control = list(mean = beta, var = v, version = "Qalpha", 
                         b_n = b_n, kFun = "FT"))
   
   qbeta_u <- sum(sapply(2:7, function(j)

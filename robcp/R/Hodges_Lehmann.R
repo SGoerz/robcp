@@ -122,13 +122,11 @@ HodgesLehmann <- function(x, b_u = "nrd0", method = "subsampling", control = lis
   return(Tn)
 }
 
-u_hat <- function(x, b_u = "SJ")
+u_hat <- function(x, b_u = "nrd0")
 {
   n <- length(x)
   diffs <- rep(x, each = n) - as.numeric(x)
   diffs[which(diffs == 0)] = NA
-  
-  print(b_u)
   
   return(density(diffs, na.rm = TRUE, from = 0, to = 0, n = 1, bw = b_u)$y)
 }

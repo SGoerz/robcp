@@ -22,3 +22,17 @@ testFormat <- function(fun)
   expect_equal(nrow(Y), nrow(X))
   expect_equal(attr(Y, "tsp"), attr(X, "tsp"))
 }
+
+testStructure <- function(fun, method)
+{
+  x <- rnorm(100)
+  y <- fun(x, method = method)
+  
+  expect_true(is.list(y))
+  expect_true(is(y$lrv, "list"))
+  expect_equal(class(y), "htest")
+  
+  expect_true(all(c("alternative", "method", "data.name", "statistic", "p.value",
+                    "cp.location", "lrv") %in% names(y)))
+  expect_true(all(c("method", "param", "value") %in% names(y$lrv)))
+}

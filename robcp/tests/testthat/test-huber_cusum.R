@@ -8,6 +8,10 @@ test_that("The output of huber_cusum has the correct format",
   expect_equal(class(res), "htest")
   expect_equal(res$alternative, "two-sided")
   expect_equal(res$method, "Huberized CUSUM test")
+  
+  testStructure(huber_cusum, "kernel")
+  testStructure(huber_cusum, "subsampling")
+  testStructure(huber_cusum, "bootstrap")
 })
 
 test_that("Huberized CUSUM test is performed correctly", 

@@ -58,9 +58,10 @@ huber_cusum <- function(x, fun = "HLm", k, constant = 1.4826, method = "kernel",
               data.name = Dataname, statistic = stat,
               p.value = pval, 
               cp.location = location, 
-              lrv = list(method = attr(stat, "lrv-method"), 
+              lrv = list(method = method, 
                          param = attr(stat, "param"), 
-                         value = attr(stat, "sigma")))
+                         value = attr(stat, "sigma")), 
+              psi = fun)
   
   class(erg) <- "htest"
   return(erg)

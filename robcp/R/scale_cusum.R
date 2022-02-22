@@ -1,19 +1,37 @@
+opt.param <-  function(x)
+{
+  n <- length(x)
+  if(n <= 5) stop("For automatic bandwidth selection x must consist of at least 6 observations!")
+  kappa <- max(5, sqrt(log10(n)))
+  m <- round(n^(1/3), 5)
+  rho <- abs(acf(x, plot = FALSE, lag.max = m + kappa)[[1]][, , 1][-1])
+  i <- 1
+  cond <- 2 * sqrt(log10(n) / n)
+  repeat
+  {
+    if(i > m - 1 || max(rho[i:(kappa+i)]) <= cond) break
+    i <- i + 1
+  }
+  
+  return(i)
+}
+
 ## Tests for Scale Changes Based on Pairwise Differences (Gerstenberger et. al.)
 
 ##'@name scale_stat
 ##'@title Test statistic to detect Scale Changes 
 ##'@description Computes the test statistic for CUSUM-based tests on scale changes.
 ##'@param x time series (numeric or ts vector).
-##'@param version variance estimation method. One of "empVar", "MD", "GMD", "MAD", "QBeta".
+##'@param version variance estimation method. One of "empVar", "MD", "GMD", "MAD", "Qalpha".
 ##'@param control a list of control parameters.
 ##'@param constant scale factor for the MAD.
-##'@param beta quantile of the distribution function of all absolute pairwise differences used in \code{version = "QBeta"}.
+##'@param alpha quantile of the distribution function of all absolute pairwise differences used in \code{version = "Qalpha"}.
 ##'@return Test statistic (numeric value) with the attribute cp-location 
 ##'        indicating at which index a change point is most likely. Is an S3 
 ##'        object of the class cpStat   
 
-scale_stat <- function(x, version = "empVar", control = list(), 
-                       constant = 1.4826, beta = 0.5)
+scale_stat <- function(x, version = "empVar", method = "kernel", control = list(), 
+                       constant = 1.4826, alpha = 0.5)
 {
   ## argument check
   if(is(x, "ts"))
@@ -34,19 +52,10 @@ scale_stat <- function(x, version = "empVar", control = list(),
   {
     control$kFun <- "SFT"
   }
-  if(is.null(control$b_n) || is.na(control$b_n))
+  
+  if(method == "kernel" && (is.null(control$b_n) || is.na(control$b_n)))
   {
-    if(n < 5) stop("For automatic bandwidth selection x must consist of at least 6 observations!")
-    rho <- abs(acf(x, plot = FALSE)[[1]][, , 1])
-    kappa <- max(5, sqrt(log10(n)))
-    i <- 1
-    cond <- 2 * sqrt(log10(n) / n)
-    repeat
-    {
-      if(kappa + i > n || max(rho[i:(kappa+i)]) <= cond) break
-      i <- i + 1
-    }
-    control$b_n <- i - 1
+    control$b_n <- max(opt.param(x), opt.param(x^2))
   }
   
   ## end argument check
@@ -68,7 +77,7 @@ scale_stat <- function(x, version = "empVar", control = list(),
     {
       if(!requireNamespace("cumstats", quietly = TRUE)) 
       {
-        stop("Package \"cumstats\" needed for the dependent wild bootstrap to work. Please install it.",
+        stop("Package \"cumstats\" needed for the MD. Please install it.",
              call. = FALSE)
       }
       y <- cumstats::cummedian(x)
@@ -82,9 +91,9 @@ scale_stat <- function(x, version = "empVar", control = list(),
     {
       res <- sapply(2:n, function(k) mad(x[1:k], constant = constant))
       control$mean <- median(x)
-    } else if(version == "QBeta")
+    } else if(version == "Qalpha")
     {
-      res <- QBeta(x, beta)
+      res <- Qalpha(x, alpha)
       # sorted <- x[1]
       # res <- sapply(2:n, function(k)
       # {
@@ -94,7 +103,7 @@ scale_stat <- function(x, version = "empVar", control = list(),
       #   kthPair(sorted[1:(k-1)], -sorted[2:k], a)
       # })
       
-      control$mean <- beta
+      control$mean <- alpha
     } else 
     {
       stop("version not supported.")
@@ -106,17 +115,27 @@ scale_stat <- function(x, version = "empVar", control = list(),
     stat <- res - res[n-1]
     stat <- 2:n * abs(stat)
     k <- which.max(stat) + 1
+    res <- max(stat)
+  } 
+  
+  if(method == "kernel") 
+  {
     sigma <- sqrt(n * lrv(x, method = "kernel", control = control))
-    res <- max(stat) / sigma
+    res <- res / sigma 
+    
+    attr(res, "lrv-estimation") <- "kernel"
+    attr(res, "sigma") <- sigma
+    attr(res, "param") <- control$b_n 
+    attr(res, "kFun") <- control$kFun
+    stat <- stat / sigma
+    
+  } else if(method == "bootstrap")
+  {
+    attr(res, "lrv-estimation") <- NA
   } 
   
   attr(res, "cp-location") <- as.integer(k)
-  attr(res, "data") <- ts(x)
-  attr(res, "lrv-estimation") <- "kernel"
-  attr(res, "sigma") <- sigma
-  attr(res, "b_n") <- control$b_n 
-  attr(res, "kFun") <- control$kFun
-  attr(res, "teststat") <- ts(stat / sigma)
+  attr(res, "teststat") <- ts(stat)
   class(res) <- "cpStat"
   
   return(res)
@@ -138,22 +157,41 @@ scale_stat <- function(x, version = "empVar", control = list(),
 ##'@param tol tolerance of the distribution function (numeric), which is used do compute p-values.
 ##'@return A list fo the class "htest" containing
 
-scale_cusum <- function(x, version = "empVar", control = list(), 
-                        constant = 1.4826, beta = 0.5, fpc = TRUE, tol = 1e-8)
+scale_cusum <- function(x, version = "empVar", method = "kernel", control = list(), 
+                        constant = 1.4826, alpha = 0.5, fpc = TRUE, tol = 1e-8)
 {
   Dataname <- deparse(substitute(x))
   
-  stat <- scale_stat(x = x, version = version, control = control,
-                     constant = constant, beta = beta)
+  stat <- scale_stat(x = x, version = version, method = method, control = control,
+                     constant = constant, alpha = alpha)
   location <- attr(stat, "cp-location")
   names(stat) <- "S"
   
   if(fpc) stat <- stat + 1.46035 / sqrt(2 * pi) / sqrt(length(x))
   
+  if(method == "kernel")
+  {
+    p.val <- 1 - pKSdist(stat, tol)
+    erg2 <- list(lrv = list(method = "kernel", 
+                            param = attr(stat, "param"), 
+                            value = attr(stat, "sigma")))
+  } else if(method == "bootstrap")
+  {
+    control$l <- opt.param(x)
+    if(is.null(control$B)) control$B <- 1 / tol
+    p.val <- dbb(stat, data = x, version = version, control = control, alpha = alpha)
+    erg2 <- list(bootstrap = list(param = control$l))
+  } else
+  {
+    stop("method not supported.")
+  }
+  
   erg <- list(alternative = "two-sided", method = "CUSUM test for scale changes",
               data.name = Dataname, statistic = stat,
-              p.value = 1 - pKSdist(stat, tol), 
+              p.value = p.val,
               cp.location = location)
+  
+  erg <- c(erg, erg2)
   
   class(erg) <- "htest"
   return(erg)

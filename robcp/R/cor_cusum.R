@@ -18,15 +18,13 @@ cor_stat <- function(x, version = "rho", control = list())
     tsp <- attr(x, "tsp")
   }
   
-  ######## also for 1-dim data? ########
-  # if(!(is(x, "matrix") || is(x, "numeric") || is(x, "integer")))
-  # {
-  #   stop("x must be a numeric or integer vector or matrix!")
-  # }
-
-  n <- nrow(x)
-  
+  if(!is(x, "matrix") || ncol(x) > 2)
+  {
+    stop("x must be a numeric or integer matrix with at least 2 columns!")
+  }
   ## end argument check
+  
+  n <- nrow(x)
   
   if(version == "rho")
   {

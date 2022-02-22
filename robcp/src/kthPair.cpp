@@ -247,40 +247,45 @@ double kthPair(NumericVector x1, NumericVector y1, int k, int k2 = NA_INTEGER)
 }
 
 
+//' Computes the Q-alpha statistic.
+//' @param x Numeric vector.
+//' @param alpha quantile. Numeric value in (0, 1]
+//'
+//' @return Weighted median of x with respect to w.
+//'
+//' @examples 
+//' x <- rnorm(10)
+//' Qalpha(x, 0.5)
 // [[Rcpp::export]]
-NumericVector QBeta(NumericVector x1, double beta)
+NumericVector Qalpha(NumericVector x, double alpha)
 {
-  NumericVector x = clone(x1);
+  if(alpha <= 0 | alpha > 1) Rcpp::stop("alpha need to be from the interval (0, 1]!");
+  
   int n = x.size();
   NumericVector out(n-1);
+  NumericVector diffs(n * (n-1) / 2);
   
-  int k, i, a;
-  double temp;
+  int k, i, j;
   
-  for(k = 2; k <= n; k++)
+  j = -1;
+  
+  for(k = 1; k < n; k++)
   {
-    i = k - 1;
-    while(i > 0 && x[i] > x[i-1])
+    for(i = 0; i < k; i++)
     {
-      temp = x[i]; 
-      x[i] = x[i-1];
-      x[i-1] = temp;
-      i--;
-    }
-
-    a = (int) std::floor(k * (k - 1) * (1 - beta) / 2.0) + 1;
-    
-    NumericVector y1(k-1); 
-    NumericVector y2(k-1);
-    
-    for(i = 0; i < k-1; i++)
-    {
-      y1[i] = x[i];
-      y2[i] = -x[i+1];
+      j++;
+      diffs[j] = std::abs(x[i] - x[k]);
     }
     
-    out[k-2] = kthPair(y1, y2, a);
+    if(j > 0)
+    {
+      std::sort(diffs.begin() + j - k + 1, diffs.begin() + j + 1);
+      std::inplace_merge(diffs.begin(), diffs.begin() + j - k + 1, 
+                         diffs.begin() + j + 1);
+    }
+    
+    out[k-1] = diffs[std::ceil((j+1) * alpha) - 1];
   }
   
-  return out;
-}
+  return(out);
+} 

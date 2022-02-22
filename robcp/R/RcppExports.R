@@ -25,7 +25,16 @@ kthPair <- function(x1, y1, k, k2 = NA_integer_) {
     .Call('_robcp_kthPair', PACKAGE = 'robcp', x1, y1, k, k2)
 }
 
-QBeta <- function(x1, beta) {
-    .Call('_robcp_QBeta', PACKAGE = 'robcp', x1, beta)
+#' Computes the Q-alpha statistic.
+#' @param x Numeric vector.
+#' @param alpha quantile. Numeric value in (0, 1]
+#'
+#' @return Weighted median of x with respect to w.
+#'
+#' @examples 
+#' x <- rnorm(10)
+#' Qalpha(x, 0.5)
+Qalpha <- function(x, alpha) {
+    .Call('_robcp_Qalpha', PACKAGE = 'robcp', x, alpha)
 }
 

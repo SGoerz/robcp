@@ -91,8 +91,8 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
     rho <- cor(x.adj[-n], x.adj[-1], method = "spearman")
     
     #####
-    p1 <- 0.25
-    p2 <- 0.8
+    p1 <- 1/3
+    p2 <- 2/3
     #####
     
     param <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)
