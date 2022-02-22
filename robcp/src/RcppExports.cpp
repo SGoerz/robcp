@@ -10,6 +10,18 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// Qalpha
+NumericVector Qalpha(NumericVector x, double alpha);
+RcppExport SEXP _robcp_Qalpha(SEXP xSEXP, SEXP alphaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    rcpp_result_gen = Rcpp::wrap(Qalpha(x, alpha));
+    return rcpp_result_gen;
+END_RCPP
+}
 // weightedMedian
 double weightedMedian(NumericVector x, IntegerVector w);
 RcppExport SEXP _robcp_weightedMedian(SEXP xSEXP, SEXP wSEXP) {
@@ -36,18 +48,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// Qalpha
-NumericVector Qalpha(NumericVector x, double alpha);
-RcppExport SEXP _robcp_Qalpha(SEXP xSEXP, SEXP alphaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
-    rcpp_result_gen = Rcpp::wrap(Qalpha(x, alpha));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 RcppExport SEXP c_cumsum(SEXP);
 RcppExport SEXP c_cumsum_ma(SEXP, SEXP, SEXP);
@@ -71,9 +71,9 @@ RcppExport SEXP trafo_tau(SEXP, SEXP);
 RcppExport SEXP wilcox(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_robcp_Qalpha", (DL_FUNC) &_robcp_Qalpha, 2},
     {"_robcp_weightedMedian", (DL_FUNC) &_robcp_weightedMedian, 2},
     {"_robcp_kthPair", (DL_FUNC) &_robcp_kthPair, 4},
-    {"_robcp_Qalpha", (DL_FUNC) &_robcp_Qalpha, 2},
     {"c_cumsum",            (DL_FUNC) &c_cumsum,            1},
     {"c_cumsum_ma",         (DL_FUNC) &c_cumsum_ma,         3},
     {"cholesky",            (DL_FUNC) &cholesky,            5},

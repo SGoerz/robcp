@@ -13,5 +13,5 @@ Author: Sheila Goerz [aut, cre], Alexander Duerre [aut]
 Maintainer: Sheila Goerz <sheila.goerz@tu-dortmund.de>
 Imports: methods, Rcpp
 LinkingTo: Rcpp
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Suggests: testthat, MASS, pracma, mvtnorm, cumstats

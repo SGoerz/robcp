@@ -45,10 +45,10 @@ else if \code{method = "bootstrap"}:
 }
 
 \details{
-The function performs a CUSUM-type test on changes in the scale. Formally, the hypothesis pair 
+The function performs a CUSUM-type test on changes in the scale. Formally, the hypothesis pair is
 \deqn{H_0: \sigma^2_2 = ... = \sigma_n^2}
 \deqn{vs.}
-\deqn{H_1: \exists k \in \{2, ..., n_1\}: \sigma^2_k \neq \sigma^2_{k+1}}
+\deqn{H_1: \exists k \in \{2, ..., n-1\}: \sigma^2_k \neq \sigma^2_{k+1}}
 where \eqn{\sigma^2_t = Var(X_t)} and \eqn{n} is the length of the time series. \eqn{k} is called a 'change point'. The hypotheses do not include \eqn{\sigma^2_1} since then the variance of one single observation would need to be estimated. 
 
 The test statistic is computed using \code{\link{scale_stat}} and in the case of \code{method = "kernel"} asymptotically follows a Kolmogorov distribution. To derive the p-value, the function \code{\link{pKSdist}} is used.
@@ -57,7 +57,7 @@ The test statistic is computed using \code{\link{scale_stat}} and in the case of
 \references{
 Gerstenberger, C., Vogel, D., and Wendler, M. (2020). Tests for scale changes based on pairwise differences. Journal of the American Statistical Association, 115(531), 1336-1348.
 
-\enc{Dürre}{Duerre}, A. (2021+). "Finite sample correction for cusum tests", \emph{unpublished manuscript}
+\enc{Dürre}{Duerre}, A. (2022+). "Finite sample correction for cusum tests", \emph{unpublished manuscript}
 }
 
 \author{
