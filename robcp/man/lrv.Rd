@@ -72,7 +72,7 @@ The kernel-based long run variance estimation is available for various testing s
    \deqn{\hat{\sigma}^2 = \hat{f}_Z(v_n)^{-1} \sum_{h = -(n-1)}^{n-1} W \left( \frac{|h|}{b_n} \right) \frac{1}{n} \sum_{i = 1}^{n - |h|} \hat{\phi}_n(x_i)\hat{\phi}_n(x_{i+|h|}),}
    where \eqn{\hat{\phi}_n(x) = 1_{\{|x - m_n| \leq v_n\}} - 0.5} and 
    \deqn{\hat{f}_Z(t) = \frac{1}{n h_n} \sum_{i = 1}^n K\left(\frac{|x_i - m_n| - t}{h_n}\right)} 
-   the kernel density estimation of the density of \eqn{|X - med(F^X)|}, \eqn{h_n =} \code{IQR(x)}\eqn{n^{-\frac{1}{3}}}, and \eqn{K} is the quatratic kernel function.
+   the kernel density estimation of the density of \eqn{|X - med(F^X)|}, \eqn{h_n =} \code{IQR(x)*n^{-1/3}}, and \eqn{K} is the quatratic kernel function.
    
    Default values: \eqn{m_n =} \code{median(x)}, \eqn{v_n =} \code{mad(x)}.
   
@@ -85,14 +85,18 @@ The kernel-based long run variance estimation is available for various testing s
   Default values: \eqn{m_n = \alpha = 0.5}, \eqn{v_n =} \code{Qalpha(x, m_n)[n-1]}.
   
   \item \code{"tau"}
+  
   Only available for bivariate data: assume that the given data \code{x} has the format \eqn{(x_i, y_i)_{i = 1, ..., n}}.
   \deqn{\hat{\sigma}^2 = \sum_{h = -(n-1)}^{n-1} W \left( \frac{|h|}{b_n} \right) \frac{1}{n} \sum_{i = 1}^{n - |h|} \hat{\phi}_n((x_i, y_i))\hat{\phi}_n((x_{i+|h|}, y_{i+|h|}),}
-  where \eqn{\hat{\phi}_n(x) = 4 F_n(x, y) - 2F_{X,n}(x) 2 - F_{Y,n}(y) + 1 - v_n} and \eqn{F_n}, \eqn{F_{X,n}} and \eqn{F_{Y,n}} are the empirical distribution functions of \eqn{((X_i, Y_i))_{i = 1, ..., n}}, \eqn{(X_i)_{i = 1, ..., n}} and \eqn(Y_i)_{i = 1, ..., n}}.
+  where \eqn{\hat{\phi}_n(x) = 4 F_n(x, y) - 2F_{X,n}(x) 2 - F_{Y,n}(y) + 1 - v_n} and \eqn{F_n}, \eqn{F_{X,n}} and \eqn{F_{Y,n}} are the empirical distribution functions of \eqn{((X_i, Y_i))_{i = 1, ..., n}}, \eqn{(X_i)_{i = 1, ..., n}} and \eqn{(Y_i)_{i = 1, ..., n}}.
   
-  Default value: \eqn{v_n = \hat{\tau}_n = \frac{2}{n(n-1)} \sum_{1 \leq i < j \leq n} sign\left((x_j - x_i)(y_j - y_i)\right)}}.
+  Default value: \eqn{v_n = \hat{\tau}_n = \frac{2}{n(n-1)} \sum_{1 \leq i < j \leq n} sign\left((x_j - x_i)(y_j - y_i)\right)}.
   
   \item \code{"rho"}
-   \deqn{\hat{\sigma}^2 = \sum_{h = -(n-1)}^{n-1} W \left( \frac{|h|}{b_n} \right) \frac{1}{n} \sum_{i = 1}^{n - |h|} \hat{\phi}_n((x_i, y_i))\hat{\phi}_n((x_{i+|h|}, y_{i+|h|}),}
+  
+  Only availabe for \eqn{d}-variate data with \eqn{d > 1}: assume that the given data \code{x} has the format \eqn{(x_{i,j} | i = 1, ..., n; j = 1, ..., d)}.
+  \deqn{\hat{\sigma}^2 = a(d)^2 2^{2d} \left\{ \sum_{h = -(n-1)}^{n-1} K\left( \frac{|h|}{b_n} \right) \left( \sum_{i = 1}^{n-|h|} n^{-1} \prod_{j = 1}^d \hat{\phi}_n(x_i, x_j) \hat{\phi}_n(x_{i+|h|}, x_j) - \left( n^{-1} \sum_{i = 1}^n \prod_{j = 1}^d \hat{\phi}_n(x_i, x_j) \right)^2 \right) \right\} ,}
+   where \eqn{a(d) = (d+1) / (2^d - d - 1)}, \eqn{\hat{\phi}_n(x, y) = 1 - \hat{U}_n(x, y)}, \eqn{\hat{U}_n(x, y) = n^{-1}} (rank of \eqn{x_{i,j}} in \eqn{x_{i,1}, ..., x_{i,n})}.
 }
 
 When \code{control$gamma0 = TRUE} (default) then negative estimates of the long run variance are replaced by the autocovariance at lag 0 (= ordinary variance of the data). The function will then throw a warning.
