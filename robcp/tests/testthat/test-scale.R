@@ -19,35 +19,30 @@ test_that("scale_stat is computed correctly",
   b_n <- 2
   
   # empVar:
-  y <-  5034.6 / sqrt(5 * lrv(x,control = list(b_n = b_n, mean = mean(x),
-                                               var = var(x), kFun = "SFT", 
-                                               version = "empVar")))
+  y <-  5034.6 / sqrt(5 * lrv(x, control = list(b_n = b_n, kFun = "SFT", 
+                                                version = "empVar")))
   z <- scale_stat(x, version = "empVar", control = list(b_n = b_n))
   attributes(z) <- NULL
   expect_equal(z, y)
   
   # MD:
-  y <-  49 / sqrt(5 * lrv(x, control = list(b_n = b_n, mean = median(x), kFun = "SFT",
-                                               var = mean(abs(x - median(x))) * 5 / 4, 
+  y <-  49 / sqrt(5 * lrv(x, control = list(b_n = b_n, kFun = "SFT", 
                                                version = "MD")))
   z <- scale_stat(x, version = "MD", control = list(b_n = b_n))
   attributes(z) <- NULL
   expect_equal(z, y)
   
   # GMD:
-  y <-  30.4 / sqrt(5 * lrv(x, "kernel", 
-                            control = list(b_n = b_n, mean = 0, kFun = "SFT",
-                                           var = sum(sapply(2:5, function(j) sum(abs(x[j] - x[1:(j-1)])))) / 10, 
-                                           version = "GMD")))
+  y <-  30.4 / sqrt(5 * lrv(x, "kernel", control = list(b_n = b_n, kFun = "SFT",
+                                                        version = "GMD")))
   z <- scale_stat(x, version = "GMD", control = list(b_n = b_n))
   attributes(z) <- NULL
   expect_equal(z, y)
   
   # MAD:
-  y <-  27 / sqrt(5 * lrv(x, "kernel", 
-                          control = list(b_n = b_n, mean = median(x), 
-                                         var = mad(x, constant = 1), version = "MAD")))
-  z <- scale_stat(x, version = "MAD", constant = 1, control = list(b_n = b_n))
+  y <-  27 * 1.4826 / sqrt(5 * lrv(x, "kernel", 
+                          control = list(b_n = b_n, version = "MAD")))
+  z <- scale_stat(x, version = "MAD", control = list(b_n = b_n))
   attributes(z) <- NULL
   expect_equal(z, y)
   
@@ -55,7 +50,7 @@ test_that("scale_stat is computed correctly",
   x <- c(6, 2, 1, 10, 5, 0)
   beta <- 0.9
   y <-  12 / sqrt(6 * lrv(x, "kernel", control = list(version = "Qalpha",
-                              kFun = "SFT", b_n = b_n, mean = beta, var = 9)))
+                              kFun = "SFT", b_n = b_n, loc = beta)))
   z <- scale_stat(x, version = "Qalpha", control = list(b_n = b_n), alpha = beta)
   attributes(z) <- NULL
   expect_equal(z, y)

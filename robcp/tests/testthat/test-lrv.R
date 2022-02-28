@@ -94,8 +94,7 @@ test_that("kernel-based estimation for the scale is correctly computed",
   m <- mean(x)
   v <- var(x)
   y <- lrv(x, method = "kernel",
-           control = list(mean = m, var = v, version = "empVar", 
-                          b_n = b_n, kFun = "FT"))
+           control = list(version = "empVar", b_n = b_n, kFun = "FT"))
   
   expect_equal(y, lrvTest((x - m)^2 - v, b_n))
   
@@ -103,28 +102,24 @@ test_that("kernel-based estimation for the scale is correctly computed",
   m <- median(x)
   v <- mean(abs(x - m)) * 5 / 4
   y <- lrv(x, method = "kernel",
-           control = list(mean = m, var = v, version = "MD", 
-                          b_n = b_n, kFun = "FT"))
+           control = list(version = "MD", b_n = b_n, kFun = "FT"))
   
   expect_equal(y, lrvTest(abs(x - m) - v, b_n))
   
   # GMD:
-  m <- 0
   v <- sum(sapply(2:5, function(j) sum(abs(x[j] - x[1:(j-1)])))) / 10
-  y <- lrv(x, method = "kernel",
-           control = list(mean = m, var = v, version = "GMD", 
-                          b_n = b_n, kFun = "FT"))
+  y <- lrv(x, method = "kernel", control = list(version = "GMD", b_n = b_n,
+                                                kFun = "FT"))
   
   expect_equal(y, 4 * lrvTest(sapply(x, function(xi) mean(abs(x - xi))) - v, b_n))
   
   x <- c(85, 89, 36, 12, 51, 39, 24)
   
   # MAD:
-  m <- 39
+  m <- 39 
   v <- 15
   y <- lrv(x, "kernel", 
-           control = list(mean = m, var = v, version = "MAD", 
-                          b_n = b_n, kFun = "FT"))
+           control = list(version = "MAD", scale = 15, b_n = b_n, kFun = "FT"))
   mad_f <- sum(3 / 4 * (1 - (c(-12, 12, -3, -15, 0) / 38 / 7^(-1/3))^2)) / 38 / 7^(2/3)
   
   expect_equal(y, lrvTest(as.numeric(abs(x - m) <= v) - 0.5, b_n) / mad_f)
@@ -132,7 +127,7 @@ test_that("kernel-based estimation for the scale is correctly computed",
   # Qalpha:
   beta <- 0.5
   v <- 34
-  y <- lrv(x, "kernel", control = list(mean = beta, var = v, version = "Qalpha", 
+  y <- lrv(x, "kernel", control = list(loc = beta, version = "Qalpha", 
                         b_n = b_n, kFun = "FT"))
   
   qbeta_u <- sum(sapply(2:7, function(j)
@@ -169,8 +164,8 @@ test_that("kernel-based estimation for the correlation is computed correctly",
   res1 <- 4 * 13 / 5^3
   res3 <- 4 * (13 + 12 + 4/3) / 5^3
   
-  expect_equal(lrv(x, control = list(b_n = 1, kFun = "FT", version = "tau", var = 0)), res1)
-  expect_equal(lrv(x, control = list(b_n = 3, kFun = "FT", version = "tau", var = 0)), res3)
+  expect_equal(lrv(x, control = list(b_n = 1, kFun = "FT", version = "tau", scale = 0)), res1)
+  expect_equal(lrv(x, control = list(b_n = 3, kFun = "FT", version = "tau", scale = 0)), res3)
 })
 
 test_that("subsampling estimation is correctly computed", 

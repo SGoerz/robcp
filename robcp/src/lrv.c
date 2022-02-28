@@ -21,14 +21,14 @@ void extract(double ma[], double arr[], int start, int n)
 
 //*************************** kernel functions *******************************//
 
-// Bartlett kernel 
+// Bartlett kernel (1)
 double kBartlett(double x)
 {
   if(fabs(x) < 1) return 1 - fabs(x);
   else return 0;
 }
 
-// flat top kernel  
+// flat top kernel (2)
 double kFT(double x)
 {
   if(fabs(x) <= 0.5) return 1;
@@ -36,7 +36,7 @@ double kFT(double x)
   else return 0;
 }
 
-// Parzen kernel
+// Parzen kernel (3)
 double kParzen(double x)
 {
   if(0 <= fabs(x) && fabs(x) <= 0.5)
@@ -49,7 +49,7 @@ double kParzen(double x)
   return 0;
 }
 
-// Quadratic Spectral kernel
+// Quadratic Spectral kernel (4)
 double kQS(double x)
 {
   if(x == 0) return 1;
@@ -57,28 +57,28 @@ double kQS(double x)
     (sin(6 * M_PI * x / 5) / (6 * M_PI* x / 5) - cos(6 * M_PI * x / 5)); 
 }
 
-// Tukey-Hanning kernel
+// Tukey-Hanning kernel (5)
 double kTH(double x)
 {
   if(fabs(x) <= 1) return (1 + cos(M_PI * x)) / 2;
   return 0;
 }
 
-// truncated kernel
+// truncated kernel (6)
 double kTruncated(double x)
 {
   if(fabs(x) > 1) return 0;
   return 1;
 }
 
-// smoothed flat top kernel
+// smoothed flat top kernel (7)
 double kSFT(double x)
 {
   if(fabs(x) < 1) return pow(1 - 4 * pow(fabs(x) - 0.5, 2), 2);
   return 0;
 }
 
-// Epanechnikov kernel
+// Epanechnikov kernel (8)
 double kEpanechnikov(double x)
 {
   if(fabs(x) < 1) 
@@ -88,7 +88,7 @@ double kEpanechnikov(double x)
   return 0;
 }
 
-// quadratic kernel
+// quadratic kernel (9)
 double kQuadratic(double x)
 {
   if(fabs(x) < 1)

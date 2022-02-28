@@ -4,7 +4,14 @@
 #include <Rmath.h>
 #include <stdlib.h>
 
-
+/* tau: estimate Kendall's tau for x[1:k], k = 2, ..., n
+ * 
+ * input: X (first part of the bivariate time series (numeric vector))
+ *        X (second part of the bivariate time series (numeric vector))
+ *        n (length of the time series; numeric or integer)
+ *        
+ * output: vector of tau-s (numeric; length n-1)
+ */
 SEXP tau(SEXP X, SEXP Y, SEXP N)
 {
   double *x = REAL(X);

@@ -64,13 +64,13 @@ scale_stat <- function(x, version = "empVar", method = "kernel", control = list(
   
   if(version == "empVar")
   {
-    control$mean <- mean(x)
-    control$var <- var(x)
+    control$loc <- mean(x)
+    control$scale <- var(x)
 
     stat <- .Call("CUSUM", as.numeric(x^2))
-    sigma <-  sqrt(lrv(x, method = "kernel", control = control))
-    res <- max(stat) / sigma
-    k <- which.max(stat)
+    # sigma <-  sqrt(lrv(x, method = "kernel", control = control))
+    res <- max(stat)
+    k <- which.max(res)
   } else 
   {
     if(version == "MD")
@@ -83,14 +83,14 @@ scale_stat <- function(x, version = "empVar", method = "kernel", control = list(
       y <- cumstats::cummedian(x)
       res <- .Call("MD", as.numeric(x), as.numeric(y), as.numeric(n)) / (1:(n-1))
 
-      control$mean <- median(x)
+      control$loc <- median(x)
     } else if(version == "GMD")
     {
       res <- .Call("GMD", as.numeric(x), as.numeric(n)) / ((1:(n-1)) * (2:n)) * 2
     } else if(version == "MAD")
     {
       res <- sapply(2:n, function(k) mad(x[1:k], constant = constant))
-      control$mean <- median(x)
+      control$loc <- median(x)
     } else if(version == "Qalpha")
     {
       res <- Qalpha(x, alpha)
@@ -103,24 +103,24 @@ scale_stat <- function(x, version = "empVar", method = "kernel", control = list(
       #   kthPair(sorted[1:(k-1)], -sorted[2:k], a)
       # })
       
-      control$mean <- alpha
+      control$loc <- alpha
     } else 
     {
       stop("version not supported.")
     }
 
-    control$var <- res[n-1]
+    control$scale <- res[n-1]
     control$distr <- FALSE
     
     stat <- res - res[n-1]
     stat <- 2:n * abs(stat)
     k <- which.max(stat) + 1
-    res <- max(stat)
+    res <- max(stat) / sqrt(n)
   } 
   
   if(method == "kernel") 
   {
-    sigma <- sqrt(n * lrv(x, method = "kernel", control = control))
+    sigma <- sqrt(lrv(x, method = "kernel", control = control))
     res <- res / sigma 
     
     attr(res, "lrv-estimation") <- "kernel"

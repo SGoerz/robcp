@@ -32,7 +32,7 @@ test_that("cor_stat is computed correctly",
   x <- matrix(c(82, 43, 71, 54, 90, 40, 12, 75, 91, 49), ncol = 2)
   b_n <- 2
   
-  y <- 2 / sqrt(5 * lrv(x, "kernel", control = list(b_n = b_n, version = "tau", var = 0)))
+  y <- 2 / sqrt(5 * lrv(x, "kernel", control = list(b_n = b_n, version = "tau", scale = 0)))
   z <- cor_stat(x, "tau", control = list(b_n = b_n, kFun = "quadratic"))
   attributes(z) <- NULL
   expect_equal(z, y)

@@ -29,7 +29,7 @@ lrv <- function(x, method = "kernel", control = list())
   ### ***********
   con <- list(kFun = "bartlett", B = 1000, b_n = NA, l = NA, 
               gamma0 = TRUE, overlapping = TRUE, distr = FALSE, seed = NA, 
-              version = NA, mean = 0, var = 1)
+              version = "mean", loc = NA, scale = NA)
   nmsC <- names(con)
   con[(namc <- names(control))] <- control
   if(length(noNms <- namc[!namc %in% nmsC])) 
@@ -62,7 +62,7 @@ lrv <- function(x, method = "kernel", control = list())
     if(b_n > n)
       stop("The bandwidth b_n cannot be larger than the length of the time series!")
     
-    if(!is.na(con$version))
+    if(con$version != "mean")
     {
       if(con$version == "rho")
       {
@@ -72,15 +72,18 @@ lrv <- function(x, method = "kernel", control = list())
                      as.numeric(mean(apply(rks, 1, prod))^2))
       } else if(con$version == "tau")
       {
+        if(is.na(con$scale)) con$scale <- .Call("tau", as.numeric(x[, 1]), 
+                                                as.numeric(x[, 2]), 
+                                                as.numeric(n))[n - 1]
         f1 <- .Call("trafo_tau", as.numeric(x), as.numeric(n)) / n
         psi <- 4 * f1 - 2 * ecdf(x[, 1])(x[, 1]) - 2 * ecdf(x[, 2])(x[, 2]) + 
-          1 - con$var
+          1 - con$scale
         
         erg <- 4 * .Call("lrv", as.numeric(psi), as.numeric(con$b_n), as.numeric(con$kFun), 
               PACKAGE = "robcp")
       } else
       {
-        stop("Version not supported!")
+        stop("version not supported!")
       }
     } else
     {
@@ -97,7 +100,7 @@ lrv <- function(x, method = "kernel", control = list())
     method <- match.arg(method, c("subsampling", "kernel", "scale_kernel", "bootstrap"))
     erg <- switch(method, 
            "kernel" = lrv_kernel(x, con$b_n, con$kFun, con$gamma0, con$distr,
-                                 con$version, con$mean, con$var),
+                                 con$version, con$loc, con$scale),
            "subsampling" = lrv_subs(x, con$l, con$overlapping, con$distr), 
            "bootstrap" = lrv_dwb(x, con$l, con$B, con$kFun, con$seed, con$distr))
   }
@@ -117,7 +120,7 @@ lrv <- function(x, method = "kernel", control = list())
 ##'               
 ##'@name lrv
 lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
-                       version = NA, m = 0, v = 1)
+                       version = "mean", loc = NA, scale = NA)
 {
   n <- length(x)
   if(!is.na(b_n) && (!is(b_n, "numeric") || b_n <= 0 || b_n > n))
@@ -134,23 +137,33 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
     x <- ecdf(x)(x)
   }
   
-  if(!is.na(version))
+  if(version != "mean")
   {
     if(version == "empVar")
     {
-      x_cen <- (x - m)^2 - v
+      if(is.na(loc)) loc <- mean(x)
+      if(is.na(scale)) scale <- var(x)
+      x_cen <- (x - loc)^2 - scale
     } else if(version == "MD")
     {
-      x_cen <- abs(x - m) - v
+      if(is.na(loc)) loc <- median(x)
+      if(is.na(scale)) scale <- sum(abs(x - loc)) / (n - 1)
+      x_cen <- abs(x - loc) - scale
     } else if(version == "GMD")
     {
-      x_cen <- sapply(x, function(xi) mean(abs(x - xi))) - v
+      if(is.na(scale)) scale <- sum(sapply(2:n, function(j)
+        sum(abs(x[j] - x[1:(j-1)])))) * 2 / (n * (n - 1))
+      x_cen <- sapply(x, function(xi) mean(abs(x - xi))) - scale
     } else if(version == "MAD")
     {
-      x_cen <- as.numeric(abs(x - m) <= v) - 0.5
+      if(is.na(loc)) loc <- median(x)
+      if(is.na(scale)) scale <- mad(x)
+      x_cen <- as.numeric(abs(x - loc) <= scale) - 0.5
     } else if(version == "Qalpha")
     {
-      x_cen <- sapply(x, function(xi) mean(as.numeric(abs(x - xi) <= v))) - m
+      if(is.na(loc)) loc <- 0.5
+      if(is.na(scale)) scale <- Qalpha(x, loc)[n-1]
+      x_cen <- sapply(x, function(xi) mean(as.numeric(abs(x - xi) <= scale))) - loc
     } else 
     {
       stop("version not supported.")
@@ -176,12 +189,13 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
       erg <- erg * 4
     } else if(version == "MAD")
     {
-      erg <- erg / .Call("MAD_f", as.numeric(x), as.numeric(n), as.numeric(m), 
-                         as.numeric(v), as.numeric(IQR(x) * n^(-1/3)), as.numeric(8))
+      erg <- erg / .Call("MAD_f", as.numeric(x), as.numeric(n), as.numeric(loc), 
+                         as.numeric(scale), as.numeric(IQR(x) * n^(-1/3)), as.numeric(8))
     } else if(version == "Qalpha")
     {
-      erg <- erg * 4 / .Call("Qalpha_u", as.numeric(x), as.numeric(n), as.numeric(v), 
+      erg <- erg * 4 / .Call("Qalpha_u", as.numeric(x), as.numeric(n), as.numeric(scale), 
                              as.numeric(IQR(x) * n^(-1/3)), as.numeric(8))
+      # as.numeric(8) = Epanechnikov kernel 
     }
   }
   
@@ -198,7 +212,7 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
 ##'
 ##'input: x (time series)
 ##'       l (block length; numeric; 1 <= l <= length(x))
-##'       overlapping (overlapping subsamplin? boolean)
+##'       overlapping (overlapping subsampling? boolean)
 ##'       distr (distribution function or plain observations? boolean)
 ##'       
 ##'@name lrv

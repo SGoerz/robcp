@@ -61,7 +61,3 @@ Wied, D., Dehling, H., Van Kampen, M., and Vogel, D. (2014). A fluctuation test 
 \seealso{
 \code{\link{lrv}}, \code{\link{cor_cusum}}
 }
-
-\examples{
-TO DO
-}

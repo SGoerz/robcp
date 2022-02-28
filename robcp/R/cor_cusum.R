@@ -54,7 +54,7 @@ cor_stat <- function(x, version = "rho", control = list())
     
     if(is.null(dim(x)) || ncol(x) != 2) stop("For the test on Kendall's tau, x must be bivariate.")
     res <- .Call("tau", as.numeric(x[, 1]), as.numeric(x[, 2]), as.numeric(n))
-    control$var <- res[n-1]
+    control$scale <- res[n-1]
   } else
   {
     stop("version not supported.")
