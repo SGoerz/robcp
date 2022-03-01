@@ -95,8 +95,8 @@ The kernel-based long run variance estimation is available for various testing s
   \item \code{"rho"}
   
   Only availabe for \eqn{d}-variate data with \eqn{d > 1}: assume that the given data \code{x} has the format \eqn{(x_{i,j} | i = 1, ..., n; j = 1, ..., d)}.
-  \deqn{\hat{\sigma}^2 = a(d)^2 2^{2d} \left\{ \sum_{h = -(n-1)}^{n-1} K\left( \frac{|h|}{b_n} \right) \left( \sum_{i = 1}^{n-|h|} n^{-1} \prod_{j = 1}^d \hat{\phi}_n(x_i, x_j) \hat{\phi}_n(x_{i+|h|}, x_j) - \left( n^{-1} \sum_{i = 1}^n \prod_{j = 1}^d \hat{\phi}_n(x_i, x_j) \right)^2 \right) \right\} ,}
-   where \eqn{a(d) = (d+1) / (2^d - d - 1)}, \eqn{\hat{\phi}_n(x, y) = 1 - \hat{U}_n(x, y)}, \eqn{\hat{U}_n(x, y) = n^{-1}} (rank of \eqn{x_{i,j}} in \eqn{x_{i,1}, ..., x_{i,n})}.
+  \deqn{\hat{\sigma}^2 = a(d)^2 2^{2d} \left\{ \sum_{h = -(n-1)}^{n-1} K\left( \frac{|h|}{b_n} \right) \left( \sum_{i = 1}^{n-|h|} n^{-1} \prod_{j = 1}^d \hat{\phi}_n(x_i, x_j) \hat{\phi}_n(x_{i+|h|}, x_j) - M^2 \right) \right\} ,}
+   where \eqn{a(d) = (d+1) / (2^d - d - 1)},  \eqn{M = n^{-1} \sum_{i = 1}^n \prod_{j = 1}^d \hat{\phi}_n(x_i, x_j)} and \eqn{\hat{\phi}_n(x, y) = 1 - \hat{U}_n(x, y)}, \eqn{\hat{U}_n(x, y) = n^{-1}} (rank of \eqn{x_{i,j}} in \eqn{x_{i,1}, ..., x_{i,n})}.
 }
 
 When \code{control$gamma0 = TRUE} (default) then negative estimates of the long run variance are replaced by the autocovariance at lag 0 (= ordinary variance of the data). The function will then throw a warning.

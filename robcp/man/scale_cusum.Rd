@@ -8,7 +8,8 @@ Performs the CUSUM-based test on changes in the scale.
 }
 
 \usage{
-scale_cusum(x, version = "empVar", method = "kernel", control = list(), constant = 1.4826, beta = 0.5, fpc = TRUE, tol = 1e-08)
+scale_cusum(x, version = "empVar", method = "kernel", control = list(), 
+            constant = 1.4826, beta = 0.5, fpc = TRUE, tol = 1e-08)
 }
 
 \arguments{
