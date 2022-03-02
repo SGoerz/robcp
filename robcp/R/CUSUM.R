@@ -104,36 +104,4 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
   return(erg)
 }
 
-##'print.cpStat: print method for change point statistics
-##'              prints the value of the test statistic and add the most likely
-##'              change point location
-print.cpStat <- function(x, ...)
-{
-  loc <- attr(x, "cp-location")
-  print(round(as.numeric(x), digits = getOption("digits")), ...)
-  cat("location: ", loc)
-  return(invisible(x))
-}
 
-
-##'plot.cpStat: plot method for change point statistics
-##'             plots the trajectory of the test statistic process with a red 
-##'             line indicating the critical value (alpha = 0.05) and a blue 
-##'             line indicating the most probable change point location
-plot.cpStat <- function(x, ylim, xaxt, ...)
-{
-  data <- attr(x, "teststat")
-  if(missing(ylim)) ylim <- c(min(c(data, 1.358)), max(c(data, 1.358)))
-  if(missing(xaxt)) xaxt <- "n"
-  plot(data, ylim = ylim, xaxt = "n", ...)
-  k <- attr(x, "cp-location")
-  abline(v = k, col = "blue")
-  
-  ticks <- axTicks(1)
-  ticks <- ticks[abs(ticks - k) / length(data) >= 0.05]
-  axis(1, ticks)
-  axis(1, k, col.axis = "blue", col.ticks = "blue", tick = TRUE)
-  abline(h = 1.358, col = "red")
-  
-  return(invisible(NULL))
-}

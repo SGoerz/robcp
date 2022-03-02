@@ -3,7 +3,8 @@
 \title{Hodges-Lehmann Test for Change Points}
 
 \usage{
-hl_test(x, b_u = "SJ", method = "subsampling", control = list(), tol = 1e-8)
+hl_test(x, b_u = "nrd0", method = "subsampling", control = list(), tol = 1e-8, 
+        plot = FALSE)
 }
 
 \description{
@@ -16,6 +17,7 @@ Performs the two-sample Hodges-Lehmann change point test.
 \item{method}{method for estimating the long run variance.}
 \item{control}{a list of control parameters (cf. \code{\link{lrv}}).}
 \item{tol}{tolerance of the distribution function (numeric), which is used to compute p-values.}
+\item{plot}{should the test statistic be plotted (cf. \code{\link{plot.cpStat}}). Boolean.}
 }
 
 \value{

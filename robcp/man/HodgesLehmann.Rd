@@ -6,7 +6,7 @@
 Computes the test statistic for the Hodges-Lehmann change point test.
 }
 \usage{
-HodgesLehmann(x, b_u = "SJ", method = "subsampling", control = list())
+HodgesLehmann(x, b_u = "nrd0", method = "subsampling", control = list())
 u_hat(x, b_u)
 }
 \arguments{

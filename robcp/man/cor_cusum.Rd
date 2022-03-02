@@ -7,7 +7,8 @@ Performs a CUSUM-based test on changes in Spearman's rho or Kendall's tau.
 }
 
 \usage{
-cor_cusum(x, version = "rho", control = list(), fpc = TRUE, tol = 1e-08)
+cor_cusum(x, version = "rho", control = list(), fpc = TRUE, tol = 1e-08, 
+          plot = FALSE)
 }
 
 \arguments{
@@ -16,6 +17,7 @@ cor_cusum(x, version = "rho", control = list(), fpc = TRUE, tol = 1e-08)
 \item{control}{a list of control parameters.}
 \item{fpc}{finite population correction (boolean).}
 \item{tol}{tolerance of the distribution function (numeric), which is used do compute p-values.}
+\item{plot}{should the test statistic be plotted (cf. \code{\link{plot.cpStat}}). Boolean.}
 }
 
 \value{
@@ -60,6 +62,7 @@ Sheila \enc{Görz}{Goerz}
 
 \examples{
 ### first: gerenate a time series with a burn-in period of m and a change point k
+require(mvtnorm)
 n <- 500
 m <- 100
 N <- n + m

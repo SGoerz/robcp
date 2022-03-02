@@ -1,4 +1,4 @@
-estim <- function(x, version, alpha = 0.5)
+estim <- function(x, version, alpha = 0.5, constant = 1.4826)
 {
   n <- length(x)
   
@@ -33,9 +33,9 @@ estim <- function(x, version, alpha = 0.5)
 ##'@param seed (start for random number generator)
 ##'       
 ##'@return 
-dbb <- function(stat, data, version, control = list(), alpha = 0.5)
+dbb <- function(stat, data, version, control = list(), alpha = 0.5, constant = 1.4826)
 {
-  n <- length(x)
+  n <- length(data)
   
   browser()
   
@@ -70,7 +70,7 @@ dbb <- function(stat, data, version, control = list(), alpha = 0.5)
   {
     j <- sample(1:(n-l+1), k, replace = TRUE)
     x_star <- data[as.vector(sapply(j, function(j) j:(j+l-1)))]
-    estim(x_star, version, alpha)
+    estim(x_star, version, alpha, constant)
   })
   
   return(mean(res > stat))

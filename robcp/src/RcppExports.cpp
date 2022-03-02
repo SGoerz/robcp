@@ -35,16 +35,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // kthPair
-double kthPair(NumericVector x1, NumericVector y1, int k, int k2);
-RcppExport SEXP _robcp_kthPair(SEXP x1SEXP, SEXP y1SEXP, SEXP kSEXP, SEXP k2SEXP) {
+double kthPair(NumericVector X, NumericVector Y, int k, int k2);
+RcppExport SEXP _robcp_kthPair(SEXP XSEXP, SEXP YSEXP, SEXP kSEXP, SEXP k2SEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x1(x1SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type y1(y1SEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Y(YSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     Rcpp::traits::input_parameter< int >::type k2(k2SEXP);
-    rcpp_result_gen = Rcpp::wrap(kthPair(x1, y1, k, k2));
+    rcpp_result_gen = Rcpp::wrap(kthPair(X, Y, k, k2));
     return rcpp_result_gen;
 END_RCPP
 }

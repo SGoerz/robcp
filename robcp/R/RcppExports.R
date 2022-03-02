@@ -30,11 +30,11 @@ weightedMedian <- function(x, w) {
 
 #'kthPair:
 #'
-#'input: - x and y (numeric vectors; descending order)
+#'input: - X and Y (numeric vectors; descending order)
 #'       - n and m (lengths of x and y; integer)
 #'       - k (index of element to choose; integer; 1 <= k <= n * m)
 #'
-kthPair <- function(x1, y1, k, k2 = NA_integer_) {
-    .Call('_robcp_kthPair', PACKAGE = 'robcp', x1, y1, k, k2)
+kthPair <- function(X, Y, k, k2 = NA_integer_) {
+    .Call('_robcp_kthPair', PACKAGE = 'robcp', X, Y, k, k2)
 }
 

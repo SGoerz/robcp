@@ -98,7 +98,7 @@ test_that("CUSUM test for changes in the scale is performed correctly",
   suppressWarnings({p <- replicate(200, 
   {
     x <- rnorm(200)
-    x[101:200] <- x[101:200] * 10
+    x[101:200] <- x[101:200] * 3
     scale_cusum(x, version = "GMD")$p.value
   })})
   
@@ -110,7 +110,7 @@ test_that("CUSUM test for changes in the scale is performed correctly",
   {
     x <- rnorm(200)
     x[101:200] <- x[101:200] * 3
-    scale_cusum(x, version = "MAD")$p.value
+    scale_cusum(x, version = "MAD", control = list(b_n = 10))$p.value
   })})
 
   expect_equal(mean(p < 0.05), 1, tolerance = 0.01)
@@ -118,12 +118,10 @@ test_that("CUSUM test for changes in the scale is performed correctly",
   # Qalpha:
   suppressWarnings({p <- replicate(200, 
   {
-    i <<- i+1
-    set.seed(i)
     x <- rnorm(200)
-    x[101:200] <- x[101:200] * 3
-    scale_cusum(x, version = "Qalpha", method = "bootstrap", control = list(l = 10),
-                alpha = 0.9, tol = 1e-3)$p.value
+    x[101:200] <- x[101:200] * 10
+    scale_cusum(x, version = "Qalpha", method = "kernel",
+                alpha = 0.8, tol = 1e-8)$p.value
   })})
   
   expect_equal(mean(p < 0.05), 1, tolerance = 0.1)
