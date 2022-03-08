@@ -8,7 +8,7 @@
 ##'@param control a list of control parameters.
 ##'@param tol tolerance of the distribution function (numeric), which is used do compute p-values.
 ##'@return A list fo the class "htest" containing
-hl_test <- function(x, b_u = "nrd0", method = "subsampling", control = list(), 
+hl_test <- function(x, b_u = "nrd0", method = "kernel", control = list(), 
                     tol = 1e-8, plot = FALSE)
 {
   Dataname <- deparse(substitute(x))

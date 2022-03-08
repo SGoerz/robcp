@@ -17,7 +17,7 @@ cor_cusum(x, version = "rho", control = list(), fpc = TRUE, tol = 1e-08,
 \item{control}{a list of control parameters.}
 \item{fpc}{finite population correction (boolean).}
 \item{tol}{tolerance of the distribution function (numeric), which is used do compute p-values.}
-\item{plot}{should the test statistic be plotted (cf. \code{\link{plot.cpStat}}). Boolean.}
+\item{plot}{should the test statistic be plotted (cf. \code{\link{plot.cpStat}})? Boolean.}
 }
 
 \value{
@@ -28,22 +28,18 @@ A list of the class "htest" containing the following components:
   \item{method}{name of the performed test (character string).}
   \item{cp.location}{index of the estimated change point location (integer).}
   \item{data.name}{name of the data (character string).}
-  
-Plus if \code{method = "kernel"}:
-\item{lrv}{list containing the compontents \code{method}, \code{param} and \code{value}.}
-else if \code{method = "bootstrap"}:
-\item{......................}{.................................................................}
+  \item{lrv}{list containing the compontents \code{method}, \code{param} and \code{value}.}
 }
 
 
 \details{
-The function perform a CUSUM-type test on changes in the fluctuation of a time series \eqn{x}. Formally, the typothesis pair can be written as
+The function perform a CUSUM-type test on changes in the fluctuation of a time series \eqn{x}. Formally, the hypothesis pair can be written as
 \deqn{H_0: \xi_1, ..., \xi_n}
 \deqn{vs.}
 \deqn{H_1: \exists k \in \{1, ..., n-1\}: \xi_k \neq \xi_{k+1}}
 where \eqn{\xi_i} is a fluctuation measure (either Spearman's rho or Kendall's tau) and \eqn{n} is the length of the time series. \eqn{k} is called a 'change point'.
 
-The test statistic is computed using \code{\link{cor_stat}} and, if \code{method = "kernel"}, asymptotically follows a Kolmogorov distribution. To derive the p-value, the funtion \code{\link{pKSdist}} is used.
+The test statistic is computed using \code{\link{cor_stat}} and asymptotically follows a Kolmogorov distribution. To derive the p-value, the funtion \code{\link{pKSdist}} is used.
 }
 
 \references{

@@ -4,7 +4,7 @@ estim <- function(x, version, alpha = 0.5, constant = 1.4826)
   
   if(version == "empVar")
   {
-    res <- .Call("CUSUM", as.numeric(x^2))
+    return(max(.Call("CUSUM", as.numeric(x^2))))
   } else if(version == "MD")
   {
     y <- cumstats::cummedian(x)
@@ -19,38 +19,24 @@ estim <- function(x, version, alpha = 0.5, constant = 1.4826)
   {
     res <- Qalpha(x, alpha)
   }
-  return(max(abs(res - res[n-1]) * 2:n))
+  return(max(abs(res - res[n-1]) * 2:n) / sqrt(n))
 }
 
 
-
-##'@name dbb 
-##'@description Dependent block bootstrap (overlapping, non-circular).
+##'@description Performs a dependent block bootstrap in order to determine the p-value for the 
 ##'
-##'@param x (time series)
-##'@param l (block length, 1 <= l)
-##'@param B (number of bootstrap samples, numeric > 0)
-##'@param seed (start for random number generator)
+##'@param x time series
+##'@param l block length, 1 <= l
+##'@param B number of bootstrap samples, numeric > 0
+##'@param seed start for random number generator
 ##'       
 ##'@return 
-dbb <- function(stat, data, version, control = list(), alpha = 0.5, constant = 1.4826)
+dbb <- function(stat, data, version, control = list(), alpha = 0.5, 
+                constant = 1.4826, level = 0.05)
 {
   n <- length(data)
   
-  browser()
-  
-  ## argument check
-  # if(!is.na(l) && (!is.numeric(l) || l < 1 || l > n))
-  # {
-  #   stop("l must be a positive integer and cannot be larger than the length of x!")
-  # }
-  # if(missing(l) | is.na(l)) 
-  # {
-  #   rho <- abs(cor(x[1:(n-1)], x[2:n], method = "spearman"))
-  #   l <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
-  #   l <- tryCatch(as.integer(l), error = function(e) stop("Integer overflow in default l estimation. Please specify a value manually."), 
-  #                 warning = function(w) stop("Integer overflow in default l estimation. Please specify a value manually."))
-  # }
+  ## if l, B or seed are missing
   
   B <- control$B
   l <- control$l
@@ -72,7 +58,7 @@ dbb <- function(stat, data, version, control = list(), alpha = 0.5, constant = 1
     x_star <- data[as.vector(sapply(j, function(j) j:(j+l-1)))]
     estim(x_star, version, alpha, constant)
   })
-  
-  return(mean(res > stat))
+
+  return(list(mean(res > stat), quantile(res, 1 - level)))
 }
 

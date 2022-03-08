@@ -38,14 +38,15 @@ The \code{control} argument is a list that can supply any of the following compo
 
 \strong{Kernel-based estimation}
 
-The kernel-based long run variance estimation is available for various testing scenarios (\code{control$version}) and both for one- and moredimensional data. It uses the bandwidth \eqn{b_n = } \code{control$b_n} and kernel function \eqn{k(x) = } \code{control$kFun}. For tests in certain properties also a corresponding location \code{control$loc} (\eqn{m_n}) and scale \code{control$scale} (\eqn{v_n}) estimation needs to be supplied. Supported testing scenarios are:
+The kernel-based long run variance estimation is available for various testing scenarios (set by \code{control$version}) and both for one- and multi-dimensional data. It uses the bandwidth \eqn{b_n = } \code{control$b_n} and kernel function \eqn{k(x) = } \code{control$kFun}. For tests on certain properties also a corresponding location \code{control$loc} (\eqn{m_n}) and scale \code{control$scale} (\eqn{v_n}) estimation needs to be supplied. Supported testing scenarios are:
 
 \itemize{
   \item \code{"mean"}
   \itemize{
-    \item one-dim. data:
+    \item 1-dim. data:
     \deqn{\hat{\sigma}^2 = \frac{1}{n} \sum_{i = 1}^n (x_i - \bar{x})^2 + \frac{2}{n} \sum_{h = 1}^{b_n} \sum_{i = 1}^{n - h} (x_i - \bar{x}) (x_{i + h} - \bar{x}) k(h / b_n).}
     If \code{control$distr = TRUE}, then the long run variance is estimated on the empirical distribution of \eqn{x}. The resulting value is then multiplied with \eqn{\sqrt{\pi} / 2}.
+    
     Default values: \code{b_n} = \eqn{0.9 n^{1/3}}, \code{kFun = "bartlett"}.
     
     \item multivariate time series:
@@ -56,19 +57,23 @@ The kernel-based long run variance estimation is available for various testing s
     Default values: \code{b_n} = \eqn{\log_{1.8 + m / 40}(n / 50)}, \code{kFun = "bartlett"}.
   }
   
-  \item \code{"empVar"} For a test on changes in the empirical variance.
+  \item \code{"empVar"} for tests on changes in the empirical variance.
   \deqn{\hat{\sigma}^2 = \sum_{h = -(n-1)}^{n-1} W \left( \frac{|h|}{b_n} \right) \frac{1}{n} \sum_{i = 1}^{n - |h|} ((x_i - m_n)^2 - v_n)((x_{i+|h|} - m_n)^2 - v_n).}
+  
   Default values: \eqn{m_n =} \code{mean(x)}, \eqn{v_n = } \code{var(x)}.
   
-  \item \code{"MD"} tests on a change in the median deviation.
+  \item \code{"MD"} for tests on a change in the median deviation.
   \deqn{\hat{\sigma}^2 = \sum_{h = -(n-1)}^{n-1} W \left( \frac{|h|}{b_n} \right) \frac{1}{n} \sum_{i = 1}^{n - |h|} (|x_i - m_n| - v_n)(|x_{i+|h|} - m_n| - v_n).}
+  
   Default values: \eqn{m_n =} \code{median(x)}, \eqn{v_n = \frac{1}{n-1} \sum_{i = 1}^n |x_i - m_n|}.
   
-  \item \code{"GMD"}
+  \item \code{"GMD"} for tests on changes in Gini's mean difference.
   \deqn{\hat{\sigma}^2 = 4 \sum_{h = -(n-1)}^{n-1} W \left( \frac{|h|}{b_n} \right) \frac{1}{n} \sum_{i = 1}^{n - |h|} \hat{\phi}_n(x_i)\hat{\phi}_n(x_{i+|h|})}
-  with \eqn{\hat{\phi}_n(x) = n^{-1} \sum_{i = 1}^n |x - x_i| - v_n}. Default value: \eqn{v_n =} \eqn{\frac{2}{n(n-1)} \sum_{1 \leq i < j \leq n} |x_i - x_j|.}
+  with \eqn{\hat{\phi}_n(x) = n^{-1} \sum_{i = 1}^n |x - x_i| - v_n}.
   
-  \item \code{"MAD"}
+  Default value: \eqn{v_n =} \eqn{\frac{2}{n(n-1)} \sum_{1 \leq i < j \leq n} |x_i - x_j|.}
+  
+  \item \code{"MAD"} for tests on changes in the median absolute deviation (from the median).
    \deqn{\hat{\sigma}^2 = \hat{f}_Z(v_n)^{-1} \sum_{h = -(n-1)}^{n-1} W \left( \frac{|h|}{b_n} \right) \frac{1}{n} \sum_{i = 1}^{n - |h|} \hat{\phi}_n(x_i)\hat{\phi}_n(x_{i+|h|}),}
    where \eqn{\hat{\phi}_n(x) = 1_{\{|x - m_n| \leq v_n\}} - 0.5} and 
    \deqn{\hat{f}_Z(t) = \frac{1}{n h_n} \sum_{i = 1}^n K\left(\frac{|x_i - m_n| - t}{h_n}\right)} 
@@ -76,7 +81,7 @@ The kernel-based long run variance estimation is available for various testing s
    
    Default values: \eqn{m_n =} \code{median(x)}, \eqn{v_n =} \code{mad(x)}.
   
-  \item \code{"Qalpha"}
+  \item \code{"Qalpha"} for tests on changes in \code{\link{Qalpha}}.
   \deqn{\hat{\sigma}^2 = \frac{4}{\hat{u}(v_n)} \sum_{h = -(n-1)}^{n-1} W \left( \frac{|h|}{b_n} \right) \frac{1}{n} \sum_{i = 1}^{n - |h|} \hat{\phi}_n(x_i)\hat{\phi}_n(x_{i+|h|}),}
   where \eqn{\hat{\phi}_n(x) = n^{-1} \sum_{i = 1}^n 1_{\{|x - x_i| \leq v_n\}} - m_n} and 
   \deqn{\hat{u}(t) = \frac{2}{n(n-1)h_n} \sum_{1 \leq i < j \leq n} K\left(\frac{|x_i - x_j| - t}{h_n}\right)}
@@ -84,7 +89,7 @@ The kernel-based long run variance estimation is available for various testing s
   
   Default values: \eqn{m_n = \alpha = 0.5}, \eqn{v_n =} \code{Qalpha(x, m_n)[n-1]}.
   
-  \item \code{"tau"}
+  \item \code{"tau"} for tests in changes in Kendall's tau.
   
   Only available for bivariate data: assume that the given data \code{x} has the format \eqn{(x_i, y_i)_{i = 1, ..., n}}.
   \deqn{\hat{\sigma}^2 = \sum_{h = -(n-1)}^{n-1} W \left( \frac{|h|}{b_n} \right) \frac{1}{n} \sum_{i = 1}^{n - |h|} \hat{\phi}_n((x_i, y_i))\hat{\phi}_n((x_{i+|h|}, y_{i+|h|}),}
@@ -92,7 +97,7 @@ The kernel-based long run variance estimation is available for various testing s
   
   Default value: \eqn{v_n = \hat{\tau}_n = \frac{2}{n(n-1)} \sum_{1 \leq i < j \leq n} sign\left((x_j - x_i)(y_j - y_i)\right)}.
   
-  \item \code{"rho"}
+  \item \code{"rho"} for tests on changes in Spearman's rho.
   
   Only availabe for \eqn{d}-variate data with \eqn{d > 1}: assume that the given data \code{x} has the format \eqn{(x_{i,j} | i = 1, ..., n; j = 1, ..., d)}.
   \deqn{\hat{\sigma}^2 = a(d)^2 2^{2d} \left\{ \sum_{h = -(n-1)}^{n-1} K\left( \frac{|h|}{b_n} \right) \left( \sum_{i = 1}^{n-|h|} n^{-1} \prod_{j = 1}^d \hat{\phi}_n(x_i, x_j) \hat{\phi}_n(x_{i+|h|}, x_j) - M^2 \right) \right\} ,}

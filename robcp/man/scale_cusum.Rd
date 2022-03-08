@@ -9,7 +9,8 @@ Performs the CUSUM-based test on changes in the scale.
 
 \usage{
 scale_cusum(x, version = "empVar", method = "kernel", control = list(), 
-            constant = 1.4826, alpha = 0.5, fpc = TRUE, tol = 1e-08)
+            constant = 1.4826, alpha = 0.5, fpc = TRUE, tol, plot = FALSE, 
+            level = 0.05)
 }
 
 \arguments{
@@ -27,7 +28,11 @@ scale_cusum(x, version = "empVar", method = "kernel", control = list(),
 
 \item{fpc}{finite population correction (boolean).}
 
-\item{tol}{tolerance of the distribution function (numeric), which is used do compute p-values.}
+\item{tol}{tolerance for the computation of the p-value (numeric). Default for kernel-based long run variance estimation: 1e-8. Default for bootstrap: 1e-3.}
+
+\item{plot}{should the test statistic be plotted (cf. \code{\link{plot.cpStat}})? Boolean.}
+
+\item{level}{significance level of the test (numeric between 0 and 1).}
 }
 
 \value{
@@ -42,7 +47,7 @@ A list of the class "htest" containing the following components:
 Plus if \code{method = "kernel"}:
 \item{lrv}{list containing the compontents \code{method}, \code{param} and \code{value}.}
 else if \code{method = "bootstrap"}:
-\item{......................}{.................................................................}
+\item{bootstrap}{list containing the compontents \code{param} (= block length) and \code{crit.value}.}
 }
 
 \details{
@@ -53,6 +58,8 @@ The function performs a CUSUM-type test on changes in the scale. Formally, the h
 where \eqn{\sigma^2_t = Var(X_t)} and \eqn{n} is the length of the time series. \eqn{k} is called a 'change point'. The hypotheses do not include \eqn{\sigma^2_1} since then the variance of one single observation would need to be estimated. 
 
 The test statistic is computed using \code{\link{scale_stat}} and in the case of \code{method = "kernel"} asymptotically follows a Kolmogorov distribution. To derive the p-value, the function \code{\link{pKSdist}} is used.
+
+If \code{method = "bootstrap"}, a dependent block bootstrap with parameters \eqn{B = 1/}\code{tol} and \eqn{l =} \code{control$l} is performed in order to derive the p-value of the test. First, select a boostrap sample \eqn{x_1^*, ..., x_{kl}^*}, \eqn{k = \lfloor n/l \rfloor}, the following way: Uniformly draw a random iid sample \eqn{J_1, ..., J_k} from \eqn{\{1, ..., n-l+1\}} and concatenate the blocks \eqn{x_{J_i}, ..., x_{J_i + l-1}} for \eqn{i = 1, ..., k}. Then apply the test statistic \eqn{\hat{T}_s} to the bootstrap sample. Repeat the procedure \eqn{B} times. The p-value is can be obtained as the proportion of the bootstrapped test statistics which is larger than the test statistic on the full sample.
 }
 
 \references{

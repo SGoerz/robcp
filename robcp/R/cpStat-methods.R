@@ -20,12 +20,13 @@ print.cpStat <- function(x, ...)
 ##'
 ##'@description 
 ##'Plots the trajectory of the test statistic process with a red line indicating 
-##'the critical value (alpha = 0.05) and a blue line indicating the most
+##'the critical value (default: to the level alpha = 0.05) and a blue line indicating the most
 ##'probable change point location
 ##'
 ##'@param x object of the class 'cpStat'.
 ##'@param ylim the y limits of the plot.
 ##'@param xaxt a character which specifies the x axis type (see \code{\link{par}}).
+##'@param crit.val critical value of the test.
 ##'@param ... other graphical parameters (see \code{\link{par}}).
 ##'
 ##'@details
@@ -36,10 +37,10 @@ print.cpStat <- function(x, ...)
 ##'   
 ##'@seealso \code{\link{plot}}, \code{\link{par}}, \code{\link{CUSUM}}, \code{\link{HodgesLehmann}}, 
 ##'         \code{\link{wmw_stat}}
-plot.cpStat <- function(x, ylim, xaxt, ...)
+plot.cpStat <- function(x, ylim, xaxt, crit.val = 1.358, ...)
 {
   data <- attr(x, "teststat")
-  if(missing(ylim)) ylim <- c(min(c(data, 1.358)), max(c(data, 1.358)))
+  if(missing(ylim)) ylim <- c(min(c(data, crit.val)), max(c(data, crit.val)))
   if(missing(xaxt))
   {
     xaxis <- TRUE
@@ -56,7 +57,7 @@ plot.cpStat <- function(x, ylim, xaxt, ...)
     axis(1, ticks)
     axis(1, k, col.axis = "blue", col.ticks = "blue", tick = TRUE)
   }
-  abline(h = 1.358, col = "red")
+  abline(h = crit.val, col = "red")
   
   return(invisible(NULL))
 }

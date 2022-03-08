@@ -7,7 +7,7 @@ Computes the test statistic for the Hodges-Lehmann change point test.
 }
 \usage{
 HodgesLehmann(x, b_u = "nrd0", method = "subsampling", control = list())
-u_hat(x, b_u)
+u_hat(x, b_u = "nrd0")
 }
 \arguments{
 \item{x}{time series (numeric or \code{ts} vector).}
@@ -19,17 +19,24 @@ u_hat(x, b_u)
 \details{
 Let \eqn{n} be the length of the time series. The Hodges-Lehmann test statistic is then computed as
 \deqn{\frac{\sqrt{n}}{\hat{\sigma}_n} \max_{1 \leq k < n} \hat{u}_{k,n}(0) \frac{k}{n} \left(1 - \frac{k}{n}\right) | med\{(x_j - x_i); 1 \leq i \leq k; k+1 \leq j \leq n\} | ,}
-where \eqn{\hat{\sigma}} is the estimated long run variance, computed by the square root of \code{\link{lrv}}. By default the long run variance is estimated via overlapping subsampling with an adequate block length: first the time series \eqn{x} is corrected for the estimated change point and Spearman's autocorrelation to lag 1 (\eqn{\rho}) is computed. Then the default block length follows as 
+where \eqn{\hat{\sigma}} is the estimated long run variance, computed by the square root of \code{\link{lrv}}. By default the long run variance is estimated kernel-based with the following bandwidth: first the time series \eqn{x} is corrected for the estimated change point and Spearman's autocorrelation to lag 1 (\eqn{\rho}) is computed. Then the default block length follows as 
 \deqn{l = \max\left\{\left\lceil n^{1/3} \left( \frac{2\rho}{1 - \rho^2}\right)^{2/3} \right\rceil, 1\right\}.}
 
-NEEDS TO BE CHANGED:
-
-\eqn{\hat{u}_{k,n}(0)} is estimated by \code{u_hat} on data \eqn{\tilde{x}}, where \eqn{med\{(x_j - x_i); 1 \leq i \leq k; k+1 \leq j \leq n\}} was subtracted from \eqn{x_{k+1}, ..., x_n}. Then \code{u_hat} returns
-\deqn{\frac{2}{n(n-1)b_u} \sum_{1 \leq i < j \leq n} QS((\tilde{x}_i - \tilde{x}_j) / b_u),}
-where \eqn{QS} is the Quadratic Spectral kernel function (cf. Section 'Note' in \code{\link{lrv}}). By default, \eqn{b_u} is computed from the set of all possible differences between two values in \code{x} using \code{\link{bw.SJ}} or \code{\link{bw.nrd0}}} 
+\eqn{\hat{u}_{k,n}(0)} is estimated by \code{u_hat} on data \eqn{\tilde{x}}, where \eqn{med\{(x_j - x_i); 1 \leq i \leq k; k+1 \leq j \leq n\}} was subtracted from \eqn{x_{k+1}, ..., x_n}. Then \code{\link{density}} with the arguments \code{na.rm = TRUE}, \code{from = 0}, \code{to = 0}, \code{n = 1} and \code{bw =  b_u} is applied to \eqn{(\tilde{x}_i - \tilde{x_j})_{1 \leq i < j \leq n}}.
+}
+%\eqn{\hat{u}_{k,n}(0)} is estimated by \code{u_hat} on data \eqn{\tilde{x}}, where \eqn{med\{(x_j - x_i); 1 \leq i \leq k; k+1 \leq j \leq n\}} was subtracted from \eqn{x_{k+1}, ..., x_n}. Then \code{u_hat} returns
+%\deqn{\frac{2}{n(n-1)b_u} \sum_{1 \leq i < j \leq n} QS((\tilde{x}_i - \tilde{x}_j) / b_u),}
+%where \eqn{QS} is the Quadratic Spectral kernel function (cf. Section 'Note' in \code{\link{lrv}}). By default, \eqn{b_u} is computed from the set of all possible differences between two values in \code{x} using \code{\link{bw.SJ}} or \code{\link{bw.nrd0}}} 
 
 \value{
-\code{HodgesLehmann} returns a test statistic (numeric value) with the attribute cp-location indicating at which index a change point is most likely. The returned object is an S3 object of the class \code{cpStat}.
+\code{HodgesLehmann} returns a test statistic (numeric value) with the following attributes:
+\item{cp-location}{indicating at which index a change point is most likely.}
+\item{teststat}{test process (before taking the maximum).}
+\item{lrv-estimation}{long run variance estimation method.}
+\item{sigma}{estimated long run variance.}
+\item{param}{parameter used for the lrv estimation.}
+\item{kFun}{kernel function used for the lrv estimation.}
+Is an S3 object of the class "cpStat".
 
 \code{u_hat} returns a numeric value.
 }

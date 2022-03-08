@@ -70,7 +70,7 @@ scale_stat <- function(x, version = "empVar", method = "kernel", control = list(
     stat <- .Call("CUSUM", as.numeric(x^2))
     # sigma <-  sqrt(lrv(x, method = "kernel", control = control))
     res <- max(stat)
-    k <- which.max(res)
+    k <- which.max(stat)
   } else 
   {
     if(version == "MD")
@@ -108,7 +108,7 @@ scale_stat <- function(x, version = "empVar", method = "kernel", control = list(
     {
       stop("version not supported.")
     }
-
+    
     control$scale <- res[n-1]
     control$distr <- FALSE
     
@@ -158,8 +158,14 @@ scale_stat <- function(x, version = "empVar", method = "kernel", control = list(
 ##'@return A list fo the class "htest" containing
 
 scale_cusum <- function(x, version = "empVar", method = "kernel", control = list(), 
-                        constant = 1.4826, alpha = 0.5, fpc = TRUE, tol = 1e-8)
+                        constant = 1.4826, alpha = 0.5, fpc = TRUE, tol,
+                        plot = FALSE, level = 0.05)
 {
+  if(missing(tol))
+  {
+    if(method == "kernel") tol <- 1e-8 else tol <- 1e-3
+  }
+  
   Dataname <- deparse(substitute(x))
   
   stat <- scale_stat(x = x, version = version, method = method, control = control,
@@ -175,12 +181,16 @@ scale_cusum <- function(x, version = "empVar", method = "kernel", control = list
     erg2 <- list(lrv = list(method = "kernel", 
                             param = attr(stat, "param"), 
                             value = attr(stat, "sigma")))
+    if(plot) plot(stat)
   } else if(method == "bootstrap")
   {
-    control$l <- opt.param(x)
+    if(is.na(control$l)) control$l <- opt.param(x)
     if(is.null(control$B)) control$B <- 1 / tol
-    p.val <- dbb(stat, data = x, version = version, control = control, alpha = alpha)
-    erg2 <- list(bootstrap = list(param = control$l))
+    y <- dbb(stat, data = x, version = version, control = control,
+             alpha = alpha, constant = constant, level = level)
+    p.val <- y[[1]]
+    erg2 <- list(bootstrap = list(param = control$l, crit.value = y[[2]]))
+    if(plot) plot(stat, crit.val = y[[2]])
   } else
   {
     stop("method not supported.")

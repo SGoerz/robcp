@@ -10,7 +10,7 @@
 ##'@return Test statistic (numeric value) with the attribute cp-location 
 ##'        indicating at which index a change point is most likely. Is an S3 
 ##'        object of the class cpStat        
-HodgesLehmann <- function(x, b_u = "nrd0", method = "subsampling", control = list())
+HodgesLehmann <- function(x, b_u = "nrd0", method = "kernel", control = list())
 {
   ## argument check
   if(is(x, "ts"))
@@ -91,12 +91,12 @@ HodgesLehmann <- function(x, b_u = "nrd0", method = "subsampling", control = lis
   {
     n <- length(x)
     x.adj <- x
-    #x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
+    x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
     rho <- abs(cor(x.adj[-n], x.adj[-1], method = "spearman"))
     
     #####
     p1 <- 1/3
-    p2 <- 2/3
+    p2 <- 0.85
     #####
     
     param <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)

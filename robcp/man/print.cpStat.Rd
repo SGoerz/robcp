@@ -15,3 +15,8 @@ Prints the value of the test statistic and add the most likely change point loca
 \seealso{
 \code{\link{print}}, \code{\link{wilcox_stat}}, \code{\link{CUSUM}}, \code{\link{HodgesLehmann}},
 }
+
+
+\author{
+Sheila \enc{Görz}{Goerz}
+}

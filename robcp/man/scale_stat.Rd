@@ -40,29 +40,28 @@ Is an S3 object of the class "cpStat".
 }
 
 \details{
-Let \eqn{n} be the length of the time series. The (scaled) CUSUM test statistic for testing on a change in the scale is then defined as
-\deqn{\hat{T}_{s} = \max_{1 < k \leq n} \frac{k}{\sqrt{n}\hat{D}_s} |\hat{s}_{1:k} - \hat{s}_{1:n}|,}
-where \eqn{\hat{s}_{1:k}} is a scale estimator computed using only the first \eqn{k} elements of the time series \eqn{x}. \eqn{\hat{D}_s} is the estimated long run variance, computed by the function \code{\link{lrv}} using kernel-based estimation. 
+Let \eqn{n} be the length of the time series. The CUSUM test statistic for testing on a change in the scale is then defined as
+\deqn{\hat{T}_{s} = \max_{1 < k \leq n} \frac{k}{\sqrt{n}} |\hat{s}_{1:k} - \hat{s}_{1:n}|,}
+where \eqn{\hat{s}_{1:k}} is a scale estimator computed using only the first \eqn{k} elements of the time series \eqn{x}.
 
-DEPENDENT BLOCK BOOTSTRAP?????
+If \code{method = "kernel"}, the test statistic \eqn{\hat{T}_s} is divided by the estimated long run variance \eqn{\hat{D}_s} so that it asymptotically follows a Kolmogorov distribution. \eqn{\hat{D}_s} is computed by the function \code{\link{lrv}} using kernel-based estimation. 
 
 For the scale estimator \eqn{\hat{s}_{1:k}}, there are five different options which can be set via the \code{version} parameter:
 
-Empirical variance (\code{empVar})
+\bold{Empirical variance} (\code{empVar})
 \deqn{\hat{\sigma}^2_{1:k} = \frac{1}{k-1} \sum_{i = 1}^k (x_i - \bar{x}_{1:k})^2; \; \bar{x}_{1:k} = k^{-1} \sum_{i = 1}^k x_i.}
 
-Mean deviation (\code{MD})
+\bold{Mean deviation} (\code{MD})
 \deqn{\hat{d}_{1:k}= \frac{1}{k-1} \sum_{i = 1}^k |x_i - med_{1:k}|,}
 where \eqn{med_{1:k}} is the median of \eqn{x_1, ..., x_k}. 
 
-
-Gini's mean difference (\code{GMD})
+\bold{Gini's mean difference} (\code{GMD})
 \deqn{\hat{g}_{1:k} = \frac{2}{k(k-1)} \sum_{1 \leq i < j \leq k} (x_i - x_j).}
 
-\strong{Median absolute deviation} (\code{MAD})
+\bold{Median absolute deviation} (\code{MAD})
 \deqn{\hat{m}_{1:k} = med(x_1 - med_{1:k}, ..., x_k - med_{1:k}).}
 
-\eqn{Q^{\alpha}} (\code{Qalpha})
+%\bold{\eqn{Q^{\alpha}}} (\code{Qalpha})
 \deqn{\hat{Q}^{\alpha}_{1:k} = U_{1:k}^{-1}(\alpha) = \inf\{x | \alpha \leq U_{1:k}(x)\},}
 where \eqn{U_{1:k}} is the empirical distribtion function of \eqn{|x_i - x_j|, \, 1 \leq i < j \leq k} (cf. \code{\link{Qalpha}}). 
 
@@ -92,10 +91,10 @@ x <- arima.sim(list(ar = 0.5), 100)
 
 # under H_0:
 scale_stat(x, "GMD")
-scale_stat(x, "Qalpha", method = "bootstrap", 1e-3)
+scale_stat(x, "Qalpha", method = "bootstrap")
 
 # under the alternative:
 x[51:100] <- x[51:100] * 3
 scale_stat(x)
-scale_stat(x, "Qalpha", method = "bootstrap", tol = 1e-3)
+scale_stat(x, "Qalpha", method = "bootstrap")
 }

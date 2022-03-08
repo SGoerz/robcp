@@ -82,6 +82,16 @@ test_that("CUSUM test for changes in the scale is performed correctly",
   
   expect_equal(mean(p < 0.05), 1, tolerance = 0.01)
   
+  skip_on_cran()
+  suppressWarnings({p <- replicate(200, 
+  {
+    x <- rnorm(200)
+    x[101:200] <- x[101:200] * 3
+    scale_cusum(x, control = list(b_n = NA), method = "bootstrap")$p.value
+  })})
+  
+  expect_equal(mean(p < 0.05), 1, tolerance = 0.01)
+  
   
   # MD:
   suppressWarnings({p <- replicate(200, 
@@ -99,7 +109,17 @@ test_that("CUSUM test for changes in the scale is performed correctly",
   {
     x <- rnorm(200)
     x[101:200] <- x[101:200] * 3
-    scale_cusum(x, version = "GMD")$p.value
+    scale_cusum(x, version = "GMD", method = "kernel")$p.value
+  })})
+  
+  expect_equal(mean(p < 0.05), 1, tolerance = 0.01)
+  
+  skip_on_cran()
+  suppressWarnings({p <- replicate(200, 
+  {
+    x <- rnorm(200)
+    x[101:200] <- x[101:200] * 3
+    scale_cusum(x, version = "GMD", method = "bootstrap", tol = 1e-3)$p.value
   })})
   
   expect_equal(mean(p < 0.05), 1, tolerance = 0.01)
@@ -110,9 +130,9 @@ test_that("CUSUM test for changes in the scale is performed correctly",
   {
     x <- rnorm(200)
     x[101:200] <- x[101:200] * 3
-    scale_cusum(x, version = "MAD", control = list(b_n = 10))$p.value
+    scale_cusum(x, version = "MAD", method = "kernel", control = list(b_n = 15))$p.value
   })})
-
+  hist(p)
   expect_equal(mean(p < 0.05), 1, tolerance = 0.01)
   
   # Qalpha:
@@ -120,8 +140,8 @@ test_that("CUSUM test for changes in the scale is performed correctly",
   {
     x <- rnorm(200)
     x[101:200] <- x[101:200] * 10
-    scale_cusum(x, version = "Qalpha", method = "kernel",
-                alpha = 0.8, tol = 1e-8)$p.value
+    scale_cusum(x, version = "Qalpha", method = "bootstrap",
+                alpha = 0.8, tol = 1e-3)$p.value
   })})
   
   expect_equal(mean(p < 0.05), 1, tolerance = 0.1)
@@ -134,4 +154,35 @@ test_that("CUSUM test for changes in the scale is performed correctly",
   ## maybe some more tests
   ## best to be checked graphically:
   ## hist(p)
+})
+
+
+test_that("Dependent wild bootstrap is performed correctly", 
+{
+  n <- 50
+  x <- rnorm(n)
+  seed <- 1895
+  B <- 100
+  l <- 5
+  k <- floor(n / l)
+  
+  stat1 <- scale_stat(x, "empVar", "bootstrap")
+  stat2 <- scale_stat(x, "GMD", "bootstrap")
+  
+  set.seed(seed)
+  res <- replicate(B,
+  {
+    j <- sample(1:(n-l+1), k, replace = TRUE)
+    x_star <- x[as.vector(index <- sapply(j, function(j) j:(j+l-1)))]
+    c(scale_stat(x_star, "empVar", "bootstrap"), 
+      scale_stat(x_star, "GMD", "bootstrap"))
+  })
+  
+  expect_equal(scale_cusum(x, "empVar", "bootstrap", tol = 1/B, fpc = FALSE,
+                           control = list(l = l, seed = seed))$p.value, 
+               mean(res[1, ] > stat1))
+  expect_equal(scale_cusum(x, "GMD", "bootstrap", tol = 1/B, fpc = FALSE,
+                           control = list(l = l, seed = seed))$p.value, 
+               mean(res[2, ] > stat2))
+  
 })

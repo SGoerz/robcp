@@ -65,5 +65,4 @@ export(cor_stat)
 
 export(cor_cusum)
 
-
 export(Qalpha)
