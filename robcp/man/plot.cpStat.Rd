@@ -17,7 +17,7 @@
 }
 \description{
 Plots the trajectory of the test statistic process together with a red line indicating 
-the critical value (alpha = 0.05) and a blue line indicating. the most
+the critical value (alpha = 0.05) and a blue line indicating the most
 probable change point location
 }
 \details{

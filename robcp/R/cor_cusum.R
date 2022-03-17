@@ -9,7 +9,7 @@
 ##'        indicating at which index a change point is most likely. Is an S3 
 ##'        object of the class cpStat   
 
-cor_stat <- function(x, version = "rho", control = list())
+cor_stat <- function(x, version = c("tau", "rho"), control = list())
 {
   ## argument check
   if(is(x, "ts"))
@@ -23,6 +23,8 @@ cor_stat <- function(x, version = "rho", control = list())
     stop("x must be a numeric or integer matrix with at least 2 columns!")
   }
   ## end argument check
+  
+  version <- match.arg(version)
   
   n <- nrow(x)
   
@@ -89,7 +91,7 @@ cor_stat <- function(x, version = "rho", control = list())
 ##'@param fpc finite population correction (boolean).
 ##'@param tol tolerance of the distribution function (numeric), which is used do compute p-values.
 ##'@return A list fo the class "htest"
-cor_cusum <- function(x, version = "rho", control = list(), fpc = TRUE, 
+cor_cusum <- function(x, version = c("tau", "rho"), control = list(), fpc = TRUE, 
                       tol = 1e-8, plot = FALSE)
 {
   Dataname <- deparse(substitute(x))

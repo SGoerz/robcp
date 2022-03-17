@@ -16,7 +16,8 @@
 ##        constant (scale factor of the MAD; numeric)
 ##      
 ## output: transformed time series (numeric vector or matrix)
-psi <- function(y, fun = "HLm", k, constant = 1.4826)
+psi <- function(y, fun = c("HLm", "HLg", "SLm", "SLg", "HCm", "HCg", "SCm", "SCg"), 
+                k, constant = 1.4826)
 {
   ## argument check
   ### preserve (dim)names????
@@ -35,6 +36,7 @@ psi <- function(y, fun = "HLm", k, constant = 1.4826)
     stop("x must be numeric and either be a vector, a matrix or a ts object!")
   }
   
+  fun <- match.arg(fun)
   fun <- which(c("HLm", "HLg", "SLm", "SLg", "HCm", "HCg", "SCm", "SCg") == fun)
   if(length(fun) == 0) stop("Wrong argument to \'fun\'")
   

@@ -24,7 +24,7 @@ test_that("cor_stat is computed correctly",
   b_n <- 2
   
   y <- 33/16 / sqrt(4 * lrv(x, "kernel", control = list(b_n = b_n, version = "rho")))
-  z <- cor_stat(x, control = list(b_n = b_n))
+  z <- cor_stat(x, "rho", control = list(b_n = b_n))
   attributes(z) <- NULL
   expect_equal(z, y)
   

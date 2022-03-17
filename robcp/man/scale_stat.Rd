@@ -8,14 +8,14 @@ Computes the test statistic for CUSUM-based tests on scale changes.
 }
 
 \usage{
-scale_stat(x, version = "empVar", method = "kernel", control = list(), 
-           constant = 1.4826, alpha = 0.5)
+scale_stat(x, version =  c("empVar", "MD", "GMD"), method = "kernel",
+           control = list(), constant = 1.4826, alpha = 0.5)
 }
 
 \arguments{
 \item{x}{time series (numeric or ts vector).}
 
-\item{version}{variance estimation method. One of \code{"empVar"}, \code{"MD"}, \code{"GMD"}, \code{"MAD"}, \code{"Qalpha"}.}
+\item{version}{variance estimation method.}
 
 \item{method}{either \code{"kernel"} for performing a kernel-based long run variance estimation, or \code{"bootstrap"} for performing a dependent wild bootstrap. See 'Details' below.}
 
@@ -58,12 +58,12 @@ where \eqn{med_{1:k}} is the median of \eqn{x_1, ..., x_k}.
 \bold{Gini's mean difference} (\code{GMD})
 \deqn{\hat{g}_{1:k} = \frac{2}{k(k-1)} \sum_{1 \leq i < j \leq k} (x_i - x_j).}
 
-\bold{Median absolute deviation} (\code{MAD})
-\deqn{\hat{m}_{1:k} = med(x_1 - med_{1:k}, ..., x_k - med_{1:k}).}
+%\bold{Median absolute deviation} (\code{MAD})
+%\deqn{\hat{m}_{1:k} = med(x_1 - med_{1:k}, ..., x_k - med_{1:k}).}
 
 %\bold{\eqn{Q^{\alpha}}} (\code{Qalpha})
-\deqn{\hat{Q}^{\alpha}_{1:k} = U_{1:k}^{-1}(\alpha) = \inf\{x | \alpha \leq U_{1:k}(x)\},}
-where \eqn{U_{1:k}} is the empirical distribtion function of \eqn{|x_i - x_j|, \, 1 \leq i < j \leq k} (cf. \code{\link{Qalpha}}). 
+%\deqn{\hat{Q}^{\alpha}_{1:k} = U_{1:k}^{-1}(\alpha) = \inf\{x | \alpha \leq U_{1:k}(x)\},}
+%where \eqn{U_{1:k}} is the empirical distribtion function of \eqn{|x_i - x_j|, \, 1 \leq i < j \leq k} (cf. \code{\link{Qalpha}}). 
 
 
 For the kernel-based long run variance estimation, the default bandwidth \eqn{b_n} is determined as follows:

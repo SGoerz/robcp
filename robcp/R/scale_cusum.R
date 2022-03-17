@@ -30,8 +30,8 @@ opt.param <-  function(x)
 ##'        indicating at which index a change point is most likely. Is an S3 
 ##'        object of the class cpStat   
 
-scale_stat <- function(x, version = "empVar", method = "kernel", control = list(), 
-                       constant = 1.4826, alpha = 0.5)
+scale_stat <- function(x, version = c("empVar", "MD", "GMD"), method = "kernel",
+                       control = list(), constant = 1.4826, alpha = 0.5)
 {
   ## argument check
   if(is(x, "ts"))
@@ -52,12 +52,7 @@ scale_stat <- function(x, version = "empVar", method = "kernel", control = list(
   {
     control$kFun <- "SFT"
   }
-  
-  if(method == "kernel" && (is.null(control$b_n) || is.na(control$b_n)))
-  {
-    control$b_n <- max(opt.param(x), opt.param(x^2))
-  }
-  
+  version <- match.arg(version)
   ## end argument check
   
   control$version <- version
@@ -87,23 +82,23 @@ scale_stat <- function(x, version = "empVar", method = "kernel", control = list(
     } else if(version == "GMD")
     {
       res <- .Call("GMD", as.numeric(x), as.numeric(n)) / ((1:(n-1)) * (2:n)) * 2
-    } else if(version == "MAD")
-    {
-      res <- sapply(2:n, function(k) mad(x[1:k], constant = constant))
-      control$loc <- median(x)
-    } else if(version == "Qalpha")
-    {
-      res <- Qalpha(x, alpha)
-      # sorted <- x[1]
-      # res <- sapply(2:n, function(k)
-      # {
-      #   sorted <<- sort(c(sorted, x[k]), decreasing = TRUE)
-      #   a <- ceiling(k * (k - 1) / 2 * (1 - beta))
-      #   # a <- floor(k * (k - 1) / 2 * (1 - beta)) + 1
-      #   kthPair(sorted[1:(k-1)], -sorted[2:k], a)
-      # })
-      
-      control$loc <- alpha
+    # } else if(version == "MAD")
+    # {
+    #   res <- sapply(2:n, function(k) mad(x[1:k], constant = constant))
+    #   control$loc <- median(x)
+    # } else if(version == "Qalpha")
+    # {
+    #   res <- Qalpha(x, alpha)
+    #   # sorted <- x[1]
+    #   # res <- sapply(2:n, function(k)
+    #   # {
+    #   #   sorted <<- sort(c(sorted, x[k]), decreasing = TRUE)
+    #   #   a <- ceiling(k * (k - 1) / 2 * (1 - beta))
+    #   #   # a <- floor(k * (k - 1) / 2 * (1 - beta)) + 1
+    #   #   kthPair(sorted[1:(k-1)], -sorted[2:k], a)
+    #   # })
+    #   
+    #   control$loc <- alpha
     } else 
     {
       stop("version not supported.")
@@ -120,6 +115,13 @@ scale_stat <- function(x, version = "empVar", method = "kernel", control = list(
   
   if(method == "kernel") 
   {
+    if(is.null(control$b_n) || is.na(control$b_n))
+    {
+      x.adj <- x
+      x.adj[(k+1):n] <- x.adj[(k+1):n] / sd(x.adj[(k+1):n]) * sd(x.adj[1:k])
+      control$b_n <- max(opt.param(x.adj), opt.param(x.adj^2))
+    }
+    
     sigma <- sqrt(lrv(x, method = "kernel", control = control))
     res <- res / sigma 
     
@@ -156,10 +158,10 @@ scale_stat <- function(x, version = "empVar", method = "kernel", control = list(
 ##'@param fpc finite population correction (boolean).
 ##'@param tol tolerance of the distribution function (numeric), which is used do compute p-values.
 ##'@return A list fo the class "htest" containing
-
-scale_cusum <- function(x, version = "empVar", method = "kernel", control = list(), 
-                        constant = 1.4826, alpha = 0.5, fpc = TRUE, tol,
-                        plot = FALSE, level = 0.05)
+##'
+scale_cusum <- function(x, version = c("empVar", "MD", "GMD"), method = "kernel",
+                        control = list(), constant = 1.4826, alpha = 0.5, 
+                        fpc = TRUE, tol, plot = FALSE, level = 0.05)
 {
   if(missing(tol))
   {
@@ -184,7 +186,7 @@ scale_cusum <- function(x, version = "empVar", method = "kernel", control = list
     if(plot) plot(stat)
   } else if(method == "bootstrap")
   {
-    if(is.na(control$l)) control$l <- opt.param(x)
+    if(is.null(control$l)) control$l <- opt.param(x)
     if(is.null(control$B)) control$B <- 1 / tol
     y <- dbb(stat, data = x, version = version, control = control,
              alpha = alpha, constant = constant, level = level)

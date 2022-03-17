@@ -7,8 +7,8 @@ Performs a CUSUM-based test on changes in Spearman's rho or Kendall's tau.
 }
 
 \usage{
-cor_cusum(x, version = "rho", control = list(), fpc = TRUE, tol = 1e-08, 
-          plot = FALSE)
+cor_cusum(x, version = c("tau", "rho"), control = list(), fpc = TRUE, 
+          tol = 1e-08, plot = FALSE)
 }
 
 \arguments{

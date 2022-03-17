@@ -19,7 +19,7 @@ kthPair(X, Y, k, k2 = NA)
 }
 
 \details{
-A generalized version of the algorithm of Johnson and Mizoguchi (1978), where \eqn{X} and \eqn{Y} are allowed to be of different lengths. The optional arguemnt \code{k2} allows the computation of the mean of two consecutive value without running the algorithm twice.
+A generalized version of the algorithm of Johnson and Mizoguchi (1978), where \eqn{X} and \eqn{Y} are allowed to be of different lengths. The optional argument \code{k2} allows the computation of the mean of two consecutive value without running the algorithm twice.
 }
 
 \value{

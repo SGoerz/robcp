@@ -61,11 +61,9 @@ RcppExport SEXP lrv_matrix(SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP lrv_rho(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP lrv_subs_nonoverlap(SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP lrv_subs_overlap(SEXP, SEXP, SEXP);
-RcppExport SEXP MAD_f(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP MD(SEXP, SEXP, SEXP);
 RcppExport SEXP pKSdist(SEXP, SEXP);
 RcppExport SEXP psi(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP Qalpha_u(SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP tau(SEXP, SEXP, SEXP);
 RcppExport SEXP trafo_tau(SEXP, SEXP);
 RcppExport SEXP wilcox(SEXP);
@@ -86,11 +84,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"lrv_rho",             (DL_FUNC) &lrv_rho,             6},
     {"lrv_subs_nonoverlap", (DL_FUNC) &lrv_subs_nonoverlap, 4},
     {"lrv_subs_overlap",    (DL_FUNC) &lrv_subs_overlap,    3},
-    {"MAD_f",               (DL_FUNC) &MAD_f,               6},
     {"MD",                  (DL_FUNC) &MD,                  3},
     {"pKSdist",             (DL_FUNC) &pKSdist,             2},
     {"psi",                 (DL_FUNC) &psi,                 7},
-    {"Qalpha_u",            (DL_FUNC) &Qalpha_u,            5},
     {"tau",                 (DL_FUNC) &tau,                 3},
     {"trafo_tau",           (DL_FUNC) &trafo_tau,           2},
     {"wilcox",              (DL_FUNC) &wilcox,              1},

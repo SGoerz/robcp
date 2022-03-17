@@ -95,8 +95,8 @@ HodgesLehmann <- function(x, b_u = "nrd0", method = "kernel", control = list())
     rho <- abs(cor(x.adj[-n], x.adj[-1], method = "spearman"))
     
     #####
-    p1 <- 1/3
-    p2 <- 0.85
+    p1 <- 0.45
+    p2 <- 0.9
     #####
     
     param <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)

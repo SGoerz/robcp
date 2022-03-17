@@ -8,7 +8,7 @@ Computes the test statistic for a CUSUM-based tests on changes in Spearman's rho
 }
 
 \usage{
-cor_stat(x, version = "rho", control = list())
+cor_stat(x, version = c("tau", "rho"), control = list())
 }
 
 \arguments{
@@ -35,7 +35,7 @@ Let \eqn{n} be the length of the time series, i.e. the number of rows in \code{x
 where \eqn{\hat{\xi}} is an estimator for the property on which to test, and \eqn{\hat{\sigma}} is an estimator for the square root of the corresponding long run variance (cf. \code{\link{lrv}}).
 
 
-If \code{version = "tau"}, the function tests if the correlation between \eqn{X_i} and \eqn{Y_i} of the bivariate time series \eqn{(X_i, Y_i)_{i = 1, ..., n}} stays constant for all \eqn{i = 1, ..., n} by considering Kendall's tau. Therefore, \eqn{\hat{\xi} = \hat{\tau}} is the the sample version of Kendall's tau:
+If \code{version = "tau"}, the function tests if the correlation between \eqn{x_i} and \eqn{x_i} of the bivariate time series \eqn{(x_i, x_i)_{i = 1, ..., n}} stays constant for all \eqn{i = 1, ..., n} by considering Kendall's tau. Therefore, \eqn{\hat{\xi} = \hat{\tau}} is the the sample version of Kendall's tau:
 \deqn{\hat{\tau}_k = \frac{2}{k(k-1)} \sum_{1 \leq i < j \leq k} sign\left((x_j - x_i)(y_j - y_i)\right).}
 The default bandwidth for the kernel-based long run variance estimation is \eqn{b_n = \lfloor 2n^{1/3} \rfloor} and the default kernel function is the quatratic kernel.
 

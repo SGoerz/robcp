@@ -42,7 +42,7 @@ test_that("HodgesLehmann computes the correct value",
   x <- c(14, 49, 50, 47, 28)
   l <- 2
   y <- sqrt(5) * 5.44 * u_hat(x - c(0, rep(34, 4))) / 
-    sqrt(lrv(x, "subsampling", control = list(l = l, overlapping = TRUE, distr = TRUE)))
+    sqrt(lrv(x, "kernel", control = list(l = l, overlapping = TRUE, distr = TRUE)))
   z <- HodgesLehmann(x, control = list(l = l, overlapping = TRUE, distr = TRUE))
   attributes(z) <- NULL
   
@@ -52,7 +52,8 @@ test_that("HodgesLehmann computes the correct value",
   l <- 3
   y <- sqrt(6) * 310 / 36 * u_hat(x - c(rep(0, 5), 62)) /
     sqrt(lrv(x, "subs", control = list(l = l, overlapping = TRUE, distr = TRUE)))
-  z <- HodgesLehmann(x, control = list(l = l, overlapping = TRUE, distr = TRUE))
+  z <- HodgesLehmann(x, method = "subsampling",
+                     control = list(l = l, overlapping = TRUE, distr = TRUE))
   attributes(z) <- NULL
   
   expect_equal(z, y)
