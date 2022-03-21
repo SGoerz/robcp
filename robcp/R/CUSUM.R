@@ -22,6 +22,7 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
   {
     stop("x must be a numeric or integer vector or matrix!")
   }
+  method <- match.arg(method, c("subsampling", "kernel", "bootstrap"))
   ## end argument check
   
   
@@ -51,30 +52,33 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
     }
     
     temp <- .Call("CUSUM_ma", as.numeric(x), as.numeric(sigma.inv), 
-                 as.numeric(swaps), as.numeric(n), as.numeric(m))
+                  as.numeric(swaps), as.numeric(n), as.numeric(m))
+    k <- which.max(temp)
   } else
   {
     temp <- .Call("CUSUM", as.numeric(x))
+    k <- which.max(temp)
     
     if((method == "subsampling" & (is.null(control$l) || is.na(control$l))) | 
-       (method == "kernel" & (is.null(control$b_n) || is.na(control$b_n))))
+       (method == "kernel" & (is.null(control$b_n) || is.na(control$b_n))) | 
+       (method == "bootstrap" & (is.null(control$l) || is.na(control$l))))
     {
       n <- length(x)
-      k <- temp[2]
       x.adj <- x
       x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
       rho <- cor(x.adj[-n], x.adj[-1], method = "spearman")
       
-      param <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
+      ###
+      p1 <- 0.45
+      p2 <- 0.4
+      ###
+      
+      param <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)
       param <- min(param, n-1)
-
-      if(method == "kernel")
-      {
-        control$b_n <- param
-      } else if(method == "subsampling")
-      {
-        control$l <- param
-      }
+      if(is.na(param)) param <- 1
+      
+      control$b_n <- param
+      control$l <- param
     }
     
     if(method == "kernel" & (is.null(control$kFun) || is.na(control$kFun)))
@@ -83,26 +87,21 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
     }
     
     sigma <- sqrt(lrv(x, method = method, control = control))
-    temp[1] <- temp[1] / sigma
+    temp <- temp / sigma
   }
   
-  erg <- temp[1]
-  attr(erg, "cp-location") <- as.integer(temp[2])
+  erg <- max(temp)
+  attr(erg, "cp-location") <- k
+  attr(erg, "data") <- ts(x)
+  attr(erg, "lrv-method") <- method
+  attr(erg, "sigma") <- sigma
+  if(method == "kernel") attr(erg, "param") <- control$b_n else
+    attr(erg, "param") <- control$l
+  attr(erg, "teststat") <- ts(temp)
   
   class(erg) <- "cpStat"
   
   return(erg)
 }
 
-##'print.cpStat: print method for change point statistics
-##'              prints the value of the test statistic and add the most likely
-##'              change point location
-##'@name CUSUM
-print.cpStat <- function(x, ...)
-{
-  loc <- attr(x, "cp-location")
-  print(round(as.numeric(x), digits = getOption("digits")), ...)
-  cat("location: ", loc)
-  return(invisible(x))
-}
 

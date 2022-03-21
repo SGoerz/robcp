@@ -31,6 +31,9 @@ test_that("kthPair returns the correct value",
   
   expect_equal(res1, res2)
   
+  x <- c(1, 2, 3)
+  kthPair(x, -x, 1)
+  expect_equal(x, c(1, 2, 3))
 })
 
 test_that("medianDiff returns the correct value",

@@ -61,13 +61,16 @@ double weightedMedian(NumericVector x, IntegerVector w)
 
 //'kthPair:
 //'
-//'input: - x and y (numeric vectors; descending order)
+//'input: - X and Y (numeric vectors; descending order)
 //'       - n and m (lengths of x and y; integer)
 //'       - k (index of element to choose; integer; 1 <= k <= n * m)
 //'
 // [[Rcpp::export]]
-double kthPair(NumericVector x, NumericVector y, int k, int k2 = NA_INTEGER)
+double kthPair(NumericVector X, NumericVector Y, int k, int k2 = NA_INTEGER)
 {
+  NumericVector x = clone(X);
+  NumericVector y = clone(Y);
+  
   int n = x.size();
   int m = y.size();
   
@@ -242,4 +245,5 @@ double kthPair(NumericVector x, NumericVector y, int k, int k2 = NA_INTEGER)
   return (temp[0] + temp[1]) / 2;
   //return wA[l - k + L];
 }
+
 

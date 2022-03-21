@@ -11,7 +11,7 @@
 ##'        indicating at which index a change point is most likely. Is an S3
 ##'        object of the class cpStat
 
-wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
+wilcox_stat <- function(x, h = 1L, method = "kernel", control = list())
 {
   ## argument check
   if(is(x, "ts"))
@@ -27,6 +27,7 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
   {
     control$overlapping <- FALSE
   }
+  method <- match.arg(method, c("subsampling", "kernel", "bootstrap"))
   
   n <- length(x)
   
@@ -52,7 +53,7 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
       res <- .Call("CUSUM", as.numeric(x))
     } else
     {
-      res <- .Call("wilcox", as.numeric(x), as.numeric(h))
+      res <- .Call("wilcox", as.numeric(x))
     }
   } else if(is.function(h))
   {
@@ -78,33 +79,41 @@ wilcox_stat <- function(x, h = 1L, method = "subsampling", control = list())
     stop("Invalid argument for h!")
   }
   
-  k <- res[2]
+  k <- which.max(res)
   
   if((method == "subsampling" & (is.null(control$l) || is.na(control$l))) | 
-     (method == "kernel" & (is.null(control$b_n) || is.na(control$b_n))))
+     (method == "kernel" & (is.null(control$b_n) || is.na(control$b_n))) | 
+     (method == "bootstrap" & (is.null(control$l) || is.na(control$l))))
   {
     n <- length(x)
     x.adj <- x
     x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
     rho <- cor(x.adj[-n], x.adj[-1], method = "spearman")
     
-    param <- max(ceiling(n^(1/3) * ((2 * rho) / (1 - rho^2))^(2/3)), 1)
-    param <- min(param, n-1)
+    #####
+    p1 <- ifelse(is.numeric(h) && h == 1, 0.25, 0.4)
+    p2 <- ifelse(is.numeric(h) && h == 1, 0.8, 1/3)
+    #####
     
-    if(method == "kernel")
-    {
-      control$b_n <- param
-    } else if(method == "subsampling")
-    {
-      control$l <- param
-    }
+    param <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)
+    param <- min(param, n-1)
+    if(is.na(param)) param <- 1
+    control$b_n <- param
+    control$l <- control$b_n
   }
   
-  Tn <- res[1] / sqrt(lrv(x, method = method, control = control))
+  sigma <- sqrt(lrv(x, method = method, control = control))
+  Tn <- max(res) / sigma
     
   attr(Tn, "cp-location") <- k
+  attr(Tn, "data") <- ts(x)
+  attr(Tn, "lrv-method") <- method
+  attr(Tn, "sigma") <- sigma
+  if(method == "kernel") attr(Tn, "param") <- control$b_n else
+    attr(Tn, "param") <- control$l
+  attr(Tn, "teststat") <- ts(res / sigma)
   class(Tn) <- "cpStat"
-  
+
   return(Tn)
 }
 

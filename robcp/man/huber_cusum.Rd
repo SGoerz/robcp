@@ -9,7 +9,7 @@ Performs a CUSUM test on data transformed by \code{\link{psi}}. Depending on the
 }
 \usage{
 huber_cusum(x, fun = "HLm", k, constant = 1.4826, method = "kernel",
-            control = list(), fpc = TRUE, tol = 1e-8, ...)
+            control = list(), fpc = TRUE, tol = 1e-8, plot = FALSE, ...)
 }
 
 \arguments{
@@ -21,6 +21,7 @@ huber_cusum(x, fun = "HLm", k, constant = 1.4826, method = "kernel",
 	\item{control}{a list of control parameters for the estimation of the long run variance (cf. \code{\link{lrv}}).}
 	\item{fpc}{finite population correction (boolean).}
 	\item{tol}{tolerance of the distribution function (numeric), which is used to compute p-values.}
+	\item{plot}{should the test statistic be plotted (cf. \code{\link{plot.cpStat}}). Boolean.}
 	\item{...}{further arguments to be passed to \code{\link{CUSUM}}.}
 }
 

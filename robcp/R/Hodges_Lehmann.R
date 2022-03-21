@@ -10,7 +10,7 @@
 ##'@return Test statistic (numeric value) with the attribute cp-location 
 ##'        indicating at which index a change point is most likely. Is an S3 
 ##'        object of the class cpStat        
-HodgesLehmann <- function(x, b_u = "SJ", method = "subsampling", control = list())
+HodgesLehmann <- function(x, b_u = "nrd0", method = "kernel", control = list())
 {
   ## argument check
   if(is(x, "ts"))
@@ -26,6 +26,15 @@ HodgesLehmann <- function(x, b_u = "SJ", method = "subsampling", control = list(
   {
     stop("x must consist of at least 2 observations!")
   }
+  if(is.null(control$distr) || is.na(control$distr)) 
+  {
+    control$distr <- TRUE
+  }
+  if(is.null(control$overlapping)) 
+  {
+    control$overlapping <- TRUE
+  }
+  method <- match.arg(method, c("subsampling", "kernel", "bootstrap"))
   ## end argument check
   n <- length(x)
   
@@ -62,41 +71,58 @@ HodgesLehmann <- function(x, b_u = "SJ", method = "subsampling", control = list(
     x.adj <- x - c(rep(0, k), rep(medDiff, n - k))
     #x.adj <- x - c(rep(median(x[1:k]), k), rep(median(x[(k+1):n]), n - k))
     
-    dens <- u_hat(x.adj, b_u)
+    diffs <- rep(x.adj, each = n) - as.numeric(x.adj)
+    diffs[which(diffs == 0)] = NA
+    
+    #diffs <- rep(x.adj[1:k], each = n - k) - as.numeric(x.adj[(k+1):n])
+
+    #dens <- u_hat(x.adj, b_u, "QS") 
+    dens <- density(diffs, na.rm = TRUE, from = 0, to = 0, n = 1, 
+                    bw = b_u)$y
+    
     dens * k / n * (1 - k / n) * abs(medDiff)
   })
   
   k <- which.max(Mn)
-  
+
   if((method == "subsampling" & (is.null(control$l) || is.na(control$l))) | 
      (method == "kernel" & (is.null(control$b_n) || is.na(control$b_n))) | 
      (method == "bootstrap" & (is.null(control$l) || is.na(control$l))))
   {
     n <- length(x)
     x.adj <- x
-    #x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
+    x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
     rho <- abs(cor(x.adj[-n], x.adj[-1], method = "spearman"))
     
-    #### change this?? ####
-    p1 <- 1/3
-    p2 <- 2/3
-    ####
+    #####
+    p1 <- 0.45
+    p2 <- 0.9
+    #####
     
     param <- max(ceiling(n^(p1) * ((2 * rho) / (1 - rho^2))^(p2)), 1)
-    control$b_n <- min(param, n-1)
+    param <- min(param, n-1)
+    if(is.na(param)) param <- 1
+    control$b_n <- param
     control$l <- control$b_n
   }
-  
-  Tn <- sqrt(n) * max(Mn) / sqrt(lrv(x, method = method, control = control))
-  
+
+  sigma <- sqrt(lrv(x, method = method, control = control))
+  Mn <- sqrt(n) * Mn / sigma
+  Tn <- max(Mn)
+
   attr(Tn, "cp-location") <- k
+  attr(Tn, "data") <- ts(x)
+  attr(Tn, "lrv-method") <- method
+  attr(Tn, "sigma") <- sigma
+  if(method == "kernel") attr(Tn, "param") <- control$b_n else
+    attr(Tn, "param") <- control$l
+  attr(Tn, "teststat") <- ts(Mn)
   class(Tn) <- "cpStat"
-  
+
   return(Tn)
 }
 
-
-u_hat <- function(x, b_u = "SJ")
+u_hat <- function(x, b_u = "nrd0")
 {
   n <- length(x)
   diffs <- rep(x, each = n) - as.numeric(x)

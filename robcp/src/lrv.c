@@ -21,14 +21,14 @@ void extract(double ma[], double arr[], int start, int n)
 
 //*************************** kernel functions *******************************//
 
-// Bartlett kernel 
+// Bartlett kernel (1)
 double kBartlett(double x)
 {
   if(fabs(x) < 1) return 1 - fabs(x);
   else return 0;
 }
 
-// flat top kernel  
+// flat top kernel (2)
 double kFT(double x)
 {
   if(fabs(x) <= 0.5) return 1;
@@ -36,7 +36,7 @@ double kFT(double x)
   else return 0;
 }
 
-// Parzen kernel
+// Parzen kernel (3)
 double kParzen(double x)
 {
   if(0 <= fabs(x) && fabs(x) <= 0.5)
@@ -49,7 +49,7 @@ double kParzen(double x)
   return 0;
 }
 
-// Quadratic Spectral kernel
+// Quadratic Spectral kernel (4)
 double kQS(double x)
 {
   if(x == 0) return 1;
@@ -57,18 +57,45 @@ double kQS(double x)
     (sin(6 * M_PI * x / 5) / (6 * M_PI* x / 5) - cos(6 * M_PI * x / 5)); 
 }
 
-// Tukey-Hanning kernel
+// Tukey-Hanning kernel (5)
 double kTH(double x)
 {
   if(fabs(x) <= 1) return (1 + cos(M_PI * x)) / 2;
   return 0;
 }
 
-// truncated kernel
+// truncated kernel (6)
 double kTruncated(double x)
 {
   if(fabs(x) > 1) return 0;
   return 1;
+}
+
+// smoothed flat top kernel (7)
+double kSFT(double x)
+{
+  if(fabs(x) < 1) return pow(1 - 4 * pow(fabs(x) - 0.5, 2), 2);
+  return 0;
+}
+
+// Epanechnikov kernel (8)
+double kEpanechnikov(double x)
+{
+  if(fabs(x) < 1) 
+  {
+    return 3 * (1 - x * x) / 4;
+  }
+  return 0;
+}
+
+// quadratic kernel (9)
+double kQuadratic(double x)
+{
+  if(fabs(x) < 1)
+  {
+    return pow((1 - x * x), 2);
+  }
+  return 0;
 }
 
 
@@ -96,6 +123,9 @@ double sigma_1(double *x, int n, double b_n, int k)
   case 4: kFun = &kQS; break;
   case 5: kFun = &kTH; break;
   case 6: kFun = &kTruncated; break;
+  case 7: kFun = &kSFT; break;
+  case 8: kFun = &kEpanechnikov; break;
+  case 9: kFun = &kQuadratic; break;
   default: kFun = &kTH; break;
   }
   
@@ -145,6 +175,9 @@ double sigma_2(double x1[], double x2[], int n, double b_n, int k)
   case 4: kFun = &kQS; break;
   case 5: kFun = &kTH; break;
   case 6: kFun = &kTruncated; break;
+  case 7: kFun = &kSFT; break;
+  case 8: kFun = &kEpanechnikov; break;
+  case 9: kFun = &kQuadratic; break;
   default: kFun = &kTH; break;
   }
   
@@ -236,6 +269,108 @@ SEXP lrv_matrix(SEXP Y, SEXP N, SEXP M, SEXP BN, SEXP K)
   }
   
   UNPROTECT(2);
+  return ERG;
+}
+
+
+SEXP lrv_rho(SEXP Y, SEXP N, SEXP M, SEXP BN, SEXP K, SEXP MEAN)
+{
+  SEXP X = duplicate(Y);
+  PROTECT(X);
+  double *x = REAL(X);
+  
+  int n = *REAL(N);
+  int m = *REAL(M);
+  double b_n = *REAL(BN);
+  int k = *REAL(K);
+  double mean = *REAL(MEAN);
+  
+  SEXP ERG;
+  PROTECT(ERG = allocVector(REALSXP, 1));
+  double *erg = REAL(ERG);
+  
+  
+  int i, j, h;
+  
+  double (*kFun)(double);
+  
+  switch(k)
+  {
+  case 1: kFun = &kBartlett; break;
+  case 2: kFun = &kFT; break;
+  case 3: kFun = &kParzen; break;
+  case 4: kFun = &kQS; break;
+  case 5: kFun = &kTH; break;
+  case 6: kFun = &kTruncated; break;
+  case 7: kFun = &kSFT; break;
+  case 8: kFun = &kEpanechnikov; break;
+  case 9: kFun = &kQuadratic; break;
+  default: kFun = &kTH; break;
+  }
+  
+  double var = 0;
+  double temp = 0;
+  double temp2;
+  double temp3;
+
+  for(i = 0; i < n; i++)
+  {
+    temp3 = 1;
+    for(j = 0; j < m; j++)
+    {
+      temp3 *= x[n * j + i] * x[n * j + i];
+    }
+    
+    var += temp3;
+  }
+  var /= n;
+  var -= mean; 
+  
+  for(h = 1; h < b_n; h++)
+  {
+    temp2 = 0;
+    for(i = 0; i < (n - h); i++)
+    {
+      temp3 = 1;
+      for(j = 0; j < m; j++)
+      {
+        temp3 *= x[n * j + i] * x[n * j + i + h];
+      }
+      
+      temp2 += temp3;
+    }
+    temp2 /= n;
+    temp += (temp2 - mean) * kFun(h / b_n);
+  }
+  
+  erg[0] = (var + 2 * temp) * pow(2, 2 * m) * pow((m + 1) / (pow(2, m) - m - 1), 2);
+  
+  
+  UNPROTECT(2);
+  return ERG;
+}
+
+SEXP trafo_tau(SEXP X, SEXP N)
+{
+  double *x = REAL(X);
+  int n = *REAL(N);
+  
+  SEXP ERG;
+  PROTECT(ERG = allocVector(REALSXP, n));
+  double *erg = REAL(ERG);
+  
+  int i, j; 
+  
+  for(i = 0; i < n; i++)
+  {
+    erg[i] = 0;
+    for(j = 0; j < n; j++)
+    {
+      if(x[j] <= x[i] && x[n + j] <= x[n + i]) erg[i]++;
+    }
+  }
+  
+  UNPROTECT(1);
   return ERG;
 }
 
@@ -419,6 +554,7 @@ SEXP lrv_subs_overlap(SEXP X, SEXP L, SEXP DISTR)
   {
     temp += x[j];
   }
+
   if(distr == 1)
   {
     sum[0] += fabs(temp - l * 0.5);
@@ -430,7 +566,7 @@ SEXP lrv_subs_overlap(SEXP X, SEXP L, SEXP DISTR)
   for(i = 1; i <= n - l; i++)
   {
     temp = temp - x[i - 1] + x[i + l - 1];
-    
+
     if(distr == 1)
     {
       sum[0] += fabs(temp - l * 0.5);
@@ -449,6 +585,92 @@ SEXP lrv_subs_overlap(SEXP X, SEXP L, SEXP DISTR)
   }
   
 
+  UNPROTECT(1);
+  return SUM;
+}
+
+
+SEXP MAD_f(SEXP X, SEXP N, SEXP M, SEXP V, SEXP H, SEXP K)
+{
+  SEXP SUM;
+  PROTECT(SUM = allocVector(REALSXP, 1));
+  double *sum = REAL(SUM);
+  sum[0] = 0;
+  
+  double *x = REAL(X);
+  int n = *REAL(N);
+  double m = *REAL(M);
+  double v = *REAL(V);
+  double h = *REAL(H);
+  int k = *REAL(K);
+  double (*kFun)(double);
+  
+  switch(k)
+  {
+  case 1: kFun = &kBartlett; break;
+  case 2: kFun = &kFT; break;
+  case 3: kFun = &kParzen; break;
+  case 4: kFun = &kQS; break;
+  case 5: kFun = &kTH; break;
+  case 6: kFun = &kTruncated; break;
+  case 7: kFun = &kSFT; break;
+  case 8: kFun = &kEpanechnikov; break;
+  case 9: kFun = &kQuadratic; break;
+  default: kFun = &kQS; break;
+  }
+  
+  int i;
+  
+  for(i = 0; i < n; i++)
+  {
+    sum[0] += kFun((fabs(x[i] - m) - v) / h);
+  }
+  sum[0] /= (n * h);
+  
+  UNPROTECT(1);
+  return SUM;
+}
+
+
+SEXP Qalpha_u(SEXP X, SEXP N, SEXP V, SEXP H, SEXP K)
+{
+  SEXP SUM;
+  PROTECT(SUM = allocVector(REALSXP, 1));
+  double *sum = REAL(SUM);
+  sum[0] = 0;
+  
+  double *x = REAL(X);
+  int n = *REAL(N);
+  double v = *REAL(V);
+  double h = *REAL(H);
+  int k = *REAL(K);
+  double (*kFun)(double);
+  
+  switch(k)
+  {
+  case 1: kFun = &kBartlett; break;
+  case 2: kFun = &kFT; break;
+  case 3: kFun = &kParzen; break;
+  case 4: kFun = &kQS; break;
+  case 5: kFun = &kTH; break;
+  case 6: kFun = &kTruncated; break;
+  case 7: kFun = &kSFT; break;
+  case 8: kFun = &kEpanechnikov; break;
+  case 9: kFun = &kQuadratic; break;
+  default: kFun = &kQS; break;
+  }
+  
+  int i, j;
+  for(j = 1; j < n; j++)
+  {
+    for(i = 0; i < j; i++)
+    {
+      sum[0] += kFun((abs(x[i] - x[j]) - v) / h);
+    }
+  }
+  
+  sum[0] = sum[0] * 2 / (n * (n - 1) * h);
+  
   UNPROTECT(1);
   return SUM;
 }
