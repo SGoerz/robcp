@@ -4,6 +4,7 @@ opt.param <-  function(x)
   if(n <= 5) stop("For automatic bandwidth selection x must consist of at least 6 observations!")
   kappa <- max(5, sqrt(log10(n)))
   m <- round(n^(1/3), 5)
+  if(any(is.na(x))) 
   rho <- abs(acf(x, plot = FALSE, lag.max = m + kappa)[[1]][, , 1][-1])
   i <- 1
   cond <- 2 * sqrt(log10(n) / n)
@@ -31,7 +32,7 @@ opt.param <-  function(x)
 ##'        object of the class cpStat   
 
 scale_stat <- function(x, version = c("empVar", "MD", "GMD"), method = "kernel",
-                       control = list(), constant = 1.4826, alpha = 0.5)
+                       control = list(), constant = 1.4826)#, alpha = 0.5)
 {
   ## argument check
   if(is(x, "ts"))
@@ -118,7 +119,8 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD"), method = "kernel",
     if(is.null(control$b_n) || is.na(control$b_n))
     {
       x.adj <- x
-      x.adj[(k+1):n] <- x.adj[(k+1):n] / sd(x.adj[(k+1):n]) * sd(x.adj[1:k])
+      if(k > 1 & k + 1 < n) x.adj[(k+1):n] <- x.adj[(k+1):n] /
+          sd(x.adj[(k+1):n]) * sd(x.adj[1:k])
       control$b_n <- max(opt.param(x.adj), opt.param(x.adj^2))
     }
     
@@ -160,7 +162,7 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD"), method = "kernel",
 ##'@return A list fo the class "htest" containing
 ##'
 scale_cusum <- function(x, version = c("empVar", "MD", "GMD"), method = "kernel",
-                        control = list(), constant = 1.4826, alpha = 0.5, 
+                        control = list(), constant = 1.4826,# alpha = 0.5, 
                         fpc = TRUE, tol, plot = FALSE, level = 0.05)
 {
   if(missing(tol))
@@ -171,7 +173,7 @@ scale_cusum <- function(x, version = c("empVar", "MD", "GMD"), method = "kernel"
   Dataname <- deparse(substitute(x))
   
   stat <- scale_stat(x = x, version = version, method = method, control = control,
-                     constant = constant, alpha = alpha)
+                     constant = constant)#, alpha = alpha)
   location <- attr(stat, "cp-location")
   names(stat) <- "S"
   
