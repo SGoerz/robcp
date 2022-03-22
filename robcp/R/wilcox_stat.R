@@ -58,22 +58,13 @@ wilcox_stat <- function(x, h = 1L, method = "kernel", control = list())
   } else if(is.function(h))
   {
     hVec <- Vectorize(h)
-    res <- sum(hVec(x[1], x[-1]))
-    max <- abs(res)
-    loc <- 1
+    res <- c(sum(hVec(x[1], x[-1])), rep(0, n-2))
     
-    sapply(2:(n-1), function(k)
+    sapply(2:(n-1), function(i)
     {
-      res <<- res - sum(hVec(x[1:(k-1)], x[k])) + sum(hVec(x[k], x[(k+1):n]))
-      
-      if(abs(res) > max)
-      {
-        max <<- abs(res)
-        loc <<- k
-      }
+      res[i] <<- res[i-1] - sum(hVec(x[1:(i-1)], x[i])) + sum(hVec(x[i], x[(i+1):n]))
     })
-    res[1] <- max
-    res[2] <- loc
+    res <- abs(res) / sqrt(n^3)
   } else
   {
     stop("Invalid argument for h!")

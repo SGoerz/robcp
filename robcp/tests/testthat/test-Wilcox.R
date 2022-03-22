@@ -64,6 +64,17 @@ test_that("wilcox_stat returns the correct value",
   y <- wmw_test(x, h = 2, method = "kernel", control = list(kFun = "TH"))$statistic
   attr(y, "names") <- NULL
   expect_equal(y, CUSUM(x, method = "kernel"))
+  
+  # wmw_tests are equal for h = 2 and h = function(x, y) x - y
+  y1 <- wmw_test(x, h = 2, method = "kernel")
+  y2 <- wmw_test(x, h = function(x, y) x - y, method = "kernel")
+  expect_equal(y1, y2)
+  
+  # wmw_tests are equal for h = 1 and h = function(x, y) as.numeric(x < y) - 0.5
+  y1 <- wmw_test(x, h = 1, method = "kernel", control = list(distr = TRUE))
+  y2 <- wmw_test(x, h = function(x, y) as.numeric(x < y) - 0.5, method = "kernel", 
+                 control = list(distr = TRUE))
+  expect_equal(y1, y2)
 })
 
 

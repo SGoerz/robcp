@@ -4,7 +4,6 @@ opt.param <-  function(x)
   if(n <= 5) stop("For automatic bandwidth selection x must consist of at least 6 observations!")
   kappa <- max(5, sqrt(log10(n)))
   m <- round(n^(1/3), 5)
-  if(any(is.na(x))) 
   rho <- abs(acf(x, plot = FALSE, lag.max = m + kappa)[[1]][, , 1][-1])
   i <- 1
   cond <- 2 * sqrt(log10(n) / n)
@@ -26,7 +25,7 @@ opt.param <-  function(x)
 ##'@param version variance estimation method. One of "empVar", "MD", "GMD", "MAD", "Qalpha".
 ##'@param control a list of control parameters.
 ##'@param constant scale factor for the MAD.
-##'@param alpha quantile of the distribution function of all absolute pairwise differences used in \code{version = "Qalpha"}.
+#%#'@param alpha quantile of the distribution function of all absolute pairwise differences used in \code{version = "Qalpha"}.
 ##'@return Test statistic (numeric value) with the attribute cp-location 
 ##'        indicating at which index a change point is most likely. Is an S3 
 ##'        object of the class cpStat   
@@ -190,8 +189,9 @@ scale_cusum <- function(x, version = c("empVar", "MD", "GMD"), method = "kernel"
   {
     if(is.null(control$l)) control$l <- opt.param(x)
     if(is.null(control$B)) control$B <- 1 / tol
-    y <- dbb(stat, data = x, version = version, control = control,
-             alpha = alpha, constant = constant, level = level)
+    y <- dbb(stat, data = x, version = match.arg(version), control = control,
+             #alpha = alpha, 
+             constant = constant, level = level)
     p.val <- y[[1]]
     erg2 <- list(bootstrap = list(param = control$l, crit.value = y[[2]]))
     if(plot) plot(stat, crit.val = y[[2]])

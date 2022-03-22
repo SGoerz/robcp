@@ -178,7 +178,7 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
   if(erg < 0 & gamma0)
   {
     warning("Estimated long run variance was < 0; only the estimated autocovariance to lag 0 is returned!")
-    erg <- (n - 1) / n * var(x)
+    erg <- (n - 1) / n * var(x_cen)
   }
   
   if(!is.na(version))

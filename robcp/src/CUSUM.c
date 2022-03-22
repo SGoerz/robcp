@@ -83,7 +83,7 @@ SEXP CUSUM(SEXP Y)
   int n = length(Y);
 
   SEXP RES;
-  PROTECT(RES = allocVector(REALSXP, n));
+  PROTECT(RES = allocVector(REALSXP, n-1));
   double *res = REAL(RES);
   double sqn = sqrt(n);
   double *csum = REAL(c_cumsum(Y));
@@ -91,7 +91,7 @@ SEXP CUSUM(SEXP Y)
   
   int i;
   
-  for(i = 0; i < n; i++)
+  for(i = 0; i < n-1; i++)
   {
     res[i] = fabs(csum[i] - (i + 1) * sumN) / sqn;
   }

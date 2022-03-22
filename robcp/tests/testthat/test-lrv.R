@@ -87,29 +87,32 @@ test_that("kernel-based estimation for the scale is correctly computed",
   {
     ac <- acf(z, plot = FALSE, type = "covariance", demean = FALSE,
               lag.max = b_n - 1)$acf[, , 1]
-    return(sum(2 * ac[-1] * ft) + ac[1])
+    a <- sum(2 * ac[-1] * ft) + ac[1]
+    if(a > 0) return(a)
+    return(var(z) * (length(z) - 1) / length(z))
   }
 
   # empVar:
   m <- mean(x)
   v <- var(x)
-  y <- lrv(x, method = "kernel",
-           control = list(version = "empVar", b_n = b_n, kFun = "FT"))
+  y <- suppressWarnings({lrv(x, method = "kernel",
+           control = list(version = "empVar", b_n = b_n, kFun = "FT"))})
   
   expect_equal(y, lrvTest((x - m)^2 - v, b_n))
   
   # MD:
   m <- median(x)
   v <- mean(abs(x - m)) * 5 / 4
-  y <- lrv(x, method = "kernel",
-           control = list(version = "MD", b_n = b_n, kFun = "FT"))
+  y <- suppressWarnings({lrv(x, method = "kernel",
+           control = list(version = "MD", b_n = b_n, kFun = "FT"))})
   
   expect_equal(y, lrvTest(abs(x - m) - v, b_n))
   
   # GMD:
   v <- sum(sapply(2:5, function(j) sum(abs(x[j] - x[1:(j-1)])))) / 10
-  y <- lrv(x, method = "kernel", control = list(version = "GMD", b_n = b_n,
-                                                kFun = "FT"))
+  y <- suppressWarnings({lrv(x, method = "kernel",
+                             control = list(version = "GMD", b_n = b_n,
+                                            kFun = "FT"))})
   
   expect_equal(y, 4 * lrvTest(sapply(x, function(xi) mean(abs(x - xi))) - v, b_n))
   

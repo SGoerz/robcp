@@ -9,7 +9,7 @@ Computes the test statistic for CUSUM-based tests on scale changes.
 
 \usage{
 scale_stat(x, version =  c("empVar", "MD", "GMD"), method = "kernel",
-           control = list(), constant = 1.4826, alpha = 0.5)
+           control = list(), constant = 1.4826)%, alpha = 0.5)
 }
 
 \arguments{
@@ -23,7 +23,7 @@ scale_stat(x, version =  c("empVar", "MD", "GMD"), method = "kernel",
 
 \item{constant}{scale factor for the MAD.}
 
-\item{alpha}{quantile of the distribution function of all absolute pairwise differences used in \code{version = "Qalpha"}.}
+%\item{alpha}{quantile of the distribution function of all absolute pairwise differences used in \code{version = "Qalpha"}.}
 }
 
 \value{
@@ -91,10 +91,10 @@ x <- arima.sim(list(ar = 0.5), 100)
 
 # under H_0:
 scale_stat(x, "GMD")
-scale_stat(x, "Qalpha", method = "bootstrap")
+%scale_stat(x, "Qalpha", method = "bootstrap")
 
 # under the alternative:
 x[51:100] <- x[51:100] * 3
 scale_stat(x)
-scale_stat(x, "Qalpha", method = "bootstrap")
+%scale_stat(x, "Qalpha", method = "bootstrap")
 }

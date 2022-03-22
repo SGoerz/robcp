@@ -3,7 +3,7 @@
 \title{Wilocxon-Mann-Whitney Test for Change Points}
 
 \usage{
-wmw_test(x, h = 1L, method = "subsampling", control = list(), tol = 1e-8, 
+wmw_test(x, h = 1L, method = "kernel", control = list(), tol = 1e-8, 
          plot = FALSE)
 }
 

@@ -10,7 +10,7 @@ Standardizes (multivariate) time series by their median, MAD and transforms the 
 }
 
 \usage{
-psi(y, fun = c("HLm", "HLg", "SLm", "SLg", "HCm", "HCg", "SCm", "SCg", k, 
+psi(y, fun = c("HLm", "HLg", "SLm", "SLg", "HCm", "HCg", "SCm", "SCg"), k, 
     constant = 1.4826)
 }
 

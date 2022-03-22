@@ -130,10 +130,10 @@ test_that("CUSUM test for changes in the scale is performed correctly",
   invisible(t(sapply(2:N, function(i) x[i, ] <<- e[i, ] + theta %*% e[i-1, ])))
   
   x <- x[-(1:m), ]
-  expect_equal(attr(cor_cusum(x, "rho")$statistic, "cp-location"), 250, tolerance = 0.1)
+  expect_equal(attr(cor_cusum(x, "rho")$statistic, "cp-location"), 250, tolerance = 0.2)
   
   ## tau
-  expect_equal(attr(cor_cusum(x, "tau")$statistic, "cp-location"), 250, tolerance = 0.1)
+  expect_equal(attr(cor_cusum(x, "tau")$statistic, "cp-location"), 250, tolerance = 0.2)
   
   
   ## maybe some more tests
