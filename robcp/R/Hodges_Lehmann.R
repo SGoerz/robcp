@@ -95,7 +95,7 @@ HodgesLehmann <- function(x, b_u = "nrd0", method = "kernel", control = list())
     rho <- abs(cor(x.adj[-n], x.adj[-1], method = "spearman"))
     
     #####
-    p1 <- 0.45
+    p1 <- 1/3
     p2 <- 0.9
     #####
     

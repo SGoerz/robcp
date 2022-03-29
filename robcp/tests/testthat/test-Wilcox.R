@@ -61,9 +61,10 @@ test_that("wilcox_stat returns the correct value",
   # wmw_test and CUSUM test are equal for h = 2 and the kernel-based long run
   # variance estimation
   x <- rnorm(100)
-  y <- wmw_test(x, h = 2, method = "kernel", control = list(kFun = "TH"))$statistic
+  y <- wmw_test(x, h = 2, method = "kernel",
+                control = list(kFun = "TH", b_n = 5))$statistic
   attr(y, "names") <- NULL
-  expect_equal(y, CUSUM(x, method = "kernel"))
+  expect_equal(y, CUSUM(x, method = "kernel", control = list(b_n = 5)))
   
   # wmw_tests are equal for h = 2 and h = function(x, y) x - y
   y1 <- wmw_test(x, h = 2, method = "kernel")
@@ -71,9 +72,9 @@ test_that("wilcox_stat returns the correct value",
   expect_equal(y1, y2)
   
   # wmw_tests are equal for h = 1 and h = function(x, y) as.numeric(x < y) - 0.5
-  y1 <- wmw_test(x, h = 1, method = "kernel", control = list(distr = TRUE))
+  y1 <- wmw_test(x, h = 1, method = "kernel", control = list(distr = TRUE, b_n = 2))
   y2 <- wmw_test(x, h = function(x, y) as.numeric(x < y) - 0.5, method = "kernel", 
-                 control = list(distr = TRUE))
+                 control = list(distr = TRUE, b_n = 2))
   expect_equal(y1, y2)
 })
 

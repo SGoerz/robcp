@@ -2,6 +2,7 @@ context("Qalpha")
 
 test_that("Output of Qalpha has the correct format", 
 {
+  skip_on_os("solaris")
   n <- 5
   x <- sample(1:50, n)
   y <- Qalpha(x, 0.5)
@@ -16,6 +17,7 @@ test_that("Output of Qalpha has the correct format",
 
 test_that("Qalpha returns the correct values", 
 {
+  skip_on_os("solaris")
   x <- sample(1:50, 5)
   diffs <- sort(abs(unlist(sapply(1:4, function(i) x[i] - x[(i+1):5]))))
 

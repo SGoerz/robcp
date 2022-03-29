@@ -665,7 +665,7 @@ SEXP Qalpha_u(SEXP X, SEXP N, SEXP V, SEXP H, SEXP K)
   {
     for(i = 0; i < j; i++)
     {
-      sum[0] += kFun((abs(x[i] - x[j]) - v) / h);
+      sum[0] += kFun((fabs(x[i] - x[j]) - v) / h);
     }
   }
   
