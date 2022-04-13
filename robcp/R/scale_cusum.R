@@ -13,7 +13,7 @@ opt.param <-  function(x)
     i <- i + 1
   }
   
-  return(i)
+  return(i-1)
 }
 
 ## Tests for Scale Changes Based on Pairwise Differences (Gerstenberger et. al.)
@@ -30,8 +30,9 @@ opt.param <-  function(x)
 ##'        indicating at which index a change point is most likely. Is an S3 
 ##'        object of the class cpStat   
 
-scale_stat <- function(x, version = c("empVar", "MD", "GMD"), method = "kernel",
-                       control = list(), constant = 1.4826)#, alpha = 0.5)
+scale_stat <- function(x, version = c("empVar", "MD", "GMD", "MAD", "Qalpha"), 
+                       method = "kernel", control = list(), constant = 1.4826,
+                       alpha = 0.5)
 {
   ## argument check
   if(is(x, "ts"))
@@ -82,23 +83,23 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD"), method = "kernel",
     } else if(version == "GMD")
     {
       res <- .Call("GMD", as.numeric(x), as.numeric(n)) / ((1:(n-1)) * (2:n)) * 2
-    # } else if(version == "MAD")
-    # {
-    #   res <- sapply(2:n, function(k) mad(x[1:k], constant = constant))
-    #   control$loc <- median(x)
-    # } else if(version == "Qalpha")
-    # {
-    #   res <- Qalpha(x, alpha)
-    #   # sorted <- x[1]
-    #   # res <- sapply(2:n, function(k)
-    #   # {
-    #   #   sorted <<- sort(c(sorted, x[k]), decreasing = TRUE)
-    #   #   a <- ceiling(k * (k - 1) / 2 * (1 - beta))
-    #   #   # a <- floor(k * (k - 1) / 2 * (1 - beta)) + 1
-    #   #   kthPair(sorted[1:(k-1)], -sorted[2:k], a)
-    #   # })
-    #   
-    #   control$loc <- alpha
+    } else if(version == "MAD")
+    {
+      res <- sapply(2:n, function(k) mad(x[1:k], constant = constant))
+      control$loc <- median(x)
+    } else if(version == "Qalpha")
+    {
+      res <- Qalpha(x, alpha)
+      # sorted <- x[1]
+      # res <- sapply(2:n, function(k)
+      # {
+      #   sorted <<- sort(c(sorted, x[k]), decreasing = TRUE)
+      #   a <- ceiling(k * (k - 1) / 2 * (1 - beta))
+      #   # a <- floor(k * (k - 1) / 2 * (1 - beta)) + 1
+      #   kthPair(sorted[1:(k-1)], -sorted[2:k], a)
+      # })
+
+      control$loc <- alpha
     } else 
     {
       stop("version not supported.")
@@ -160,9 +161,9 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD"), method = "kernel",
 ##'@param tol tolerance of the distribution function (numeric), which is used do compute p-values.
 ##'@return A list fo the class "htest" containing
 ##'
-scale_cusum <- function(x, version = c("empVar", "MD", "GMD"), method = "kernel",
-                        control = list(), constant = 1.4826,# alpha = 0.5, 
-                        fpc = TRUE, tol, plot = FALSE, level = 0.05)
+scale_cusum <- function(x, version = c("empVar", "MD", "GMD", "MAD", "Qalpha"),
+                        method = "kernel", control = list(), constant = 1.4826, 
+                        alpha = 0.5, fpc = TRUE, tol, plot = FALSE, level = 0.05)
 {
   if(missing(tol))
   {

@@ -39,21 +39,21 @@ test_that("scale_stat is computed correctly",
   attributes(z) <- NULL
   expect_equal(z, y)
   
-  # # MAD:
-  # y <-  27 * 1.4826 / sqrt(5 * lrv(x, "kernel", 
-  #                         control = list(b_n = b_n, version = "MAD")))
-  # z <- scale_stat(x, version = "MAD", control = list(b_n = b_n))
-  # attributes(z) <- NULL
-  # expect_equal(z, y)
-  # 
-  # # QBeta:
-  # x <- c(6, 2, 1, 10, 5, 0)
-  # beta <- 0.9
-  # y <-  12 / sqrt(6 * lrv(x, "kernel", control = list(version = "Qalpha",
-  #                             kFun = "SFT", b_n = b_n, loc = beta)))
-  # z <- scale_stat(x, version = "Qalpha", control = list(b_n = b_n), alpha = beta)
-  # attributes(z) <- NULL
-  # expect_equal(z, y)
+  # MAD:
+  y <-  27 * 1.4826 / sqrt(5 * lrv(x, "kernel",
+                          control = list(b_n = b_n, version = "MAD")))
+  z <- scale_stat(x, version = "MAD", control = list(b_n = b_n))
+  attributes(z) <- NULL
+  expect_equal(z, y)
+
+  # QBeta:
+  x <- c(6, 2, 1, 10, 5, 0)
+  beta <- 0.9
+  y <-  12 / sqrt(6 * lrv(x, "kernel", control = list(version = "Qalpha",
+                              kFun = "SFT", b_n = b_n, loc = beta)))
+  z <- scale_stat(x, version = "Qalpha", control = list(b_n = b_n), alpha = beta)
+  attributes(z) <- NULL
+  expect_equal(z, y)
 })
 
 
@@ -125,26 +125,28 @@ test_that("CUSUM test for changes in the scale is performed correctly",
   expect_equal(mean(p < 0.05), 1, tolerance = 0.01)
   
   
-  # # MAD:
-  # suppressWarnings({p <- replicate(200, 
-  # {
-  #   x <- rnorm(200)
-  #   x[101:200] <- x[101:200] * 3
-  #   scale_cusum(x, version = "MAD", method = "kernel", control = list(b_n = 15))$p.value
-  # })})
-  # hist(p)
-  # expect_equal(mean(p < 0.05), 1, tolerance = 0.01)
-  # 
-  # # Qalpha:
-  # suppressWarnings({p <- replicate(200, 
-  # {
-  #   x <- rnorm(200)
-  #   x[101:200] <- x[101:200] * 10
-  #   scale_cusum(x, version = "Qalpha", method = "bootstrap",
-  #               alpha = 0.8, tol = 1e-3)$p.value
-  # })})
-  # 
-  # expect_equal(mean(p < 0.05), 1, tolerance = 0.1)
+  # MAD:
+  suppressWarnings({p <- replicate(200,
+  {
+    x <- rnorm(200)
+    #x[101:200] <- x[101:200] * 3
+    scale_cusum(x, version = "MAD", method = "kernel")$p.value
+  })})
+  hist(p)
+  expect_equal(mean(p < 0.05), 1, tolerance = 0.01)
+
+  # Qalpha:
+  suppressWarnings({p <- replicate(200,
+  {
+    # x <- rnorm(200)
+    x <- arima.sim(list(ar = 0.8), 500)
+    # x[101:200] <- x[101:200] * 3
+    scale_cusum(x, version = "Qalpha", method = "kernel",
+                alpha = 0.8, tol = 1e-3)$p.value
+  })})
+  hist(p, freq = FALSE)
+  mean(p < 0.05)
+  expect_equal(mean(p < 0.05), 1, tolerance = 0.1)
   
   # correct change point location
   x <- rnorm(100)

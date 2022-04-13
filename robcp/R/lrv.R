@@ -153,16 +153,16 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
       if(is.na(scale)) scale <- sum(sapply(2:n, function(j)
         sum(abs(x[j] - x[1:(j-1)])))) * 2 / (n * (n - 1))
       x_cen <- sapply(x, function(xi) mean(abs(x - xi))) - scale
-    # } else if(version == "MAD")
-    # {
-    #   if(is.na(loc)) loc <- median(x)
-    #   if(is.na(scale)) scale <- mad(x)
-    #   x_cen <- as.numeric(abs(x - loc) <= scale) - 0.5
-    # } else if(version == "Qalpha")
-    # {
-    #   if(is.na(loc)) loc <- 0.5
-    #   if(is.na(scale)) scale <- Qalpha(x, loc)[n-1]
-    #   x_cen <- sapply(x, function(xi) mean(as.numeric(abs(x - xi) <= scale))) - loc
+    } else if(version == "MAD")
+    {
+      if(is.na(loc)) loc <- median(x)
+      if(is.na(scale)) scale <- mad(x)
+      x_cen <- as.numeric(abs(x - loc) <= scale) - 0.5
+    } else if(version == "Qalpha")
+    {
+      if(is.na(loc)) loc <- 0.5
+      if(is.na(scale)) scale <- Qalpha(x, loc)[n-1]
+      x_cen <- sapply(x, function(xi) mean(as.numeric(abs(x - xi) <= scale))) - loc
     } else 
     {
       stop("version not supported.")
@@ -186,15 +186,15 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
     if(version == "GMD")
     {
       erg <- erg * 4
-    # } else if(version == "MAD")
-    # {
-    #   erg <- erg / .Call("MAD_f", as.numeric(x), as.numeric(n), as.numeric(loc), 
-    #                      as.numeric(scale), as.numeric(IQR(x) * n^(-1/3)), as.numeric(8))
-    # } else if(version == "Qalpha")
-    # {
-    #   erg <- erg * 4 / .Call("Qalpha_u", as.numeric(x), as.numeric(n), as.numeric(scale), 
-    #                          as.numeric(IQR(x) * n^(-1/3)), as.numeric(8))
-    #   # as.numeric(8) = Epanechnikov kernel 
+    } else if(version == "MAD")
+    {
+      erg <- erg / .Call("MAD_f", as.numeric(x), as.numeric(n), as.numeric(loc),
+                         as.numeric(scale), as.numeric(IQR(abs(x - loc)) * n^(-1/3)-1), as.numeric(8))^2
+    } else if(version == "Qalpha")
+    {
+      erg <- erg * 4 / .Call("Qalpha_u", as.numeric(x), as.numeric(n), as.numeric(scale),
+                             as.numeric(IQR(x) * n^(-1/3)-1), as.numeric(8))^2
+      # as.numeric(8) = Epanechnikov kernel
     }
   }
   
