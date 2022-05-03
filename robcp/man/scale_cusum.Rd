@@ -8,7 +8,7 @@ Performs the CUSUM-based test on changes in the scale.
 }
 
 \usage{
-scale_cusum(x, version =  c("empVar", "MD", "GMD"), method = "kernel",
+scale_cusum(x, version =  c("empVar", "MD", "GMD", "Qalpha"), method = "kernel",
             control = list(), constant = 1.4826, alpha = 0.8, fpc = TRUE, tol,
             plot = FALSE, level = 0.05)
 }

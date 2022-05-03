@@ -73,13 +73,13 @@ The kernel-based long run variance estimation is available for various testing s
   
   Default value: \eqn{v_n =} \eqn{\frac{2}{n(n-1)} \sum_{1 \leq i < j \leq n} |x_i - x_j|.}
   
-  \item \code{"MAD"} for tests on changes in the median absolute deviation (from the median).
-  \deqn{\hat{\sigma}^2 = \hat{f}_Z(v_n)^{-1} \sum_{h = -(n-1)}^{n-1} W \left( \frac{|h|}{b_n} \right) \frac{1}{n} \sum_{i = 1}^{n - |h|} \hat{\phi}_n(x_i)\hat{\phi}_n(x_{i+|h|}),}
-   where \eqn{\hat{\phi}_n(x) = 1_{\{|x - m_n| \leq v_n\}} - 0.5} and 
-   \deqn{\hat{f}_Z(t) = \frac{1}{n h_n} \sum_{i = 1}^n K\left(\frac{|x_i - m_n| - t}{h_n}\right)} 
-   the kernel density estimation of the density of \eqn{|X - med(F^X)|}, \eqn{h_n =} \code{IQR(x)*n^{-1/3}}, and \eqn{K} is the quatratic kernel function.
-   
-   Default values: \eqn{m_n =} \code{median(x)}, \eqn{v_n =} \code{mad(x)}.
+  %\item \code{"MAD"} for tests on changes in the median absolute deviation (from the median).
+  %\deqn{\hat{\sigma}^2 = \hat{f}_Z(v_n)^{-1} \sum_{h = -(n-1)}^{n-1} W \left( \frac{|h|}{b_n} \right) \frac{1}{n} \sum_{i = 1}^{n - |h|} \hat{\phi}_n(x_i)\hat{\phi}_n(x_{i+|h|}),}
+   %where \eqn{\hat{\phi}_n(x) = 1_{\{|x - m_n| \leq v_n\}} - 0.5} and 
+   %\deqn{\hat{f}_Z(t) = \frac{1}{n h_n} \sum_{i = 1}^n K\left(\frac{|x_i - m_n| - t}{h_n}\right)} 
+   %the kernel density estimation of the density of \eqn{|X - med(F^X)|}, \eqn{h_n =} \code{IQR(x)*n^{-1/3}}, and \eqn{K} is the quatratic kernel function.
+   %
+   %Default values: \eqn{m_n =} \code{median(x)}, \eqn{v_n =} \code{mad(x)}.
   
   \item \code{"Qalpha"} for tests on changes in \code{\link{Qalpha}}.
   \deqn{\hat{\sigma}^2 = \frac{4}{\hat{u}(v_n)} \sum_{h = -(n-1)}^{n-1} W \left( \frac{|h|}{b_n} \right) \frac{1}{n} \sum_{i = 1}^{n - |h|} \hat{\phi}_n(x_i)\hat{\phi}_n(x_{i+|h|}),}

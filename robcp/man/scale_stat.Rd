@@ -8,7 +8,7 @@ Computes the test statistic for CUSUM-based tests on scale changes.
 }
 
 \usage{
-scale_stat(x, version =  c("empVar", "MD", "GMD"), method = "kernel",
+scale_stat(x, version =  c("empVar", "MD", "GMD", "Qalpha"), method = "kernel",
            control = list(), constant = 1.4826, alpha = 0.8)
 }
 
@@ -58,8 +58,8 @@ where \eqn{med_{1:k}} is the median of \eqn{x_1, ..., x_k}.
 \bold{Gini's mean difference} (\code{GMD})
 \deqn{\hat{g}_{1:k} = \frac{2}{k(k-1)} \sum_{1 \leq i < j \leq k} (x_i - x_j).}
 
-\bold{Median absolute deviation} (\code{MAD})
-\deqn{\hat{m}_{1:k} = med(x_1 - med_{1:k}, ..., x_k - med_{1:k}).}
+%\bold{Median absolute deviation} (\code{MAD})
+%\deqn{\hat{m}_{1:k} = med(x_1 - med_{1:k}, ..., x_k - med_{1:k}).}
 
 \bold{\eqn{Q^{\alpha}}} (\code{Qalpha})
 \deqn{\hat{Q}^{\alpha}_{1:k} = U_{1:k}^{-1}(\alpha) = \inf\{x | \alpha \leq U_{1:k}(x)\},}
