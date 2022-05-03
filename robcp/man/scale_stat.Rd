@@ -9,7 +9,7 @@ Computes the test statistic for CUSUM-based tests on scale changes.
 
 \usage{
 scale_stat(x, version =  c("empVar", "MD", "GMD"), method = "kernel",
-           control = list(), constant = 1.4826)%, alpha = 0.5)
+           control = list(), constant = 1.4826, alpha = 0.8)
 }
 
 \arguments{
@@ -23,7 +23,7 @@ scale_stat(x, version =  c("empVar", "MD", "GMD"), method = "kernel",
 
 \item{constant}{scale factor for the MAD.}
 
-%\item{alpha}{quantile of the distribution function of all absolute pairwise differences used in \code{version = "Qalpha"}.}
+\item{alpha}{quantile of the distribution function of all absolute pairwise differences used in \code{version = "Qalpha"}.}
 }
 
 \value{
@@ -58,12 +58,12 @@ where \eqn{med_{1:k}} is the median of \eqn{x_1, ..., x_k}.
 \bold{Gini's mean difference} (\code{GMD})
 \deqn{\hat{g}_{1:k} = \frac{2}{k(k-1)} \sum_{1 \leq i < j \leq k} (x_i - x_j).}
 
-%\bold{Median absolute deviation} (\code{MAD})
-%\deqn{\hat{m}_{1:k} = med(x_1 - med_{1:k}, ..., x_k - med_{1:k}).}
+\bold{Median absolute deviation} (\code{MAD})
+\deqn{\hat{m}_{1:k} = med(x_1 - med_{1:k}, ..., x_k - med_{1:k}).}
 
-%\bold{\eqn{Q^{\alpha}}} (\code{Qalpha})
-%\deqn{\hat{Q}^{\alpha}_{1:k} = U_{1:k}^{-1}(\alpha) = \inf\{x | \alpha \leq U_{1:k}(x)\},}
-%where \eqn{U_{1:k}} is the empirical distribtion function of \eqn{|x_i - x_j|, \, 1 \leq i < j \leq k} (cf. \code{\link{Qalpha}}). 
+\bold{\eqn{Q^{\alpha}}} (\code{Qalpha})
+\deqn{\hat{Q}^{\alpha}_{1:k} = U_{1:k}^{-1}(\alpha) = \inf\{x | \alpha \leq U_{1:k}(x)\},}
+where \eqn{U_{1:k}} is the empirical distribtion function of \eqn{|x_i - x_j|, \, 1 \leq i < j \leq k} (cf. \code{\link{Qalpha}}). 
 
 
 For the kernel-based long run variance estimation, the default bandwidth \eqn{b_n} is determined as follows:
@@ -91,10 +91,10 @@ x <- arima.sim(list(ar = 0.5), 100)
 
 # under H_0:
 scale_stat(x, "GMD")
-%scale_stat(x, "Qalpha", method = "bootstrap")
+scale_stat(x, "Qalpha", method = "bootstrap")
 
 # under the alternative:
 x[51:100] <- x[51:100] * 3
 scale_stat(x)
-%scale_stat(x, "Qalpha", method = "bootstrap")
+scale_stat(x, "Qalpha", method = "bootstrap")
 }

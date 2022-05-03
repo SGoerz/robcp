@@ -46,7 +46,10 @@ dbb <- function(stat, data, version, control = list(), #alpha = 0.5,
   {
     stop("B has to be a positive integer!")
   }
-  
+  if(!is.numeric(l) || l < 1)
+  {
+    stop("l has to be a positive integer!")
+  }
   k <- floor(n / l)
   
   ## set seed

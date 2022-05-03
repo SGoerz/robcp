@@ -32,7 +32,7 @@ opt.param <-  function(x)
 
 scale_stat <- function(x, version = c("empVar", "MD", "GMD", "MAD", "Qalpha"), 
                        method = "kernel", control = list(), constant = 1.4826,
-                       alpha = 0.5)
+                       alpha = 0.8)
 {
   ## argument check
   if(is(x, "ts"))
@@ -121,7 +121,7 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD", "MAD", "Qalpha"),
       x.adj <- x
       if(k > 1 & k + 1 < n) x.adj[(k+1):n] <- x.adj[(k+1):n] /
           sd(x.adj[(k+1):n]) * sd(x.adj[1:k])
-      control$b_n <- max(opt.param(x.adj), opt.param(x.adj^2))
+      control$b_n <- max(opt.param(x.adj), opt.param(x.adj^2), 1)
     }
     
     sigma <- sqrt(lrv(x, method = "kernel", control = control))
@@ -163,7 +163,7 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD", "MAD", "Qalpha"),
 ##'
 scale_cusum <- function(x, version = c("empVar", "MD", "GMD", "MAD", "Qalpha"),
                         method = "kernel", control = list(), constant = 1.4826, 
-                        alpha = 0.5, fpc = TRUE, tol, plot = FALSE, level = 0.05)
+                        alpha = 0.8, fpc = TRUE, tol, plot = FALSE, level = 0.05)
 {
   if(missing(tol))
   {

@@ -12,7 +12,7 @@ using namespace Rcpp;
 //' x <- rnorm(10)
 //' Qalpha(x, 0.5)
 // [[Rcpp::export]]
-NumericVector Qalpha(NumericVector x, double alpha)
+NumericVector Qalpha(NumericVector x, double alpha = 0.8)
 {
   if(alpha <= 0 || alpha > 1) Rcpp::stop("alpha need to be from the interval (0, 1]!");
   

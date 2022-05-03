@@ -9,7 +9,7 @@ Performs the CUSUM-based test on changes in the scale.
 
 \usage{
 scale_cusum(x, version =  c("empVar", "MD", "GMD"), method = "kernel",
-            control = list(), constant = 1.4826, fpc = TRUE, tol,
+            control = list(), constant = 1.4826, alpha = 0.8, fpc = TRUE, tol,
             plot = FALSE, level = 0.05)
 }
 
@@ -24,7 +24,7 @@ scale_cusum(x, version =  c("empVar", "MD", "GMD"), method = "kernel",
 
 \item{constant}{scale factor for the MAD.}
 
-%\item{alpha}{quantile of the distribution function of all absolute pairwise differences used in \code{version = "Qalpha"}.}
+\item{alpha}{quantile of the distribution function of all absolute pairwise differences used in \code{version = "Qalpha"}.}
 
 \item{fpc}{finite population correction (boolean).}
 
