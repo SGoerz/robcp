@@ -1,4 +1,4 @@
-estim <- function(x, version, constant = 1.4826)#, alpha = 0.5)
+estim <- function(x, version, constant = 1.4826, alpha = 0.5)
 {
   n <- length(x)
   
@@ -15,9 +15,9 @@ estim <- function(x, version, constant = 1.4826)#, alpha = 0.5)
   # } else if(version == "MAD")
   # {
   #   res <- sapply(2:n, function(k) mad(x[1:k], constant = constant))
-  # } else if(version == "Qalpha")
-  # {
-  #   res <- Qalpha(x, alpha)
+  } else if(version == "Qalpha")
+  {
+    res <- Qalpha(x, alpha)
   }
   return(max(abs(res - res[n-1]) * 2:n) / sqrt(n))
 }
@@ -31,7 +31,7 @@ estim <- function(x, version, constant = 1.4826)#, alpha = 0.5)
 ##'@param seed start for random number generator
 ##'       
 ##'@return 
-dbb <- function(stat, data, version, control = list(), #alpha = 0.5, 
+dbb <- function(stat, data, version, control = list(), alpha = 0.5, 
                 constant = 1.4826, level = 0.05)
 {
   n <- length(data)
@@ -46,7 +46,10 @@ dbb <- function(stat, data, version, control = list(), #alpha = 0.5,
   {
     stop("B has to be a positive integer!")
   }
-  
+  if(!is.numeric(l) || l < 1)
+  {
+    stop("l has to be a positive integer!")
+  }
   k <- floor(n / l)
   
   ## set seed
@@ -56,7 +59,7 @@ dbb <- function(stat, data, version, control = list(), #alpha = 0.5,
   {
     j <- sample(1:(n-l+1), k, replace = TRUE)
     x_star <- data[as.vector(sapply(j, function(j) j:(j+l-1)))]
-    estim(x_star, version, constant)#, alpha)
+    estim(x_star, version, constant, alpha)
   })
 
   return(list(mean(res > stat), quantile(res, 1 - level)))

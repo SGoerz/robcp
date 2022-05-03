@@ -420,7 +420,7 @@ SEXP gen_matrix(SEXP N, SEXP L, SEXP K)
 
 //********************** other variance estimation ***************************//
 
-
+/* outdated
 //// u
 SEXP u_hat(SEXP X, SEXP B, SEXP K)
 {
@@ -461,6 +461,7 @@ SEXP u_hat(SEXP X, SEXP B, SEXP K)
   UNPROTECT(1);
   return SUM;
 }
+*/
 
 // lrv_subs_nonoverlap: non-overlapping subsampling estimation of the long run variance
 //

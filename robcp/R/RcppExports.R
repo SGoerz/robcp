@@ -10,7 +10,7 @@
 #' @examples 
 #' x <- rnorm(10)
 #' Qalpha(x, 0.5)
-Qalpha <- function(x, alpha) {
+Qalpha <- function(x, alpha = 0.8) {
     .Call('_robcp_Qalpha', PACKAGE = 'robcp', x, alpha)
 }
 

@@ -8,7 +8,7 @@ Estimates Q-alpha using the first \eqn{k} elements of a time series.
 }
 
 \usage{
-Qalpha(x, alpha)
+Qalpha(x, alpha = 0.8)
 }
 
 \arguments{

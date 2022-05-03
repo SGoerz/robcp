@@ -13,7 +13,7 @@ opt.param <-  function(x)
     i <- i + 1
   }
   
-  return(i)
+  return(i-1)
 }
 
 ## Tests for Scale Changes Based on Pairwise Differences (Gerstenberger et. al.)
@@ -22,7 +22,7 @@ opt.param <-  function(x)
 ##'@title Test statistic to detect Scale Changes 
 ##'@description Computes the test statistic for CUSUM-based tests on scale changes.
 ##'@param x time series (numeric or ts vector).
-##'@param version variance estimation method. One of "empVar", "MD", "GMD", "MAD", "Qalpha".
+##'@param version variance estimation method. One of "empVar", "MD", "GMD", "Qalpha".
 ##'@param control a list of control parameters.
 ##'@param constant scale factor for the MAD.
 #%#'@param alpha quantile of the distribution function of all absolute pairwise differences used in \code{version = "Qalpha"}.
@@ -30,8 +30,9 @@ opt.param <-  function(x)
 ##'        indicating at which index a change point is most likely. Is an S3 
 ##'        object of the class cpStat   
 
-scale_stat <- function(x, version = c("empVar", "MD", "GMD"), method = "kernel",
-                       control = list(), constant = 1.4826)#, alpha = 0.5)
+scale_stat <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"), 
+                       method = "kernel", control = list(), constant = 1.4826,
+                       alpha = 0.8)
 {
   ## argument check
   if(is(x, "ts"))
@@ -86,19 +87,10 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD"), method = "kernel",
     # {
     #   res <- sapply(2:n, function(k) mad(x[1:k], constant = constant))
     #   control$loc <- median(x)
-    # } else if(version == "Qalpha")
-    # {
-    #   res <- Qalpha(x, alpha)
-    #   # sorted <- x[1]
-    #   # res <- sapply(2:n, function(k)
-    #   # {
-    #   #   sorted <<- sort(c(sorted, x[k]), decreasing = TRUE)
-    #   #   a <- ceiling(k * (k - 1) / 2 * (1 - beta))
-    #   #   # a <- floor(k * (k - 1) / 2 * (1 - beta)) + 1
-    #   #   kthPair(sorted[1:(k-1)], -sorted[2:k], a)
-    #   # })
-    #   
-    #   control$loc <- alpha
+    } else if(version == "Qalpha")
+    {
+      res <- Qalpha(x, alpha)
+      control$loc <- alpha
     } else 
     {
       stop("version not supported.")
@@ -120,7 +112,7 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD"), method = "kernel",
       x.adj <- x
       if(k > 1 & k + 1 < n) x.adj[(k+1):n] <- x.adj[(k+1):n] /
           sd(x.adj[(k+1):n]) * sd(x.adj[1:k])
-      control$b_n <- max(opt.param(x.adj), opt.param(x.adj^2))
+      control$b_n <- max(opt.param(x.adj), opt.param(x.adj^2), 1)
     }
     
     sigma <- sqrt(lrv(x, method = "kernel", control = control))
@@ -152,7 +144,7 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD"), method = "kernel",
 ##'@title Tests for Scale Changes Based on Pairwise Differences
 ##'@description Performs the CUSUM-based test on changes in the scale.
 ##'@param x time series (numeric or ts vector).
-##'@param version variance estimation method. One of "empVar", "MD", "GMD", "MAD", "QBeta".
+##'@param version variance estimation method. One of "empVar", "MD", "GMD", "QBeta".
 ##'@param control a list of control parameters.
 ##'@param constant scale factor for the MAD.
 ##'@param beta quantile of the distribution function of all absolute pairwise differences used in \code{version = "QBeta"}.
@@ -160,9 +152,9 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD"), method = "kernel",
 ##'@param tol tolerance of the distribution function (numeric), which is used do compute p-values.
 ##'@return A list fo the class "htest" containing
 ##'
-scale_cusum <- function(x, version = c("empVar", "MD", "GMD"), method = "kernel",
-                        control = list(), constant = 1.4826,# alpha = 0.5, 
-                        fpc = TRUE, tol, plot = FALSE, level = 0.05)
+scale_cusum <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"),
+                        method = "kernel", control = list(), constant = 1.4826, 
+                        alpha = 0.8, fpc = TRUE, tol, plot = FALSE, level = 0.05)
 {
   if(missing(tol))
   {
@@ -190,7 +182,7 @@ scale_cusum <- function(x, version = c("empVar", "MD", "GMD"), method = "kernel"
     if(is.null(control$l)) control$l <- opt.param(x)
     if(is.null(control$B)) control$B <- 1 / tol
     y <- dbb(stat, data = x, version = match.arg(version), control = control,
-             #alpha = alpha, 
+             alpha = alpha, 
              constant = constant, level = level)
     p.val <- y[[1]]
     erg2 <- list(bootstrap = list(param = control$l, crit.value = y[[2]]))
