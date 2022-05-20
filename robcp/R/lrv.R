@@ -14,8 +14,10 @@
 ##'output: long run variance (numeric value) or long run covariance matrix 
 ##'        (numeric matrix with dim. m x m, when m is the number of columns)
 
-lrv <- function(x, method = c("kernel", "subsampling", "bootstrap"), control = list())
+lrv <- function(x, method = c("kernel", "subsampling", "bootstrap", "none"), 
+                control = list())
 {
+  if(method == "none") return(1)
   ## argument check
   if(is(x, "ts"))
   {

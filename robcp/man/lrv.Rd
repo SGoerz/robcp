@@ -9,17 +9,19 @@ Estimates the long run variance respectively covariance matrix of the supplied t
 }
 
 \usage{
-lrv(x, method = c("kernel", "subsampling", "bootstrap"), control = list())
+lrv(x, method = c("kernel", "subsampling", "bootstrap", "none"), control = list())
 }
 
 \arguments{
   \item{x}{vector or matrix with each column representing a time series (numeric).}
-  \item{method}{method of estimation. Options are \code{kernel}, \code{subsampling} and \code{bootstrap}.}
+  \item{method}{method of estimation. Options are \code{kernel}, \code{subsampling}, \code{bootstrap} and \code{none}.}
   \item{control}{a list of control parameters. See 'Details'.}
 }
 
 \details{
 The long run variance equals the limit of \eqn{n} times the variance of the arithmetic mean of a short range dependent time series, where \eqn{n} is the length of the time series. It is used to standardize tests concering the mean on dependent data.
+
+If \code{method = "none"}, no long run variance estimation is performed and the value 1 is returned (i.e. it does not alterate the test statistic). 
 
 The \code{control} argument is a list that can supply any of the following components:
 \describe{
