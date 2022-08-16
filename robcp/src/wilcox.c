@@ -9,7 +9,8 @@
 double hFun(double x1, double x2)
 {
   if(x1 < x2) return 0.5;
-  else return -0.5;
+  else if(x1 > x2) return -0.5;
+  return 0;
 }
 
 SEXP wilcox(SEXP X)

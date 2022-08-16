@@ -34,7 +34,7 @@ HodgesLehmann <- function(x, b_u = "nrd0", method = "kernel", control = list())
   {
     control$overlapping <- TRUE
   }
-  method <- match.arg(method, c("subsampling", "kernel", "bootstrap"))
+  method <- match.arg(method, c("subsampling", "kernel", "bootstrap", "none"))
   ## end argument check
   n <- length(x)
   

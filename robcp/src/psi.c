@@ -19,7 +19,7 @@ void trafo(double arr[], double mu, double sigma, int start, int n)
 }
 
 
-// marginal huberized location
+// marginal Huberized location
 void HLm(double arr[], int start, int n, int m, double k)
 {
   int j; 
@@ -30,7 +30,7 @@ void HLm(double arr[], int start, int n, int m, double k)
   }
 }
 
-// global huberized location
+// global Huberized location
 void HLg(double arr[], int start, int n, int m, double k)
 {
   int j; 
@@ -44,7 +44,7 @@ void HLg(double arr[], int start, int n, int m, double k)
   
   if(sum == 0)
   {
-    for(j = 0; j < n; j++)
+    for(j = 0; j < m; j++)
     {
       arr[start + j * n] = 0;
     }
@@ -85,7 +85,7 @@ void SLg(double arr[], int start, int n, int m, double k)
   
   if(sum == 0)
   {
-    for(j = 0; j < n; j++)
+    for(j = 0; j < m; j++)
     {
       arr[start + j * n] = 0;
     }

@@ -13,7 +13,7 @@ u_hat(x, b_u = "nrd0")
 \item{x}{time series (numeric or \code{ts} vector).}
 \item{b_u}{bandwidth for \code{\link{u_hat}}. Either a numeric value or the name
            of a bandwidth selection function (c.f. \code{\link{bw.nrd0}}).}
-\item{method}{method of long run variance estimation. Options are \code{"kernel"}, \code{"subsampling"} and \code{"bootstrap"}.}
+\item{method}{method of long run variance estimation. Options are \code{"kernel"}, \code{"subsampling"}, \code{"bootstrap"} and \code{"none"}.}
 \item{control}{a list of control parameters for the estimation of the long run variance (cf. \code{\link{lrv}}).}
 }
 

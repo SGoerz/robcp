@@ -31,14 +31,25 @@ print.cpStat <- function(x, ...)
 ##'
 ##'@details
 ##' * Default \code{ylim} is \code{c(min(c(data, 1.358)), max(c(data, 1.358)))}.
-##' * Default \code{xaxt} is the simlar to the option \code{"s"}, only that there 
+##' * Default \code{xaxt} is the similar to the option \code{"s"}, only that there 
 ##'   is a red labelled tick at the most probable change point location. Ticks too 
 ##'   close to this will be suppressed.
 ##'   
 ##'@seealso \code{\link{plot}}, \code{\link{par}}, \code{\link{CUSUM}}, \code{\link{HodgesLehmann}}, 
 ##'         \code{\link{wmw_stat}}
-plot.cpStat <- function(x, ylim, xaxt, crit.val = 1.358, ...)
+plot.cpStat <- function(x, ylim, xaxt, crit.val, ...)
 {
+  if(missing(crit.val))
+  {
+    if(!is.null(attr(x, "m"))) 
+    {
+      m <- attr(x, "m")
+      crit.val <- uniroot(Vectorize(function(x) pBessel(x, m) - 0.95), 
+                          interval = c(0, m + 1))$root
+    }
+    else crit.val <- 1.358
+  }
+  
   data <- attr(x, "teststat")
   if(missing(ylim)) ylim <- c(min(c(data, crit.val)), max(c(data, crit.val)))
   if(missing(xaxt))

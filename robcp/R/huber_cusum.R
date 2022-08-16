@@ -35,16 +35,15 @@ huber_cusum <- function(x, fun = "HLm", k, constant = 1.4826, method = "kernel",
   location <- attr(stat, "cp-location")
   names(stat) <- "S"
   
+  if(!is.finite(stat)) stat <- 0
+  
   if(is(x, "matrix"))
   {
-    h <- ncol(x)
-    h <- switch(fun, HCm = h * (h + 1) / 2, HCg = h * (h + 1) / 2, 
-                SCm = h * (h - 1) / 2, SCg = h * (h + 1) / 2 - 1, h)
+    h <- attr(stat, "m")
     
     if(fpc) stat <- (sqrt(stat) + 1.46035 / sqrt(2 * pi) / sqrt(nrow(x)))^2
     
     pval <- 1 - pBessel(stat, h)
-    
   }
   else
   {
@@ -62,7 +61,7 @@ huber_cusum <- function(x, fun = "HLm", k, constant = 1.4826, method = "kernel",
                          param = attr(stat, "param"), 
                          value = attr(stat, "sigma")), 
               psi = fun)
-  
+
   class(erg) <- "htest"
   return(erg)
 }

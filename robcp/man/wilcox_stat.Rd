@@ -10,10 +10,10 @@ wilcox_stat(x, h = 1L, method = "kernel", control = list())
 }
 
 \arguments{
-\item{x}{Time series (numeric or ts vector)}
+\item{x}{Time series (numeric or ts vector).}
 \item{h}{Kernel function of the U statistic (1L or 2L, or a function with two parameters).}
-\item{method}{Method for estimating the long run variance}
-\item{control}{A list of control parameters for the estimation of the long run variance (cf. \code{\link{lrv}})}
+\item{method}{Method for estimating the long run variance. Options are \code{"kernel"}, \code{"subsampling"}, \code{"bootstrap"} and \code{"none"}.}
+\item{control}{A list of control parameters for the estimation of the long run variance (cf. \code{\link{lrv}}).}
 }
 
 \details{

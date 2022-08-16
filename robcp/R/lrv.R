@@ -17,6 +17,7 @@
 lrv <- function(x, method = c("kernel", "subsampling", "bootstrap", "none"), 
                 control = list())
 {
+  method <- match.arg(method)
   if(method == "none") return(1)
   ## argument check
   if(is(x, "ts"))
@@ -27,7 +28,6 @@ lrv <- function(x, method = c("kernel", "subsampling", "bootstrap", "none"),
   {
     stop("x must be a numeric or integer vector or matrix!")
   }
-  method <- match.arg(method)
   ### ***********
   con <- list(kFun = "bartlett", B = 1000, b_n = NA, l = NA, 
               gamma0 = TRUE, overlapping = TRUE, distr = FALSE, seed = NA, 
@@ -135,7 +135,7 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
   
   if(distr)
   {
-    x <- ecdf(x)(x)
+    x <- rank(x) / n
   }
   
   if(version != "mean")
@@ -176,7 +176,7 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
   
   erg <- .Call("lrv", as.numeric(x_cen), as.numeric(b_n), as.numeric(kFun),
                PACKAGE = "robcp")
-
+  
   if(erg < 0 & gamma0)
   {
     warning("Estimated long run variance was < 0; only the estimated autocovariance to lag 0 is returned!")
@@ -237,7 +237,7 @@ lrv_subs <- function(x, l, overlapping = TRUE, distr = TRUE)
   
   if(distr)
   {
-    x <- ecdf(x)(x)
+    x <- rank(x) / n
     meanX <- (n + 1) / (2 * n) * l
   } else
   {

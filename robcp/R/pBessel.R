@@ -17,6 +17,7 @@ pBessel <- function(tn, p)
   {
     stop("h has to be a positive integer!")
   }
+  tn <- as.numeric(tn)
   ## end argument check
   
   if (p == 1) {

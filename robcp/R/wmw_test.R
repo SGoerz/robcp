@@ -14,6 +14,7 @@ wmw_test <- function(x, h = 1L, method = "kernel", control = list(),
 {
   Dataname <- deparse(substitute(x))
   stat <- wilcox_stat(x, h = h, method = method, control = control)
+  if(!is.finite(stat)) stat <- 0
   location <- attr(stat, "cp-location")
   names(stat) <- "S"
   

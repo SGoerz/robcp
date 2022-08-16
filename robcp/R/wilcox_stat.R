@@ -27,7 +27,7 @@ wilcox_stat <- function(x, h = 1L, method = "kernel", control = list())
   {
     control$overlapping <- FALSE
   }
-  method <- match.arg(method, c("subsampling", "kernel", "bootstrap"))
+  method <- match.arg(method, c("subsampling", "kernel", "bootstrap", "none"))
   
   n <- length(x)
   

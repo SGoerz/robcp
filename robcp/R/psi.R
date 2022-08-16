@@ -7,11 +7,11 @@
 # SCm: marginal sign covariance
 # SCg: global sign covariance
 
-## psi: standartizes and transforms a time series Y according to a psi 
+## psi: standardizes and transforms a time series Y according to a psi 
 ##      function 
 ##              
 ## input: Y (time series; numeric vector, matrix or ts object)
-##        fun (psi function; charater, one of the above)
+##        fun (psi function; character, one of the above)
 ##        k (parameter for psi function; numeric)
 ##        constant (scale factor of the MAD; numeric)
 ##      
@@ -56,6 +56,11 @@ psi <- function(y, fun = c("HLm", "HLg", "SLm", "SLg", "HCm", "HCg", "SCm", "SCg
     n <- nrow(y)
     med <- apply(y, 2, median)
     MAD <- apply(y, 2, function(x) mad(x, constant = constant))
+    if(any(MAD == 0))
+    {
+      warning("mad computed to be 0. Using standard deviation instead.")
+      MAD[MAD == 0] <- apply(y[, MAD == 0, drop = FALSE], 2, sd)
+    }
   } else
   {
     if(fun %in% 7:8) 
@@ -66,6 +71,11 @@ psi <- function(y, fun = c("HLm", "HLg", "SLm", "SLg", "HCm", "HCg", "SCm", "SCg
     m <- 1
     med <- median(y)
     MAD <- mad(y, constant = constant)
+    if(MAD == 0) 
+    {
+      warning("mad computed to be 0. Using standard deviation instead.")
+      MAD <- sd(y)
+    }
   }
   
   erg <- .Call("psi", as.numeric(y), as.numeric(fun), as.numeric(n), 
