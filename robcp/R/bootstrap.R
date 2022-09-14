@@ -4,7 +4,7 @@ estim <- function(x, version, constant = 1.4826, alpha = 0.5)
   
   if(version == "empVar")
   {
-    return(max(.Call("CUSUM", as.numeric(x^2))))
+    return(max(.Call("CUSUM_var", as.numeric(x), as.numeric(x^2))))
   } else if(version == "MD")
   {
     y <- cumstats::cummedian(x)

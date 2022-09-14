@@ -2,7 +2,7 @@
 \alias{plot.cpStat}
 \title{Plot method for change point statistics}
 \usage{
-\method{plot}{cpStat}(x, ylim, xaxt, crit.val = 1.358, ...)
+\method{plot}{cpStat}(x, ylim, xaxt, crit.val, ...)
 }
 \arguments{
 \item{x}{object of the class 'cpStat'.}
@@ -11,7 +11,7 @@
 
 \item{xaxt}{a character which specifies the x axis type (see \code{\link{par}}).}
 
-\item{crit.val}{critical value of the test.}
+\item{crit.val}{critical value of the test. Default: 1.358.}
 
 \item{...}{other graphical parameters (see \code{\link{par}}).}
 }

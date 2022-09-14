@@ -8,12 +8,13 @@ Computes the test statistic for a CUSUM-based tests on changes in Spearman's rho
 }
 
 \usage{
-cor_stat(x, version = c("tau", "rho"), control = list())
+cor_stat(x, version = c("tau", "rho"), method = "kernel", control = list())
 }
 
 \arguments{
 \item{x}{time series (numeric or ts vector).}
 \item{version}{version of the test. Either \code{"rho"} or \code{"tau"}.}
+\item{method}{methods of long run variance estimation. Options are \code{"kernel"} and \code{"none"}.}
 \item{control}{a list of control parameters.}
 }
 

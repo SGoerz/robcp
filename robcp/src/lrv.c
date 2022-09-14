@@ -139,7 +139,7 @@ double sigma_1(double *x, int n, double b_n, int k)
     var += x[i] * x[i];
   }
   
-  for(h = 1; h <= b_n; h++)
+  for(h = 1; h < b_n; h++)
   {
     temp2 = 0;
     for(i = 0; i < (n - h); i++)

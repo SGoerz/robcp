@@ -25,7 +25,7 @@ test_that("output of wilcox_stat has the correct format",
 test_that("wilcox_stat returns the correct value", 
 {
   x <- c(37, 40, 9, 14, 37, 3)
-  t1 <- 4 / sqrt(6)^3 / 
+  t1 <- 3.5 / sqrt(6)^3 / 
     sqrt(lrv(x, method = "subsampling", 
              control = list(overlapping = FALSE, distr = TRUE, l = 2)))
   
