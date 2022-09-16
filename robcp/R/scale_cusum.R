@@ -24,8 +24,7 @@ opt.param <-  function(x)
 ##'@param x time series (numeric or ts vector).
 ##'@param version variance estimation method. One of "empVar", "MD", "GMD", "Qalpha".
 ##'@param control a list of control parameters.
-##'@param constant scale factor for the MAD.
-#%#'@param alpha quantile of the distribution function of all absolute pairwise differences used in \code{version = "Qalpha"}.
+##'@param alpha quantile of the distribution function of all absolute pairwise differences used in \code{version = "Qalpha"}.
 ##'@return Test statistic (numeric value) with the attribute cp-location 
 ##'        indicating at which index a change point is most likely. Is an S3 
 ##'        object of the class cpStat   
@@ -109,8 +108,8 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"),
       rho2 <- abs(cor((x.adj[-n])^2, (x.adj[-1])^2, method = "spearman"))
       
       ##
-      p1 <- 0.4
-      p2 <- 0.4
+      p1 <- 0.5
+      p2 <- 0.3
       ##
       
       param <- max(n^(p1) * ((2 * rho1) / (1 - rho1^2))^(p2),
@@ -149,10 +148,9 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"),
 ##'@title Tests for Scale Changes Based on Pairwise Differences
 ##'@description Performs the CUSUM-based test on changes in the scale.
 ##'@param x time series (numeric or ts vector).
-##'@param version variance estimation method. One of "empVar", "MD", "GMD", "QBeta".
+##'@param version variance estimation method. One of "empVar", "MD", "GMD", "Qalpha".
 ##'@param control a list of control parameters.
-##'@param constant scale factor for the MAD.
-##'@param beta quantile of the distribution function of all absolute pairwise differences used in \code{version = "QBeta"}.
+##'@param alpha quantile of the distribution function of all absolute pairwise differences used in \code{version = "Qalpha"}.
 ##'@param fpc finite population correction (boolean).
 ##'@param tol tolerance of the distribution function (numeric), which is used do compute p-values.
 ##'@return A list fo the class "htest" containing
