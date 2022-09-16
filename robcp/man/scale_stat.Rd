@@ -9,7 +9,7 @@ Computes the test statistic for CUSUM-based tests on scale changes.
 
 \usage{
 scale_stat(x, version =  c("empVar", "MD", "GMD", "Qalpha"), method = "kernel",
-           control = list(), constant = 1.4826, alpha = 0.8)
+           control = list(), alpha = 0.8)
 }
 
 \arguments{
@@ -20,8 +20,6 @@ scale_stat(x, version =  c("empVar", "MD", "GMD", "Qalpha"), method = "kernel",
 \item{method}{either \code{"kernel"} for performing a kernel-based long run variance estimation, or \code{"bootstrap"} for performing a dependent wild bootstrap. See 'Details' below.}
 
 \item{control}{a list of control parameters.}
-
-\item{constant}{scale factor for the MAD.}
 
 \item{alpha}{quantile of the distribution function of all absolute pairwise differences used in \code{version = "Qalpha"}.}
 }

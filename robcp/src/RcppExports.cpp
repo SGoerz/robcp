@@ -54,6 +54,7 @@ RcppExport SEXP c_cumsum_ma(SEXP, SEXP, SEXP);
 RcppExport SEXP cholesky(SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP CUSUM(SEXP);
 RcppExport SEXP CUSUM_ma(SEXP, SEXP, SEXP, SEXP, SEXP);
+RcppExport SEXP CUSUM_var(SEXP, SEXP);
 RcppExport SEXP gen_matrix(SEXP, SEXP, SEXP);
 RcppExport SEXP GMD(SEXP, SEXP);
 RcppExport SEXP lrv(SEXP, SEXP, SEXP);
@@ -79,6 +80,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"cholesky",            (DL_FUNC) &cholesky,            5},
     {"CUSUM",               (DL_FUNC) &CUSUM,               1},
     {"CUSUM_ma",            (DL_FUNC) &CUSUM_ma,            5},
+    {"CUSUM_var",           (DL_FUNC) &CUSUM_var,           2},
     {"gen_matrix",          (DL_FUNC) &gen_matrix,          3},
     {"GMD",                 (DL_FUNC) &GMD,                 2},
     {"lrv",                 (DL_FUNC) &lrv,                 3},

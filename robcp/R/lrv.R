@@ -31,7 +31,7 @@ lrv <- function(x, method = c("kernel", "subsampling", "bootstrap", "none"),
   ### ***********
   con <- list(kFun = "bartlett", B = 1000, b_n = NA, l = NA, 
               gamma0 = TRUE, overlapping = TRUE, distr = FALSE, seed = NA, 
-              version = "mean", loc = NA, scale = NA)
+              version = "mean", alpha_Q = NA)
   nmsC <- names(con)
   con[(namc <- names(control))] <- control
   if(length(noNms <- namc[!namc %in% nmsC])) 
@@ -74,13 +74,10 @@ lrv <- function(x, method = c("kernel", "subsampling", "bootstrap", "none"),
                      as.numeric(mean(apply(rks, 1, prod))^2))
       } else if(con$version == "tau")
       {
-        if(is.na(con$scale)) con$scale <- .Call("tau", as.numeric(x[, 1]), 
-                                                as.numeric(x[, 2]), 
-                                                as.numeric(n))[n - 1]
         f1 <- .Call("trafo_tau", as.numeric(x), as.numeric(n)) / n
         psi <- 4 * f1 - 2 * ecdf(x[, 1])(x[, 1]) - 2 * ecdf(x[, 2])(x[, 2]) + 
-          1 - con$scale
-        
+          1
+        psi <- psi - mean(psi)
         erg <- 4 * .Call("lrv", as.numeric(psi), as.numeric(con$b_n), as.numeric(con$kFun), 
               PACKAGE = "robcp")
       } else
@@ -101,7 +98,7 @@ lrv <- function(x, method = c("kernel", "subsampling", "bootstrap", "none"),
   {
     erg <- switch(method, 
            "kernel" = lrv_kernel(x, con$b_n, con$kFun, con$gamma0, con$distr,
-                                 con$version, con$loc, con$scale),
+                                 con$version, con$alpha_Q),
            "subsampling" = lrv_subs(x, con$l, con$overlapping, con$distr), 
            "bootstrap" = lrv_dwb(x, con$l, con$B, con$kFun, con$seed, con$distr))
   }
@@ -121,7 +118,7 @@ lrv <- function(x, method = c("kernel", "subsampling", "bootstrap", "none"),
 ##'               
 ##'@name lrv
 lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
-                       version = "mean", loc = NA, scale = NA)
+                       version = "mean", alpha_Q = NA)
 {
   n <- length(x)
   if(!is.na(b_n) && (!is(b_n, "numeric") || b_n <= 0 || b_n > n))
@@ -138,37 +135,26 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
     x <- rank(x) / n
   }
   
-  if(version != "mean")
+  if(version == "empVar")
   {
-    if(version == "empVar")
-    {
-      if(is.na(loc)) loc <- mean(x)
-      if(is.na(scale)) scale <- var(x)
-      x_cen <- (x - loc)^2 - scale
-    } else if(version == "MD")
-    {
-      if(is.na(loc)) loc <- median(x)
-      if(is.na(scale)) scale <- sum(abs(x - loc)) / (n - 1)
-      x_cen <- abs(x - loc) - scale
-    } else if(version == "GMD")
-    {
-      if(is.na(scale)) scale <- sum(sapply(2:n, function(j)
-        sum(abs(x[j] - x[1:(j-1)])))) * 2 / (n * (n - 1))
-      x_cen <- sapply(x, function(xi) mean(abs(x - xi))) - scale
-    } else if(version == "MAD")
-    {
-      if(is.na(loc)) loc <- median(x)
-      if(is.na(scale)) scale <- mad(x)
-      x_cen <- as.numeric(abs(x - loc) <= scale) - 0.5
-    } else if(version == "Qalpha")
-    {
-      if(is.na(loc)) loc <- 0.5
-      if(is.na(scale)) scale <- Qalpha(x, loc)[n-1]
-      x_cen <- sapply(x, function(xi) mean(as.numeric(abs(x - xi) <= scale))) - loc
-    } else 
-    {
-      stop("version not supported.")
-    }
+    x <- (x - mean(x))^2 
+  } else if(version == "MD")
+  {
+    x <- abs(x - median(x)) 
+  } else if(version == "GMD")
+  {
+    x <- sapply(seq_along(x), function(i) mean(abs(x[-i] - x[i])))
+  } 
+  
+  # if(version == "MAD")
+  # {
+  #   x_cen <- as.numeric(abs(x - median(x)) <= mad(x)) - 0.5
+  # } else
+  if(version == "Qalpha")
+  {
+    if(is.na(alpha_Q)) alpha_Q <- 0.5
+    scale <- Qalpha(x, alpha_Q)[n-1]
+    x_cen <- sapply(x, function(xi) mean(as.numeric(abs(x - xi) <= scale))) - alpha_Q
   } else
   {
     x_cen <- x - mean(x)
@@ -188,14 +174,14 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
     if(version == "GMD")
     {
       erg <- erg * 4
-    } else if(version == "MAD")
-    {
-      erg <- erg / .Call("MAD_f", as.numeric(x), as.numeric(n), as.numeric(loc),
-                         as.numeric(scale), as.numeric(IQR(abs(x - loc)) * n^(-1/3)-1), as.numeric(8))^2
+    # } else if(version == "MAD")
+    # {
+    #   erg <- erg / .Call("MAD_f", as.numeric(x), as.numeric(n), as.numeric(loc),
+    #                      as.numeric(scale), as.numeric(IQR(abs(x - loc)) * n^(-1/3)-1), as.numeric(8))^2
     } else if(version == "Qalpha")
     {
       erg <- erg * 4 / .Call("Qalpha_u", as.numeric(x), as.numeric(n), as.numeric(scale),
-                             as.numeric(IQR(x) * n^(-1/3)-1), as.numeric(8))^2
+                             as.numeric(IQR(x) * n^(-1/3)), as.numeric(8))^2
       # as.numeric(8) = Epanechnikov kernel
     }
   }

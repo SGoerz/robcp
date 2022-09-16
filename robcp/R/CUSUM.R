@@ -66,8 +66,8 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
       n <- length(x)
       x.adj <- x
       x.adj[(k+1):n] <- x.adj[(k+1):n] - mean(x[(k+1):n]) + mean(x[1:k])
-      rho <- cor(x.adj[-n], x.adj[-1], method = "spearman")
-      
+      rho <- abs(cor(x.adj[-n], x.adj[-1], method = "spearman"))
+
       ###
       p1 <- 0.45
       p2 <- 0.4

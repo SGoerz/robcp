@@ -9,7 +9,7 @@
 ##'        indicating at which index a change point is most likely. Is an S3 
 ##'        object of the class cpStat   
 
-cor_stat <- function(x, version = c("tau", "rho"), control = list())
+cor_stat <- function(x, version = c("tau", "rho"), method = "kernel", control = list())
 {
   ## argument check
   if(is(x, "ts"))
@@ -56,7 +56,7 @@ cor_stat <- function(x, version = c("tau", "rho"), control = list())
     
     if(is.null(dim(x)) || ncol(x) != 2) stop("For the test on Kendall's tau, x must be bivariate.")
     res <- .Call("tau", as.numeric(x[, 1]), as.numeric(x[, 2]), as.numeric(n))
-    control$scale <- res[n-1]
+    #control$scale <- res[n-1]
   } else
   {
     stop("version not supported.")
@@ -67,7 +67,8 @@ cor_stat <- function(x, version = c("tau", "rho"), control = list())
   stat <- res - tail(res, 1)
   stat <- (n - length(res) + 1):n * abs(stat)
   k <- which.max(stat) + 1
-  sigma <- sqrt(n * lrv(x, method = "kernel", control = control))
+  if(method == "kernel") sigma <- sqrt(n * lrv(x, method = "kernel", control = control)) else
+    if(method == "none") sigma <- 1 else stop("Unknown method")
   res <- max(stat) / sigma
    
   attr(res, "cp-location") <- as.integer(k)
@@ -91,12 +92,12 @@ cor_stat <- function(x, version = c("tau", "rho"), control = list())
 ##'@param fpc finite population correction (boolean).
 ##'@param tol tolerance of the distribution function (numeric), which is used do compute p-values.
 ##'@return A list fo the class "htest"
-cor_cusum <- function(x, version = c("tau", "rho"), control = list(), fpc = TRUE, 
-                      tol = 1e-8, plot = FALSE)
+cor_cusum <- function(x, version = c("tau", "rho"), method = "kernel", control = list(),
+                      fpc = TRUE, tol = 1e-8, plot = FALSE)
 {
   Dataname <- deparse(substitute(x))
   
-  stat <- cor_stat(x = x, version = version, control = control)
+  stat <- cor_stat(x = x, version = version, method = method, control = control)
   location <- attr(stat, "cp-location")
   names(stat) <- "S"
   

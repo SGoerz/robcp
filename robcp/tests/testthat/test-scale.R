@@ -19,21 +19,21 @@ test_that("scale_stat is computed correctly",
   b_n <- 2
   
   # empVar:
-  y <-  5034.6 / sqrt(5 * lrv(x, control = list(b_n = b_n, kFun = "SFT", 
+  y <- 4 * 125.99 / sqrt(5 * lrv(x, control = list(b_n = b_n, kFun = "quadratic", 
                                                 version = "empVar")))
   z <- scale_stat(x, version = "empVar", control = list(b_n = b_n))
   attributes(z) <- NULL
   expect_equal(z, y)
   
   # MD:
-  y <-  49 / sqrt(5 * lrv(x, control = list(b_n = b_n, kFun = "SFT", 
+  y <-  49 / sqrt(5 * lrv(x, control = list(b_n = b_n, kFun = "quadratic", 
                                                version = "MD")))
   z <- scale_stat(x, version = "MD", control = list(b_n = b_n))
   attributes(z) <- NULL
   expect_equal(z, y)
   
   # GMD:
-  y <-  30.4 / sqrt(5 * lrv(x, "kernel", control = list(b_n = b_n, kFun = "SFT",
+  y <-  30.4 / sqrt(5 * lrv(x, "kernel", control = list(b_n = b_n, kFun = "quadratic",
                                                         version = "GMD")))
   z <- scale_stat(x, version = "GMD", control = list(b_n = b_n))
   attributes(z) <- NULL
@@ -50,7 +50,7 @@ test_that("scale_stat is computed correctly",
   x <- c(6, 2, 1, 10, 5, 0)
   beta <- 0.9
   y <-  12 / sqrt(6 * lrv(x, "kernel", control = list(version = "Qalpha",
-                              kFun = "SFT", b_n = b_n, loc = beta)))
+                              kFun = "SFT", b_n = b_n, alpha_Q = beta)))
   z <- scale_stat(x, version = "Qalpha", control = list(b_n = b_n), alpha = beta)
   attributes(z) <- NULL
   expect_equal(z, y)

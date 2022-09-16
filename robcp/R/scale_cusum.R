@@ -13,7 +13,7 @@ opt.param <-  function(x)
     i <- i + 1
   }
   
-  return(i-1)
+  return(i)
 }
 
 ## Tests for Scale Changes Based on Pairwise Differences (Gerstenberger et. al.)
@@ -31,7 +31,7 @@ opt.param <-  function(x)
 ##'        object of the class cpStat   
 
 scale_stat <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"), 
-                       method = "kernel", control = list(), constant = 1.4826,
+                       method = "kernel", control = list(),# constant = 1.4826,
                        alpha = 0.8)
 {
   ## argument check
@@ -51,7 +51,7 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"),
   }
   if(is.null(control$kFun) || is.na(control$kFun))
   {
-    control$kFun <- "SFT"
+    control$kFun <- "quadratic"
   }
   version <- match.arg(version)
   ## end argument check
@@ -60,11 +60,7 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"),
   
   if(version == "empVar")
   {
-    control$loc <- mean(x)
-    control$scale <- var(x)
-
-    stat <- .Call("CUSUM", as.numeric(x^2))
-    # sigma <-  sqrt(lrv(x, method = "kernel", control = control))
+    stat <- .Call("CUSUM_var", as.numeric(x), as.numeric(x^2))
     res <- max(stat)
     k <- which.max(stat)
   } else 
@@ -78,31 +74,27 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"),
       }
       y <- cumstats::cummedian(x)
       res <- .Call("MD", as.numeric(x), as.numeric(y), as.numeric(n)) / (1:(n-1))
-
-      control$loc <- median(x)
     } else if(version == "GMD")
     {
       res <- .Call("GMD", as.numeric(x), as.numeric(n)) / ((1:(n-1)) * (2:n)) * 2
     # } else if(version == "MAD")
     # {
     #   res <- sapply(2:n, function(k) mad(x[1:k], constant = constant))
-    #   control$loc <- median(x)
     } else if(version == "Qalpha")
     {
       res <- Qalpha(x, alpha)
-      control$loc <- alpha
+      control$alpha_Q <- alpha
     } else 
     {
       stop("version not supported.")
     }
     
-    control$scale <- res[n-1]
     control$distr <- FALSE
     
     stat <- res - res[n-1]
-    stat <- 2:n * abs(stat)
+    stat <- 2:n * abs(stat) / sqrt(n)
     k <- which.max(stat) + 1
-    res <- max(stat) / sqrt(n)
+    res <- max(stat) 
   } 
   
   if(method == "kernel") 
@@ -110,9 +102,22 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"),
     if(is.null(control$b_n) || is.na(control$b_n))
     {
       x.adj <- x
+      x.adj <- x
       if(k > 1 & k + 1 < n) x.adj[(k+1):n] <- x.adj[(k+1):n] /
-          sd(x.adj[(k+1):n]) * sd(x.adj[1:k])
-      control$b_n <- max(opt.param(x.adj), opt.param(x.adj^2), 1)
+        sd(x.adj[(k+1):n]) * sd(x.adj[1:k])
+      rho1 <- abs(cor(x.adj[-n], x.adj[-1], method = "spearman"))
+      rho2 <- abs(cor((x.adj[-n])^2, (x.adj[-1])^2, method = "spearman"))
+      
+      ##
+      p1 <- 0.4
+      p2 <- 0.4
+      ##
+      
+      param <- max(n^(p1) * ((2 * rho1) / (1 - rho1^2))^(p2),
+                   n^(p1) * ((2 * rho2) / (1 - rho2^2))^(p2), 1)
+      param <- min(param, n-1)
+      if(is.na(param)) param <- 1
+      control$b_n <- param
     }
     
     sigma <- sqrt(lrv(x, method = "kernel", control = control))
@@ -153,7 +158,7 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"),
 ##'@return A list fo the class "htest" containing
 ##'
 scale_cusum <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"),
-                        method = "kernel", control = list(), constant = 1.4826, 
+                        method = "kernel", control = list(), #constant = 1.4826, 
                         alpha = 0.8, fpc = TRUE, tol, plot = FALSE, level = 0.05)
 {
   if(missing(tol))
@@ -164,7 +169,8 @@ scale_cusum <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"),
   Dataname <- deparse(substitute(x))
   
   stat <- scale_stat(x = x, version = version, method = method, control = control,
-                     constant = constant)#, alpha = alpha)
+                     #constant = constant, 
+                     alpha = alpha)
   location <- attr(stat, "cp-location")
   names(stat) <- "S"
   
@@ -183,7 +189,8 @@ scale_cusum <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"),
     if(is.null(control$B)) control$B <- 1 / tol
     y <- dbb(stat, data = x, version = match.arg(version), control = control,
              alpha = alpha, 
-             constant = constant, level = level)
+             #constant = constant,
+             level = level)
     p.val <- y[[1]]
     erg2 <- list(bootstrap = list(param = control$l, crit.value = y[[2]]))
     if(plot) plot(stat, crit.val = y[[2]])

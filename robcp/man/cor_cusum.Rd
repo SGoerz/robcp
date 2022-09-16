@@ -7,13 +7,14 @@ Performs a CUSUM-based test on changes in Spearman's rho or Kendall's tau.
 }
 
 \usage{
-cor_cusum(x, version = c("tau", "rho"), control = list(), fpc = TRUE, 
-          tol = 1e-08, plot = FALSE)
+cor_cusum(x, version = c("tau", "rho"), method = "kernel", control = list(), 
+          fpc = TRUE, tol = 1e-08, plot = FALSE)
 }
 
 \arguments{
 \item{x}{time series (matrix or ts object with numeric/integer values).}
 \item{version}{version of the test. Either \code{rho} or \code{tau}.}
+\item{method}{method for estimating the long run variance.}
 \item{control}{a list of control parameters.}
 \item{fpc}{finite population correction (boolean).}
 \item{tol}{tolerance of the distribution function (numeric), which is used do compute p-values.}
