@@ -19,6 +19,7 @@ lrv <- function(x, method = c("kernel", "subsampling", "bootstrap", "none"),
 {
   method <- match.arg(method)
   if(method == "none") return(1)
+  
   ## argument check
   if(is(x, "ts"))
   {
@@ -28,14 +29,19 @@ lrv <- function(x, method = c("kernel", "subsampling", "bootstrap", "none"),
   {
     stop("x must be a numeric or integer vector or matrix!")
   }
+  
   ### ***********
-  con <- list(kFun = "bartlett", B = 1000, b_n = NA, l = NA, 
+  con <- list(kFun = "bartlett", B = 1000, b_n = NA, l_n = NA, 
               gamma0 = TRUE, overlapping = TRUE, distr = FALSE, seed = NA, 
               version = "mean", alpha_Q = NA)
   nmsC <- names(con)
   con[(namc <- names(control))] <- control
   if(length(noNms <- namc[!namc %in% nmsC])) 
     warning("unknown names in control: ", paste(noNms, collapse = ", "))
+  if(con$distr) con$version <- "distr"
+  if(is.na(con$b_n) && !is.na(con$l_n) && method == "kernel") con$b_n <- con$l_n
+  if(is.na(con$l_n) && !is.na(con$b_n) && (method == "subsampling" | method == "bootstrap"))
+    con$l_n <- con$b_n
   ### ***********
 
   con$kFun <- pmatch(con$kFun, c("bartlett", "FT", "parzen", "QS", "TH", 
@@ -96,11 +102,52 @@ lrv <- function(x, method = c("kernel", "subsampling", "bootstrap", "none"),
     }
   } else
   {
+    fact <- 1
+    
+    if(con$version == "distr")
+    {
+      x <- rank(x) / length(x)
+    } else if(con$version == "empVar")
+    {
+      x <- (x - mean(x))^2 
+    } else if(con$version == "MD")
+    {
+      x <- abs(x - median(x)) 
+    } else if(con$version == "GMD")
+    {
+      fact <- 4
+      x <- sapply(seq_along(x), function(i) mean(abs(x[-i] - x[i])))
+    # } else if(con$version == "MAD")
+    # {
+    #   x_cen <- as.numeric(abs(x - median(x)) <= mad(x)) - 0.5
+    } else if(con$version == "Qalpha")
+    {
+      n <- length(x)
+      if(is.na(con$alpha_Q)) con$alpha_Q <- 0.5
+      scale <- Qalpha(x, con$alpha_Q)[n - 1]
+      
+      fact <- 4 / .Call("Qalpha_u", as.numeric(x), as.numeric(n), as.numeric(scale),
+                        as.numeric(IQR(x) * n^(-1/3)), as.numeric(8))^2
+      #### as.numeric(8) = Epanechnikov kernel
+      
+      x <- sapply(x, function(xi) mean(as.numeric(abs(x - xi) <= scale)))
+    } else if(con$version != "mean")
+    {
+      stop("version not supported!")
+    }
+
+    
     erg <- switch(method, 
-           "kernel" = lrv_kernel(x, con$b_n, con$kFun, con$gamma0, con$distr,
-                                 con$version, con$alpha_Q),
-           "subsampling" = lrv_subs(x, con$l, con$overlapping, con$distr), 
-           "bootstrap" = lrv_dwb(x, con$l, con$B, con$kFun, con$seed, con$distr))
+           "kernel" = lrv_kernel(x, con$b_n, con$kFun, con$gamma0),
+           "subsampling" = lrv_subs(x, con$l_n, con$overlapping, con$version == "distr"), 
+           "bootstrap" = lrv_dwb(x, con$l_n, con$B, con$kFun, con$seed))
+    
+    # } else if(version == "MAD")
+    # {
+    #   erg <- erg / .Call("MAD_f", as.numeric(x), as.numeric(n), as.numeric(loc),
+    #                      as.numeric(scale), as.numeric(IQR(abs(x - loc)) * n^(-1/3)-1), as.numeric(8))^2
+    
+    erg <- erg * fact
   }
   
   return(erg)
@@ -117,8 +164,7 @@ lrv <- function(x, method = c("kernel", "subsampling", "bootstrap", "none"),
 ##'               default: TRUE)
 ##'               
 ##'@name lrv
-lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
-                       version = "mean", alpha_Q = NA)
+lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE)
 {
   n <- length(x)
   if(!is.na(b_n) && (!is(b_n, "numeric") || b_n <= 0 || b_n > n))
@@ -130,35 +176,33 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
     b_n <- 0.9 * n^(1/3)
   }
   
-  if(distr)
-  {
-    x <- rank(x) / n
-  }
-  
-  if(version == "empVar")
-  {
-    x <- (x - mean(x))^2 
-  } else if(version == "MD")
-  {
-    x <- abs(x - median(x)) 
-  } else if(version == "GMD")
-  {
-    x <- sapply(seq_along(x), function(i) mean(abs(x[-i] - x[i])))
-  } 
+  # if(distr)
+  # {
+  #   x <- rank(x) / n
+  # }
+  # 
+  # if(version == "empVar")
+  # {
+  #   x <- (x - mean(x))^2 
+  # } else if(version == "MD")
+  # {
+  #   x <- abs(x - median(x)) 
+  # } else if(version == "GMD")
+  # {
+  #   x <- sapply(seq_along(x), function(i) mean(abs(x[-i] - x[i])))
+  # } else if(version == "Qalpha")
+  # {
+  #   if(is.na(alpha_Q)) alpha_Q <- 0.5
+  #   scale <- Qalpha(x, alpha_Q)[n-1]
+  #   x_cen <- sapply(x, function(xi) mean(as.numeric(abs(x - xi) <= scale)))
+  # }
   
   # if(version == "MAD")
   # {
   #   x_cen <- as.numeric(abs(x - median(x)) <= mad(x)) - 0.5
   # } else
-  if(version == "Qalpha")
-  {
-    if(is.na(alpha_Q)) alpha_Q <- 0.5
-    scale <- Qalpha(x, alpha_Q)[n-1]
-    x_cen <- sapply(x, function(xi) mean(as.numeric(abs(x - xi) <= scale))) - alpha_Q
-  } else
-  {
-    x_cen <- x - mean(x)
-  }
+
+  x_cen <- x - mean(x)
   
   erg <- .Call("lrv", as.numeric(x_cen), as.numeric(b_n), as.numeric(kFun),
                PACKAGE = "robcp")
@@ -169,27 +213,27 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
     erg <- (n - 1) / n * var(x_cen)
   }
   
-  if(!is.na(version))
-  {
-    if(version == "GMD")
-    {
-      erg <- erg * 4
-    # } else if(version == "MAD")
-    # {
-    #   erg <- erg / .Call("MAD_f", as.numeric(x), as.numeric(n), as.numeric(loc),
-    #                      as.numeric(scale), as.numeric(IQR(abs(x - loc)) * n^(-1/3)-1), as.numeric(8))^2
-    } else if(version == "Qalpha")
-    {
-      erg <- erg * 4 / .Call("Qalpha_u", as.numeric(x), as.numeric(n), as.numeric(scale),
-                             as.numeric(IQR(x) * n^(-1/3)), as.numeric(8))^2
-      # as.numeric(8) = Epanechnikov kernel
-    }
-  }
-  
-  if(distr)
-  {
-    erg <- erg * sqrt(pi / 2)
-  }
+  # if(!is.na(version))
+  # {
+  #   if(version == "GMD")
+  #   {
+  #     erg <- erg * 4
+  #   # } else if(version == "MAD")
+  #   # {
+  #   #   erg <- erg / .Call("MAD_f", as.numeric(x), as.numeric(n), as.numeric(loc),
+  #   #                      as.numeric(scale), as.numeric(IQR(abs(x - loc)) * n^(-1/3)-1), as.numeric(8))^2
+  #   } else if(version == "Qalpha")
+  #   {
+  #     erg <- erg * 4 / .Call("Qalpha_u", as.numeric(x), as.numeric(n), as.numeric(scale),
+  #                            as.numeric(IQR(x) * n^(-1/3)), as.numeric(8))^2
+  #     #### as.numeric(8) = Epanechnikov kernel
+  #   }
+  # }
+  # 
+  # if(distr)
+  # {
+  #   erg <- erg * sqrt(pi / 2)
+  # }
   
   return(erg)
 }
@@ -203,7 +247,7 @@ lrv_kernel <- function(x, b_n, kFun, gamma0 = TRUE, distr = FALSE,
 ##'       distr (distribution function or plain observations? boolean)
 ##'       
 ##'@name lrv
-lrv_subs <- function(x, l, overlapping = TRUE, distr = TRUE)
+lrv_subs <- function(x, l, overlapping = TRUE, distr = FALSE)
 {
   ## argument check
   if(!is.na(l) && (!is(l, "numeric") || l <= 0))
@@ -221,17 +265,16 @@ lrv_subs <- function(x, l, overlapping = TRUE, distr = TRUE)
                   warning = function(w) stop("Integer overflow in default l estimation. Please specify a value manually."))
   }
   
-  if(distr)
-  {
-    x <- rank(x) / n
-    meanX <- (n + 1) / (2 * n) * l
-  } else
-  {
-    meanX <- mean(x) * l
-  }
-  
   if(!overlapping)
   {
+    if(distr)
+    {
+      # x <- rank(x) / n
+      meanX <- (n + 1) / (2 * n) * l
+    } else
+    {
+      meanX <- mean(x) * l
+    }
     res <- .Call("lrv_subs_nonoverlap", as.numeric(x), as.numeric(l),
                as.numeric(meanX), as.numeric(distr))
   } else
@@ -252,7 +295,7 @@ lrv_subs <- function(x, l, overlapping = TRUE, distr = TRUE)
 ##'       seed (start for random number generator)
 ##'       
 ##'@name lrv
-lrv_dwb <- function(x, l, B, kFun, seed = NA, distr = FALSE)
+lrv_dwb <- function(x, l, B, kFun, seed = NA)
 {
   n <- length(x)
   
@@ -279,10 +322,10 @@ lrv_dwb <- function(x, l, B, kFun, seed = NA, distr = FALSE)
              Bartlett kernel is used.")
   }
   
-  if(distr)
-  {
-    x <- ecdf(x)(x)
-  }
+  # if(distr)
+  # {
+  #   x <- rank(x) / n
+  # }
   
   sigma.ma <- matrix(.Call("gen_matrix", as.numeric(n), as.numeric(l),
                            as.numeric(kFun)), ncol = n)

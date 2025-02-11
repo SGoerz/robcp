@@ -5,7 +5,7 @@ test_that("output has the correct format",
   skip_on_os(os = "solaris")
   
   x <- 1:5
-  y <- HodgesLehmann(x, b_u = 1, control = list(b_n = 1, l = 1))
+  y <- HodgesLehmann(x, b_u = 1, control = list(b_n = 1, l_n = 1))
   
   # X <- matrix(1:9, ncol = 3)
   # Y <- HodgesLehmann(X)
@@ -42,8 +42,8 @@ test_that("HodgesLehmann computes the correct value",
   x <- c(14, 49, 50, 47, 28)
   l <- 2
   y <- sqrt(5) * 5.44 * u_hat(x - c(0, rep(34, 4))) / 
-    sqrt(lrv(x, "kernel", control = list(l = l, overlapping = TRUE, distr = TRUE)))
-  z <- HodgesLehmann(x, control = list(l = l, overlapping = TRUE, distr = TRUE))
+    sqrt(lrv(x, "kernel", control = list(l_n = l, overlapping = TRUE, distr = TRUE)))
+  z <- HodgesLehmann(x, control = list(l_n = l, overlapping = TRUE, distr = TRUE))
   attributes(z) <- NULL
   
   expect_equal(z, y)
@@ -51,9 +51,9 @@ test_that("HodgesLehmann computes the correct value",
   x <- c(58, 2, 59, 26, 20, 88)
   l <- 3
   y <- sqrt(6) * 310 / 36 * u_hat(x - c(rep(0, 5), 62)) /
-    sqrt(lrv(x, "subs", control = list(l = l, overlapping = TRUE, distr = TRUE)))
+    sqrt(lrv(x, "subs", control = list(l_n = l, overlapping = TRUE, distr = TRUE)))
   z <- HodgesLehmann(x, method = "subsampling",
-                     control = list(l = l, overlapping = TRUE, distr = TRUE))
+                     control = list(l_n = l, overlapping = TRUE, distr = TRUE))
   attributes(z) <- NULL
   
   expect_equal(z, y)

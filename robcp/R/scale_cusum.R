@@ -96,9 +96,10 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"),
     res <- max(stat) 
   } 
   
-  if(method == "kernel") 
+  if(method == "kernel" || method == "subsampling") 
   {
-    if(is.null(control$b_n) || is.na(control$b_n))
+    if((method == "kernel" && (is.null(control$b_n) || is.na(control$b_n))) ||
+       (method == "subsampling" && (is.null(control$l_n) || is.na(control$l_n))))
     {
       x.adj <- x
       x.adj <- x
@@ -117,15 +118,22 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"),
       param <- min(param, n-1)
       if(is.na(param)) param <- 1
       control$b_n <- param
+      control$l_n <- param
     }
     
-    sigma <- sqrt(lrv(x, method = "kernel", control = control))
+    sigma <- sqrt(lrv(x, method = method, control = control))
     res <- res / sigma 
     
-    attr(res, "lrv-estimation") <- "kernel"
+    attr(res, "lrv-estimation") <- method
     attr(res, "sigma") <- sigma
-    attr(res, "param") <- control$b_n 
-    attr(res, "kFun") <- control$kFun
+    if(method == "kernel")
+    {
+      attr(res, "kFun") <- control$kFun
+      attr(res, "param") <- control$b_n 
+    } else
+    {
+      attr(res, "param") <- control$l_n
+    }
     stat <- stat / sigma
     
   } else if(method == "bootstrap")

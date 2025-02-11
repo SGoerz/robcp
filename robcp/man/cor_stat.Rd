@@ -1,7 +1,7 @@
 \name{cor_stat}
 \alias{cor_stat}
 
-\title{Test statistic to detect Fluctuation Changes}
+\title{Test statistic to detect Correlation Changes}
 
 \description{
 Computes the test statistic for a CUSUM-based tests on changes in Spearman's rho or Kendall's tau.
@@ -40,7 +40,7 @@ If \code{version = "tau"}, the function tests if the correlation between \eqn{x_
 \deqn{\hat{\tau}_k = \frac{2}{k(k-1)} \sum_{1 \leq i < j \leq k} sign\left((x_j - x_i)(y_j - y_i)\right).}
 The default bandwidth for the kernel-based long run variance estimation is \eqn{b_n = \lfloor 2n^{1/3} \rfloor} and the default kernel function is the quatratic kernel.
 
-If \code{version = "rho"}, the function tests if the correlation of a time series of an arbitrary dimension \eqn{d} (>= 2) stays constant by considering Spearman's rho. Therefore, \eqn{\hat{\xi} = \hat{\rho}} is the sample version of Spearman's rho:
+If \code{version = "rho"}, the function tests if the correlation of a time series of an arbitrary dimension \eqn{d} (>= 2) stays constant by considering a multivariate version of Spearman's rho. Therefore, \eqn{\hat{\xi} = \hat{\rho}} is the sample version of Spearman's rho:
 \deqn{\hat{\rho}_k = a(d) \left( \frac{2^d}{k} \sum_{j = 1}^k \prod_{i = 1}^d (1 - U_{i, j; n}) - 1 \right)}
 where \eqn{U_{i, j; n} = n^{-1}} (rank of \eqn{x_{i,j}} in \eqn{x_{i,1}, ..., x_{i,n})} and \eqn{a(d) = (d+1) / (2^d - d - 1)}. Here it is essential to use \eqn{\hat{U}_{i, j; n}} instead of \eqn{\hat{U}_{i, j; k}}. The default bandwidth for the kernel-based long run variance estimation is \eqn{\sqrt{n}} and the default kernel function is the Bartlett kernel.
 

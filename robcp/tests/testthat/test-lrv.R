@@ -42,14 +42,17 @@ test_that("correct warnings and errors",
   
   ## wrong parameters specified
   expect_error(lrv(x, control = list(b_n = 5)))
-  expect_error(lrv(x, method = "subsampling", control = list(l = -1)))
+  expect_error(lrv(x, method = "subsampling", control = list(l_n = -1)))
   expect_error(lrv(x, method = "bootstrap", control = list(B = 0)))
-  expect_error(lrv(x, method = "bootstrap", control = list(l = 5)))
+  expect_error(lrv(x, method = "bootstrap", control = list(l_n = 5)))
   
   ## methods getting confused
   
   ## kernel functions for bootstrap
-  expect_warning(lrv(x, method = "bootstrap", control = list(kFun = "FT", l = 1)))
+  expect_warning(lrv(x, method = "bootstrap", control = list(kFun = "FT", l_n = 1)))
+  
+  ## wrong version 
+  expect_error(lrv(x, control = list(version = "abc")))
 })
 
 test_that("kernel-based estimation is correctly computed", 
@@ -141,8 +144,9 @@ test_that("kernel-based estimation for the scale is correctly computed",
     return(sum(temp))
   })) / (21 * 7^(-1/3) * IQR(x))
 
-  expect_equal(y, lrvTest(sapply(x, function(xi)
-    mean(as.numeric(abs(x - xi) <= v))) - beta, b_n) * 4 / qalpha_u^2)
+  newx <- sapply(x, function(xi)
+    mean(as.numeric(abs(x - xi) <= v)))
+  expect_equal(y, lrvTest(newx - mean(newx), b_n) * 4 / qalpha_u^2)
 })
 
 test_that("kernel-based estimation for the correlation is computed correctly", 
@@ -179,7 +183,19 @@ test_that("subsampling estimation is correctly computed",
   y <- ecdf(x)(x)
   l <- 10
   
-  ## overlapping
+  ## overlapping 
+  meanX <- mean(x) * l
+  res1 <- sapply(0:(n-l), function(i)
+  {
+    (sum(x[(i+1):(i+l)]) - meanX)^2
+  })
+  res1 <- sum(res1) / (l * (n - l + 1))
+  
+  expect_equal(lrv(x, method = "subsampling", 
+                   control = list(l_n = l, overlapping = TRUE, distr = FALSE)), 
+               res1)
+  
+  ## overlapping & distr
   res1 <- sapply(0:(n-l), function(i)
   {
     abs(sum(y[(i+1):(i+l)] - 0.5))
@@ -187,7 +203,7 @@ test_that("subsampling estimation is correctly computed",
   res1 <- (sum(res1) * sqrt(pi) / (sqrt(2*l) * (n - l + 1)))^2
   
   expect_equal(lrv(x, method = "subsampling", 
-                   control = list(l = l, overlapping = TRUE, distr = TRUE)), 
+                   control = list(l_n = l, overlapping = TRUE, distr = TRUE)), 
                res1)
   
   ## non-overlapping 
@@ -200,7 +216,7 @@ test_that("subsampling estimation is correctly computed",
   res2 <- sum(res2) / l / a
   
   expect_equal(lrv(x, method = "subsampling", 
-                   control = list(l = l, overlapping = FALSE, distr = FALSE)), 
+                   control = list(l_n = l, overlapping = FALSE, distr = FALSE)), 
                res2)
   
   ## non-overlapping & distr
@@ -212,8 +228,69 @@ test_that("subsampling estimation is correctly computed",
   res3 <- (sum(res3) * sqrt(pi/2) / sqrt(l) / a)^2
   
   expect_equal(lrv(x, method = "subsampling", 
-                   control = list(l = l, overlapping = FALSE, distr = TRUE)), 
+                   control = list(l_n = l, overlapping = FALSE, distr = TRUE)), 
                res3)
+})
+
+test_that("subsampling estimation for scale is computed correctly", 
+{
+  x <- arima.sim(list(ar = 0.5), 5)
+  l <- 3
+  
+  lrvTest <- function(z, l)
+  {
+    n <- length(z)
+    meanX <- mean(z) * l
+    mean(sapply(0:(n-l), function(i)
+    {
+      (sum(z[(i+1):(i+l)]) - meanX)^2
+    })) / l
+  }
+  
+  # empVar:
+  m <- mean(x)
+  y <- suppressWarnings({lrv(x, method = "subsampling",
+                             control = list(version = "empVar", l_n = l, overlapping = TRUE))})
+  
+  newx <- (x - m)^2
+  expect_equal(y, lrvTest(newx, l))
+  
+  # MD:
+  m <- median(x)
+  y <- suppressWarnings({lrv(x, method = "subsampling",
+                             control = list(version = "MD", l_n = l, overlapping = TRUE))})
+  
+  newx <- abs(x - m)
+  expect_equal(y, lrvTest(newx, l))
+  
+  # GMD:
+  v <- sum(sapply(2:5, function(j) sum(abs(x[j] - x[1:(j-1)])))) / 10
+  y <- suppressWarnings({lrv(x, method = "subsampling",
+                             control = list(version = "GMD", l_n = l,
+                                            overlapping = TRUE))})
+  
+  newx <- sapply(seq_along(x), function(i) mean(abs(x[-i] - x[i])))
+  expect_equal(y, 4 * lrvTest(newx, l))
+  
+  
+  x <- c(85, 89, 36, 12, 51, 39, 24)
+
+  # Qalpha:
+  beta <- 0.5
+  v <- 34
+  y <- lrv(x, "subsampling", control = list(alpha_Q = beta, version = "Qalpha",
+                                       l_n = l, overlapping = TRUE))
+  
+  qalpha_u <- sum(sapply(2:7, function(j)
+  {
+    temp <- (abs(x[1:(j-1)] - x[j]) - v) / IQR(x) / 7^(-1/3)
+    temp <- ifelse(abs(temp) < 1, 3 / 4 * (1 - temp^2), 0)
+    return(sum(temp))
+  })) / (21 * 7^(-1/3) * IQR(x))
+  
+  newx <- sapply(x, function(xi)
+    mean(as.numeric(abs(x - xi) <= v)))
+  expect_equal(y, lrvTest(newx, l) * 4 / qalpha_u^2)
 })
 
 test_that("bootstrap estimation is correctly computed", 
@@ -235,6 +312,6 @@ test_that("bootstrap estimation is correctly computed",
   
   expect_equal(var((dwb - mean(x)) * sqrt(5)), 
                lrv(x, method = "bootstrap", 
-                   control = list(l = 3, B = 1000, seed = 1895)))
+                   control = list(l_n = 3, B = 1000, seed = 1895)))
 
 })

@@ -510,7 +510,7 @@ SEXP lrv_subs_nonoverlap(SEXP X, SEXP L, SEXP MEAN, SEXP DISTR)
   
   if(distr == 1)
   {
-    sum[0] = sum[0] * sqrt(M_PI_2 / l);
+    sum[0] = sum[0] * sqrt(M_PI_2) / sqrt(l);
   } else
   {
     sum[0] = sum[0] / l;
@@ -585,7 +585,6 @@ SEXP lrv_subs_overlap(SEXP X, SEXP L, SEXP DISTR)
     sum[0] = sum[0] / (l * (n - l + 1));
   }
   
-
   UNPROTECT(1);
   return SUM;
 }

@@ -72,9 +72,9 @@ wilcox_stat <- function(x, h = 1L, method = "kernel", control = list())
   
   k <- which.max(res)
   
-  if((method == "subsampling" & (is.null(control$l) || is.na(control$l))) | 
+  if((method == "subsampling" & (is.null(control$l_n) || is.na(control$l_n))) | 
      (method == "kernel" & (is.null(control$b_n) || is.na(control$b_n))) | 
-     (method == "bootstrap" & (is.null(control$l) || is.na(control$l))))
+     (method == "bootstrap" & (is.null(control$l_n) || is.na(control$l_n))))
   {
     n <- length(x)
     x.adj <- x
@@ -90,7 +90,7 @@ wilcox_stat <- function(x, h = 1L, method = "kernel", control = list())
     param <- min(param, n-1)
     if(is.na(param)) param <- 1
     control$b_n <- param
-    control$l <- control$b_n
+    control$l_n <- control$b_n
   }
   
   sigma <- sqrt(lrv(x, method = method, control = control))
@@ -101,7 +101,7 @@ wilcox_stat <- function(x, h = 1L, method = "kernel", control = list())
   attr(Tn, "lrv-method") <- method
   attr(Tn, "sigma") <- sigma
   if(method == "kernel") attr(Tn, "param") <- control$b_n else
-    attr(Tn, "param") <- control$l
+    attr(Tn, "param") <- control$l_n
   attr(Tn, "teststat") <- ts(res / sigma)
   class(Tn) <- "cpStat"
 

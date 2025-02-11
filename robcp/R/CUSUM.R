@@ -59,9 +59,9 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
     temp <- .Call("CUSUM", as.numeric(x))
     k <- which.max(temp)
     
-    if((method == "subsampling" & (is.null(control$l) || is.na(control$l))) | 
+    if((method == "subsampling" & (is.null(control$l_n) || is.na(control$l_n))) | 
        (method == "kernel" & (is.null(control$b_n) || is.na(control$b_n))) | 
-       (method == "bootstrap" & (is.null(control$l) || is.na(control$l))))
+       (method == "bootstrap" & (is.null(control$l_n) || is.na(control$l_n))))
     {
       n <- length(x)
       x.adj <- x
@@ -78,7 +78,7 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
       if(is.na(param)) param <- 1
       
       control$b_n <- param
-      control$l <- param
+      control$l_n <- param
     }
     
     if(method == "kernel" & (is.null(control$kFun) || is.na(control$kFun)))

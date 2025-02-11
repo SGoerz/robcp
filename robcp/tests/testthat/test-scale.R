@@ -50,7 +50,7 @@ test_that("scale_stat is computed correctly",
   x <- c(6, 2, 1, 10, 5, 0)
   beta <- 0.9
   y <-  12 / sqrt(6 * lrv(x, "kernel", control = list(version = "Qalpha",
-                              kFun = "SFT", b_n = b_n, alpha_Q = beta)))
+                              kFun = "quadratic", b_n = b_n, alpha_Q = beta)))
   z <- scale_stat(x, version = "Qalpha", control = list(b_n = b_n), alpha = beta)
   attributes(z) <- NULL
   expect_equal(z, y)

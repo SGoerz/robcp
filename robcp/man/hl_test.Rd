@@ -57,5 +57,5 @@ Dehling, H., Fried, R., and Wendler, M. "A robust method for shift detection in 
 #time series with a structural break at t = 20
 Z <- c(rnorm(20, 0), rnorm(20, 2))
 
-hl_test(Z, control = list(overlapping = TRUE, b_n = 5, b2 = 0.05))
+hl_test(Z, control = list(overlapping = TRUE, b_n = 5, b_u = 0.05))
 }

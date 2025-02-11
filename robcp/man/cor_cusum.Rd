@@ -1,6 +1,6 @@
 \name{cor_cusum}
 \alias{cor_cusum}
-\title{A CUSUM-type test to detect changes in the fluctuation.}
+\title{A CUSUM-type test to detect changes in the correlation.}
 
 \description{
 Performs a CUSUM-based test on changes in Spearman's rho or Kendall's tau.
@@ -34,11 +34,11 @@ A list of the class "htest" containing the following components:
 
 
 \details{
-The function perform a CUSUM-type test on changes in the fluctuation of a time series \eqn{x}. Formally, the hypothesis pair can be written as
-\deqn{H_0: \xi_1, ..., \xi_n}
+The function perform a CUSUM-type test on changes in the correlation of a time series \eqn{x}. Formally, the hypothesis pair can be written as
+\deqn{H_0: \xi_1 = ... = \xi_n}
 \deqn{vs.}
 \deqn{H_1: \exists k \in \{1, ..., n-1\}: \xi_k \neq \xi_{k+1}}
-where \eqn{\xi_i} is a fluctuation measure (either Spearman's rho or Kendall's tau) and \eqn{n} is the length of the time series. \eqn{k} is called a 'change point'.
+where \eqn{\xi_i} is a fluctuation measure (either Spearman's rho or Kendall's tau) for the \eqn{i}-th observations and \eqn{n} is the length of the time series. \eqn{k} is called a 'change point'.
 
 The test statistic is computed using \code{\link{cor_stat}} and asymptotically follows a Kolmogorov distribution. To derive the p-value, the funtion \code{\link{pKSdist}} is used.
 }
@@ -58,7 +58,8 @@ Sheila \enc{Görz}{Goerz}
 }
 
 \examples{
-### first: gerenate a time series with a burn-in period of m and a change point k
+### first: generate a time series with a burn-in period of m and a change point 
+###        k = n/2
 require(mvtnorm)
 n <- 500
 m <- 100

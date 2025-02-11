@@ -18,7 +18,7 @@ cor_stat <- function(x, version = c("tau", "rho"), method = "kernel", control = 
     tsp <- attr(x, "tsp")
   }
   
-  if(!is(x, "matrix") || ncol(x) > 2)
+  if(!(is(x, "matrix") || ncol(x) > 2))
   {
     stop("x must be a numeric or integer matrix with at least 2 columns!")
   }

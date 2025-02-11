@@ -59,6 +59,8 @@ The change point location is estimated as the time point \eqn{k} for which the C
 }
 
 \references{
+Hušková, M., & Marušiaková, M. (2012). M-procedures for detection of changes for dependent observations. Communications in Statistics-Simulation and Computation, 41(7), 1032-1050.
+
 \enc{Dürre}{Duerre}, A. and Fried, R. (2019). "Robust change point tests by bounded transformations", \url{https://arxiv.org/abs/1905.06201}
 
 \enc{Dürre}{Duerre}, A. (2021+). "Finite sample correction for cusum tests", \emph{unpublished manuscript}

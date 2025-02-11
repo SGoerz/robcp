@@ -62,7 +62,7 @@ test_that("Output of cor_cusum has the correct format",
 
 test_that("CUSUM test for changes in the scale is performed correctly", 
 {
-  require(mvtnorm)
+  suppressWarnings(require(mvtnorm))
   
   n <- 500
   m <- 100
@@ -118,6 +118,7 @@ test_that("CUSUM test for changes in the scale is performed correctly",
   
   # correct change point location
   ## rho
+  set.seed(1895)
   rho <- c(0.9, -0.9)
   q <- rho * sqrt( (theta1^2 + 1) * (theta2^2 + 1) / (theta1 * theta2 + 1))
   S0 <- cbind(c(1, q[1]), c(q[1], 1))
