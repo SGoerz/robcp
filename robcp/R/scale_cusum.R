@@ -59,7 +59,8 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"),
   
   if(version == "empVar")
   {
-    stat <- .Call("CUSUM_var", as.numeric(x), as.numeric(x^2))
+    stat <- CUSUM_var_cpp(x, x^2)
+    # stat <- .Call("CUSUM_var", as.numeric(x), as.numeric(x^2))
     res <- max(stat)
     k <- which.max(stat)
   } else 
@@ -72,10 +73,12 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"),
              call. = FALSE)
       }
       y <- cumstats::cummedian(x)
-      res <- .Call("MD", as.numeric(x), as.numeric(y), as.numeric(n)) / (1:(n-1))
+      res <- MD_cpp(x, y) / (1:(n-1))
+      # res <- .Call("MD", as.numeric(x), as.numeric(y), as.numeric(n)) / (1:(n-1))
     } else if(version == "GMD")
     {
-      res <- .Call("GMD", as.numeric(x), as.numeric(n)) / ((1:(n-1)) * (2:n)) * 2
+      res <- GMD_cpp(x) / ((1:(n-1)) * (2:n)) * 2
+      # res <- .Call("GMD", as.numeric(x), as.numeric(n)) / ((1:(n-1)) * (2:n)) * 2
     # } else if(version == "MAD")
     # {
     #   res <- sapply(2:n, function(k) mad(x[1:k], constant = constant))
@@ -189,17 +192,17 @@ scale_cusum <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"),
                             param = attr(stat, "param"), 
                             value = attr(stat, "sigma")))
     if(plot) plot(stat)
-  } else if(method == "bootstrap")
-  {
-    if(is.null(control$l)) control$l <- opt.param(x)
-    if(is.null(control$B)) control$B <- 1 / tol
-    y <- dbb(stat, data = x, version = match.arg(version), control = control,
-             alpha = alpha, 
-             #constant = constant,
-             level = level)
-    p.val <- y[[1]]
-    erg2 <- list(bootstrap = list(param = control$l, crit.value = y[[2]]))
-    if(plot) plot(stat, crit.val = y[[2]])
+  # } else if(method == "bootstrap")
+  # {
+  #   if(is.null(control$l)) control$l <- opt.param(x)
+  #   if(is.null(control$B)) control$B <- 1 / tol
+  #   y <- dbb(stat, data = x, version = match.arg(version), control = control,
+  #            alpha = alpha, 
+  #            #constant = constant,
+  #            level = level)
+  #   p.val <- y[[1]]
+  #   erg2 <- list(bootstrap = list(param = control$l, crit.value = y[[2]]))
+  #   if(plot) plot(stat, crit.val = y[[2]])
   } else
   {
     stop("method not supported.")

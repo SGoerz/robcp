@@ -1,11 +1,5 @@
-##'pBessel: asymptotic cumulative distribution of the maximum of a h dim. 
-##'         squared Bessel bridge
-##'
-##'input: tn (test statistic; numeric)
-##'       p (dimension of the time series; integer)
-##'       
-##'output: P(t_n(X) <= tn) (numeric)
-
+# pBessel: asymptotic cumulative distribution of the maximum of a h dim. 
+#         squared Bessel bridge
 pBessel <- function(tn, p) 
 {
   ## argument check

@@ -10,6 +10,75 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// CUSUM_cpp
+NumericVector CUSUM_cpp(NumericVector x);
+RcppExport SEXP _robcp_CUSUM_cpp(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(CUSUM_cpp(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cumsum_ma_cpp
+NumericMatrix cumsum_ma_cpp(NumericMatrix X);
+RcppExport SEXP _robcp_cumsum_ma_cpp(SEXP XSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(cumsum_ma_cpp(X));
+    return rcpp_result_gen;
+END_RCPP
+}
+// CUSUM_ma_cpp
+NumericVector CUSUM_ma_cpp(NumericMatrix X, NumericMatrix Sigma);
+RcppExport SEXP _robcp_CUSUM_ma_cpp(SEXP XSEXP, SEXP SigmaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type Sigma(SigmaSEXP);
+    rcpp_result_gen = Rcpp::wrap(CUSUM_ma_cpp(X, Sigma));
+    return rcpp_result_gen;
+END_RCPP
+}
+// CUSUM_var_cpp
+NumericVector CUSUM_var_cpp(NumericVector X, NumericVector X2);
+RcppExport SEXP _robcp_CUSUM_var_cpp(SEXP XSEXP, SEXP X2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type X2(X2SEXP);
+    rcpp_result_gen = Rcpp::wrap(CUSUM_var_cpp(X, X2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// MD_cpp
+NumericVector MD_cpp(NumericVector X, NumericVector cummed);
+RcppExport SEXP _robcp_MD_cpp(SEXP XSEXP, SEXP cummedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type cummed(cummedSEXP);
+    rcpp_result_gen = Rcpp::wrap(MD_cpp(X, cummed));
+    return rcpp_result_gen;
+END_RCPP
+}
+// GMD_cpp
+NumericVector GMD_cpp(NumericVector X);
+RcppExport SEXP _robcp_GMD_cpp(SEXP XSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(GMD_cpp(X));
+    return rcpp_result_gen;
+END_RCPP
+}
 // Qalpha
 NumericVector Qalpha(NumericVector x, double alpha);
 RcppExport SEXP _robcp_Qalpha(SEXP xSEXP, SEXP alphaSEXP) {
@@ -49,20 +118,13 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport SEXP c_cumsum(SEXP);
-RcppExport SEXP c_cumsum_ma(SEXP, SEXP, SEXP);
 RcppExport SEXP cholesky(SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP CUSUM(SEXP);
-RcppExport SEXP CUSUM_ma(SEXP, SEXP, SEXP, SEXP, SEXP);
-RcppExport SEXP CUSUM_var(SEXP, SEXP);
 RcppExport SEXP gen_matrix(SEXP, SEXP, SEXP);
-RcppExport SEXP GMD(SEXP, SEXP);
 RcppExport SEXP lrv(SEXP, SEXP, SEXP);
 RcppExport SEXP lrv_matrix(SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP lrv_rho(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP lrv_subs_nonoverlap(SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP lrv_subs_overlap(SEXP, SEXP, SEXP);
-RcppExport SEXP MD(SEXP, SEXP, SEXP);
 RcppExport SEXP pKSdist(SEXP, SEXP);
 RcppExport SEXP psi(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP Qalpha_u(SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -71,23 +133,22 @@ RcppExport SEXP trafo_tau(SEXP, SEXP);
 RcppExport SEXP wilcox(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_robcp_CUSUM_cpp", (DL_FUNC) &_robcp_CUSUM_cpp, 1},
+    {"_robcp_cumsum_ma_cpp", (DL_FUNC) &_robcp_cumsum_ma_cpp, 1},
+    {"_robcp_CUSUM_ma_cpp", (DL_FUNC) &_robcp_CUSUM_ma_cpp, 2},
+    {"_robcp_CUSUM_var_cpp", (DL_FUNC) &_robcp_CUSUM_var_cpp, 2},
+    {"_robcp_MD_cpp", (DL_FUNC) &_robcp_MD_cpp, 2},
+    {"_robcp_GMD_cpp", (DL_FUNC) &_robcp_GMD_cpp, 1},
     {"_robcp_Qalpha", (DL_FUNC) &_robcp_Qalpha, 2},
     {"_robcp_weightedMedian", (DL_FUNC) &_robcp_weightedMedian, 2},
     {"_robcp_kthPair", (DL_FUNC) &_robcp_kthPair, 4},
-    {"c_cumsum",            (DL_FUNC) &c_cumsum,            1},
-    {"c_cumsum_ma",         (DL_FUNC) &c_cumsum_ma,         3},
     {"cholesky",            (DL_FUNC) &cholesky,            5},
-    {"CUSUM",               (DL_FUNC) &CUSUM,               1},
-    {"CUSUM_ma",            (DL_FUNC) &CUSUM_ma,            5},
-    {"CUSUM_var",           (DL_FUNC) &CUSUM_var,           2},
     {"gen_matrix",          (DL_FUNC) &gen_matrix,          3},
-    {"GMD",                 (DL_FUNC) &GMD,                 2},
     {"lrv",                 (DL_FUNC) &lrv,                 3},
     {"lrv_matrix",          (DL_FUNC) &lrv_matrix,          5},
     {"lrv_rho",             (DL_FUNC) &lrv_rho,             6},
     {"lrv_subs_nonoverlap", (DL_FUNC) &lrv_subs_nonoverlap, 4},
     {"lrv_subs_overlap",    (DL_FUNC) &lrv_subs_overlap,    3},
-    {"MD",                  (DL_FUNC) &MD,                  3},
     {"pKSdist",             (DL_FUNC) &pKSdist,             2},
     {"psi",                 (DL_FUNC) &psi,                 7},
     {"Qalpha_u",            (DL_FUNC) &Qalpha_u,            5},

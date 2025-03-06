@@ -19,6 +19,11 @@
 psi <- function(y, fun = c("HLm", "HLg", "SLm", "SLg", "HCm", "HCg", "SCm", "SCg"), 
                 k, constant = 1.4826)
 {
+  if(fun == "none")
+  {
+    return(y)
+  }
+  
   ## argument check
   ### preserve (dim)names????
   if(is(y, "ts"))

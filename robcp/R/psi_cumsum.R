@@ -32,12 +32,13 @@ psi_cumsum <- function(y, fun = "HLm", k, constant = 1.4826)
     m <- ncol(x)
     n <- nrow(x)
     
-    erg <- .Call("c_cumsum_ma", as.numeric(x), as.numeric(n), as.numeric(m))
-    erg <- matrix(erg, ncol = m)
+    erg <- cumsum_ma_cpp(x)
+    # erg <- .Call("c_cumsum_ma", as.numeric(x), as.numeric(n), as.numeric(m))
+    # erg <- matrix(erg, ncol = m)
   }
   else
   {
-    erg <- .Call("c_cumsum", as.numeric(x))
+    erg <- cumsum(x)
   }
   
   if(timeseries)

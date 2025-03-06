@@ -14,7 +14,7 @@ huber_cusum(x, fun = "HLm", k, constant = 1.4826, method = "kernel",
 
 \arguments{
   \item{x}{numeric vector containing a single time series or a numeric matrix containing multiple time series (column-wise).}
-  \item{fun}{character string specifying the transformation function \eqn{\psi}, see details.}
+  \item{fun}{character string specifying the transformation function \eqn{\psi}, see details. For the ordinary CUSUM test, use \code{fun = "none"}.}
   \item{k}{numeric bound used in \code{\link{psi}}.}
 	\item{constant}{scale factor of the MAD. Default is 1.4826.}
 	\item{method}{method for estimating the long run variance.}

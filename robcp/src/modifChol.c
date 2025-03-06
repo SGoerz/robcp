@@ -29,6 +29,21 @@ void rowColSwap(double A[], int j, int maxindex, int n)
   }
 }
 
+//swap only columns number j and maxindex
+void colSwap(double A[], int j, int maxindex, int n)
+{
+  int i;
+  double temp;
+  
+  for(i = 0; i < n; i++)
+  {           
+    //Columns
+    temp = A[i + j * n];
+    A[i + j * n] = A[i + maxindex * n];
+    A[i + maxindex * n] = temp;
+  }
+}
+
 
 void jthFac(double A[], double L[], int j, int n)
 {
@@ -58,7 +73,7 @@ void jthFac(double A[], double L[], int j, int n)
 //A symmetric, stored in lower triangle
 //tau = (macheps)^(1/3), tau.bar = (macheps)^(2/3), mu = 0.1
 //goal: find LL^T of A + E, E >= 0
-// Source of peusocode:
+// Source of pseudocode:
 // Schnabel, R. B., & Eskow, E. (1999). "A revised modified Cholesky factorization algorithm" 
 //                                       SIAM Journal on optimization, 9(4), 1135-1148.
 void RMCDA(double A[], double L[], int n, double tau, double tau_bar, double mu, 
@@ -323,16 +338,48 @@ SEXP cholesky(SEXP X, SEXP N, SEXP TAU, SEXP TAU_BAR, SEXP MU)
   }
   
   SEXP L; 
-  PROTECT(L = allocVector(REALSXP, n * (n + 1)));
+  PROTECT(L = allocVector(REALSXP, n * n));
   
   double *l = REAL(L);
   RMCDA(REAL(A), l, n, tau, tau_bar, mu, swaps);
   
-  for(i = 0; i < n; i++)
+  for(i = n-1; i >= 0; i--)
   {
-    l[i + n * n] = swaps[i];
+    if(swaps[i] != i) rowColSwap(l, swaps[i], i, n);
   }
   
   UNPROTECT(2);
   return L;
 }
+
+// SEXP cholesky(SEXP X, SEXP N, SEXP TAU, SEXP TAU_BAR, SEXP MU)
+// {
+//   SEXP A = duplicate(X);
+//   PROTECT(A);
+//   
+//   int n = *REAL(N);
+//   int i;
+//   double tau = *REAL(TAU);
+//   double tau_bar = *REAL(TAU_BAR);
+//   double mu = *REAL(MU);
+//   double swaps[n];
+//   
+//   for(i = 0; i < n; i++)
+//   {
+//     swaps[i] = i;
+//   }
+//   
+//   SEXP L; 
+//   PROTECT(L = allocVector(REALSXP, n * (n + 1)));
+//   
+//   double *l = REAL(L);
+//   RMCDA(REAL(A), l, n, tau, tau_bar, mu, swaps);
+//   
+//   for(i = 0; i < n; i++)
+//   {
+//     l[i + n * n] = swaps[i];
+//   }
+//   
+//   UNPROTECT(2);
+//   return L;
+// }

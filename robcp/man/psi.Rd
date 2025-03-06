@@ -16,7 +16,7 @@ psi(y, fun = c("HLm", "HLg", "SLm", "SLg", "HCm", "HCg", "SCm", "SCg"), k,
 
 \arguments{
 	\item{y}{vector or matrix with each column representing a time series (numeric).}
-	\item{fun}{character string specifying the transformation function \eqn{\psi} (more in Details).}
+	\item{fun}{character string specifying the transformation function \eqn{\psi} (more in Details). If \code{fun = "none"}, no transformation is performed.}
 	\item{k}{numeric bound used for Huber type psi-functions which determines robustness and efficiency of the test. Default for \code{psi = "HLg"} or \code{"HCg"} is \code{sqrt(qchisq(0.8, df = m)} where \code{m} are the number of time series, and otherwise it is 1.5.}
 	\item{constant}{scale factor of the MAD.}
 }

@@ -39,44 +39,49 @@ test_that("CUSUM test statistic is computed correctly",
   expect_equal(cy, max(abs(CUSUM2(y))) / 
                  sqrt(lrv(y, control = list(kFun = "TH", b_n = 2)) * n))
   
-  m <- 3
-  X <- matrix(rnorm(9), ncol = m)
+  m <- 12
+  X <- matrix(rnorm(m^2), ncol = 3)
   Y <- psi(X)
   sigma <- lrv(Y)
   
   teststat <- apply(Y, 2, CUSUM2)
   
   mchol <- modifChol(sigma)
-  swaps <- attr(mchol, "swaps")
-  mchol.inv <- chol2inv(modifChol(sigma))
-  ## swap-function
-  sapply(m:1, function(i)
-  {
-    if(i != swaps[i] + 1)
-    {
-      ## rows
-      temp <- mchol.inv[i, ]
-      mchol.inv[i, ] <<- mchol.inv[swaps[i] + 1, ]
-      mchol.inv[swaps[i] + 1, ] <<- temp
-      ## columns
-      temp <- mchol.inv[, i]
-      mchol.inv[, i] <<- mchol.inv[, swaps[i] + 1]
-      mchol.inv[, swaps[i] + 1] <<- temp
-    }
-  })
+  mchol.inv <- chol2inv(mchol)
   
-  g.inv <- ginv(sigma)
+  res <- svd(sigma)
+  svd1inv <- res$u %*% diag(1 / sqrt(res$d)) %*% t(res$v)
+  
+  # swaps <- attr(mchol, "swaps")
+  # mchol.inv <- chol2inv(modifChol(sigma))
+  # ## swap-function
+  # sapply(m:1, function(i)
+  # {
+  #   if(i != swaps[i] + 1)
+  #   {
+  #     ## rows
+  #     temp <- mchol.inv[i, ]
+  #     mchol.inv[i, ] <<- mchol.inv[swaps[i] + 1, ]
+  #     mchol.inv[swaps[i] + 1, ] <<- temp
+  #     ## columns
+  #     temp <- mchol.inv[, i]
+  #     mchol.inv[, i] <<- mchol.inv[, swaps[i] + 1]
+  #     mchol.inv[, swaps[i] + 1] <<- temp
+  #   }
+  # })
+  # 
+  # g.inv <- ginv(sigma)
   
   res1 <- max(apply(teststat, 1, function(x) t(x) %*% mchol.inv %*% x)) / nrow(Y)
-  res2 <- max(apply(teststat, 1, function(x) t(x) %*% g.inv %*% x)) / nrow(Y)
+  res2 <- max(apply(teststat, 1, function(x) t(x) %*% svd1inv %*% x)) / nrow(Y)
   
   Ychol <- CUSUM(Y, inverse = "Cholesky")
   attributes(Ychol) <- NULL
-  Yginv <- CUSUM(Y, inverse = "generalized")
-  attributes(Yginv) <- NULL
+  Ysvd <- CUSUM(Y, inverse = "svd")
+  attributes(Ysvd) <- NULL
   
   expect_equal(res1, Ychol, tolerance = 1e-5)
-  expect_equal(res2, Yginv, tolerance = 1e-5)
+  expect_equal(res2, Ysvd, tolerance = 1e-5)
   
   # correct change point location
   x <- rnorm(100)
