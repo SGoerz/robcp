@@ -1,0 +1,8 @@
+bibentry(
+  bibtype  = "Manual",
+  title    = "robcp: Robust Change-Point Tests",
+  author   = c(person(c("Sheila"), "Görz"), person("Alexander", "Dürre")),
+  year     = "2025",
+  note     = "R package version 0.3.8", 
+  url      = "https://cran.r-project.org/package=robcp"
+)
