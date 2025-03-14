@@ -14,7 +14,7 @@
 ##'output: long run variance (numeric value) or long run covariance matrix 
 ##'        (numeric matrix with dim. m x m, when m is the number of columns)
 
-lrv <- function(x, method = c("kernel", "subsampling", "none"), 
+lrv <- function(x, method = c("kernel", "subsampling", "bootstrap", "none"), 
                 control = list())
 {
   method <- match.arg(method)
