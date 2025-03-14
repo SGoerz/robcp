@@ -52,7 +52,7 @@ test_that("CUSUM test statistic is computed correctly",
   mchol.inv <- chol2inv(mchol)
   
   res <- svd(sigma)
-  svd1inv <- res$u %*% diag(1 / sqrt(res$d)) %*% t(res$v)
+  svd1inv <- res$u %*% diag(1 / res$d) %*% t(res$v)
   
   gen.inv <- ginv(sigma)
   
