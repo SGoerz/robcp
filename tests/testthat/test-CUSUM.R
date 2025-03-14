@@ -18,6 +18,8 @@ test_that("output has the correct format",
 
 test_that("CUSUM test statistic is computed correctly", 
 {
+  require(MASS)
+  
   x <- 1:5
   n <- length(x)
   y <- psi(x)
@@ -52,6 +54,8 @@ test_that("CUSUM test statistic is computed correctly",
   res <- svd(sigma)
   svd1inv <- res$u %*% diag(1 / sqrt(res$d)) %*% t(res$v)
   
+  gen.inv <- ginv(sigma)
+  
   # swaps <- attr(mchol, "swaps")
   # mchol.inv <- chol2inv(modifChol(sigma))
   # ## swap-function
@@ -74,14 +78,18 @@ test_that("CUSUM test statistic is computed correctly",
   
   res1 <- max(apply(teststat, 1, function(x) t(x) %*% mchol.inv %*% x)) / nrow(Y)
   res2 <- max(apply(teststat, 1, function(x) t(x) %*% svd1inv %*% x)) / nrow(Y)
+  res3 <- max(apply(teststat, 1, function(x) t(x) %*% gen.inv %*% x)) / nrow(Y)
   
   Ychol <- CUSUM(Y, inverse = "Cholesky")
   attributes(Ychol) <- NULL
   Ysvd <- CUSUM(Y, inverse = "svd")
   attributes(Ysvd) <- NULL
+  Ygen <- CUSUM(Y, inverse = "generalized")
+  attributes(Ygen) <- NULL
   
   expect_equal(res1, Ychol, tolerance = 1e-5)
   expect_equal(res2, Ysvd, tolerance = 1e-5)
+  expect_equal(res3, Ygen, tolerance = 1e-5)
   
   # correct change point location
   x <- rnorm(100)

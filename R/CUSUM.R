@@ -50,7 +50,7 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
     } else if(inverse == "svd")
     {
       temp <- svd(sigma)
-      sigma.inv <- temp$u %*% diag(1 / sqrt(temp$d)) %*% t(temp$v)
+      sigma.inv <- temp$u %*% diag(1 / temp$d) %*% t(temp$v)
     }
     
     swaps <- 0:(m - 1)
