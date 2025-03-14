@@ -184,36 +184,36 @@ SEXP CUSUM_ma(SEXP Y, SEXP SIGMA, SEXP SWAPS, SEXP N, SEXP M)
   UNPROTECT(4);
   return RES;
 }
-
-
-SEXP CUSUM_var(SEXP X, SEXP X2)
-{
-  PROTECT(X);
-  PROTECT(X2);
-  int n = length(X);
-
-  SEXP RES;
-  PROTECT(RES = allocVector(REALSXP, n-2));
-  double *res = REAL(RES);
-  double sqn = sqrt(n);
-
-  double *csum = REAL(c_cumsum(X));
-  double *csum2 = REAL(c_cumsum(X2));
-
-  double sumN = pow(csum[n - 1] / n, 2);
-  double sumN2 = csum2[n - 1] / n;
-
-  int i;
-
-  for(i = 1; i < n-1; i++)
-  {
-    res[i-1] = fabs(csum2[i] - pow(csum[i], 2) / (i + 1) - (i + 1) * sumN2 + (i + 1) * sumN) / sqn;
-  }
-
-  UNPROTECT(3);
-  return(RES);
-}
-
+// 
+// 
+// SEXP CUSUM_var(SEXP X, SEXP X2)
+// {
+//   PROTECT(X);
+//   PROTECT(X2);
+//   int n = length(X);
+// 
+//   SEXP RES;
+//   PROTECT(RES = allocVector(REALSXP, n-2));
+//   double *res = REAL(RES);
+//   double sqn = sqrt(n);
+// 
+//   double *csum = REAL(c_cumsum(X));
+//   double *csum2 = REAL(c_cumsum(X2));
+// 
+//   double sumN = pow(csum[n - 1] / n, 2);
+//   double sumN2 = csum2[n - 1] / n;
+// 
+//   int i;
+// 
+//   for(i = 1; i < n-1; i++)
+//   {
+//     res[i-1] = fabs(csum2[i] - pow(csum[i], 2) / (i + 1) - (i + 1) * sumN2 + (i + 1) * sumN) / sqn;
+//   }
+// 
+//   UNPROTECT(3);
+//   return(RES);
+// }
+// 
 // 
 // SEXP MD(SEXP X, SEXP CUMMED, SEXP N)
 // {

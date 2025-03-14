@@ -59,8 +59,8 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"),
   
   if(version == "empVar")
   {
-    # stat <- CUSUM_var_cpp(x, x^2)
-    stat <- .Call("CUSUM_var", as.numeric(x), as.numeric(x^2))
+    stat <- CUSUM_var_cpp(x, x^2)
+    # stat <- .Call("CUSUM_var", as.numeric(x), as.numeric(x^2))
     res <- max(stat)
     k <- which.max(stat)
   } else 
