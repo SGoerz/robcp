@@ -10,6 +10,75 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// CUSUM_cpp
+NumericVector CUSUM_cpp(NumericVector x);
+RcppExport SEXP _robcp_CUSUM_cpp(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(CUSUM_cpp(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cumsum_ma_cpp
+NumericMatrix cumsum_ma_cpp(NumericMatrix X);
+RcppExport SEXP _robcp_cumsum_ma_cpp(SEXP XSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(cumsum_ma_cpp(X));
+    return rcpp_result_gen;
+END_RCPP
+}
+// CUSUM_ma_cpp
+NumericVector CUSUM_ma_cpp(NumericMatrix X, NumericMatrix Sigma);
+RcppExport SEXP _robcp_CUSUM_ma_cpp(SEXP XSEXP, SEXP SigmaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type Sigma(SigmaSEXP);
+    rcpp_result_gen = Rcpp::wrap(CUSUM_ma_cpp(X, Sigma));
+    return rcpp_result_gen;
+END_RCPP
+}
+// CUSUM_var_cpp
+NumericVector CUSUM_var_cpp(NumericVector X, NumericVector X2);
+RcppExport SEXP _robcp_CUSUM_var_cpp(SEXP XSEXP, SEXP X2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type X2(X2SEXP);
+    rcpp_result_gen = Rcpp::wrap(CUSUM_var_cpp(X, X2));
+    return rcpp_result_gen;
+END_RCPP
+}
+// MD_cpp
+NumericVector MD_cpp(NumericVector X, NumericVector cummed);
+RcppExport SEXP _robcp_MD_cpp(SEXP XSEXP, SEXP cummedSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type cummed(cummedSEXP);
+    rcpp_result_gen = Rcpp::wrap(MD_cpp(X, cummed));
+    return rcpp_result_gen;
+END_RCPP
+}
+// GMD_cpp
+NumericVector GMD_cpp(NumericVector X);
+RcppExport SEXP _robcp_GMD_cpp(SEXP XSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(GMD_cpp(X));
+    return rcpp_result_gen;
+END_RCPP
+}
 // Qalpha
 NumericVector Qalpha(NumericVector x, double alpha);
 RcppExport SEXP _robcp_Qalpha(SEXP xSEXP, SEXP alphaSEXP) {
@@ -70,6 +139,12 @@ RcppExport SEXP trafo_tau(SEXP, SEXP);
 RcppExport SEXP wilcox(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_robcp_CUSUM_cpp", (DL_FUNC) &_robcp_CUSUM_cpp, 1},
+    {"_robcp_cumsum_ma_cpp", (DL_FUNC) &_robcp_cumsum_ma_cpp, 1},
+    {"_robcp_CUSUM_ma_cpp", (DL_FUNC) &_robcp_CUSUM_ma_cpp, 2},
+    {"_robcp_CUSUM_var_cpp", (DL_FUNC) &_robcp_CUSUM_var_cpp, 2},
+    {"_robcp_MD_cpp", (DL_FUNC) &_robcp_MD_cpp, 2},
+    {"_robcp_GMD_cpp", (DL_FUNC) &_robcp_GMD_cpp, 1},
     {"_robcp_Qalpha", (DL_FUNC) &_robcp_Qalpha, 2},
     {"_robcp_weightedMedian", (DL_FUNC) &_robcp_weightedMedian, 2},
     {"_robcp_kthPair", (DL_FUNC) &_robcp_kthPair, 4},
