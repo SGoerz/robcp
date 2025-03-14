@@ -77,8 +77,8 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"),
       # res <- .Call("MD", as.numeric(x), as.numeric(y), as.numeric(n)) / (1:(n-1))
     } else if(version == "GMD")
     {
-      # res <- GMD_cpp(x) / ((1:(n-1)) * (2:n)) * 2
-      res <- .Call("GMD", as.numeric(x), as.numeric(n)) / ((1:(n-1)) * (2:n)) * 2
+      res <- GMD_cpp(x) / ((1:(n-1)) * (2:n)) * 2
+      # res <- .Call("GMD", as.numeric(x), as.numeric(n)) / ((1:(n-1)) * (2:n)) * 2
     # } else if(version == "MAD")
     # {
     #   res <- sapply(2:n, function(k) mad(x[1:k], constant = constant))

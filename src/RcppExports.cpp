@@ -124,7 +124,6 @@ RcppExport SEXP CUSUM(SEXP);
 RcppExport SEXP CUSUM_ma(SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP CUSUM_var(SEXP, SEXP);
 RcppExport SEXP gen_matrix(SEXP, SEXP, SEXP);
-RcppExport SEXP GMD(SEXP, SEXP);
 RcppExport SEXP lrv(SEXP, SEXP, SEXP);
 RcppExport SEXP lrv_matrix(SEXP, SEXP, SEXP, SEXP, SEXP);
 RcppExport SEXP lrv_rho(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
@@ -153,7 +152,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"CUSUM_ma",            (DL_FUNC) &CUSUM_ma,            5},
     {"CUSUM_var",           (DL_FUNC) &CUSUM_var,           2},
     {"gen_matrix",          (DL_FUNC) &gen_matrix,          3},
-    {"GMD",                 (DL_FUNC) &GMD,                 2},
     {"lrv",                 (DL_FUNC) &lrv,                 3},
     {"lrv_matrix",          (DL_FUNC) &lrv_matrix,          5},
     {"lrv_rho",             (DL_FUNC) &lrv_rho,             6},

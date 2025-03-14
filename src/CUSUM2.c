@@ -240,29 +240,29 @@ SEXP CUSUM_var(SEXP X, SEXP X2)
 //   return RES;
 // }
 // 
-
-SEXP GMD(SEXP X, SEXP N)
-{
-  double n = *REAL(N);
-  double *x = REAL(X);
-
-  SEXP RES;
-  PROTECT(RES = allocVector(REALSXP, n-1));
-  double *res = REAL(RES);
-
-  int i, k;
-
-  res[0] = fabs(x[0] - x[1]);
-
-  for(k = 2; k < n; k++)
-  {
-    res[k-1] = res[k-2];
-    for(i = 0; i < k; i++)
-    {
-      res[k-1] += fabs(x[i] - x[k]);
-    }
-  }
-
-  UNPROTECT(1);
-  return RES;
-}
+// 
+// SEXP GMD(SEXP X, SEXP N)
+// {
+//   double n = *REAL(N);
+//   double *x = REAL(X);
+// 
+//   SEXP RES;
+//   PROTECT(RES = allocVector(REALSXP, n-1));
+//   double *res = REAL(RES);
+// 
+//   int i, k;
+// 
+//   res[0] = fabs(x[0] - x[1]);
+// 
+//   for(k = 2; k < n; k++)
+//   {
+//     res[k-1] = res[k-2];
+//     for(i = 0; i < k; i++)
+//     {
+//       res[k-1] += fabs(x[i] - x[k]);
+//     }
+//   }
+// 
+//   UNPROTECT(1);
+//   return RES;
+// }
