@@ -50,8 +50,8 @@ wilcox_stat <- function(x, h = 1L, method = "kernel", control = list())
     }
     if(h == 2L)
     {
-      res <- CUSUM_cpp(x)
-      # res <- .Call("CUSUM", as.numeric(x))
+      # res <- CUSUM_cpp(x)
+      res <- .Call("CUSUM", as.numeric(x))
     } else
     {
       res <- .Call("wilcox", as.numeric(x))

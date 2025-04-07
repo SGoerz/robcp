@@ -54,14 +54,14 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
     }
     
     swaps <- 0:(m - 1)
-    temp <- CUSUM_ma_cpp(x, sigma.inv)
-    # temp <- .Call("CUSUM_ma", as.numeric(x), as.numeric(sigma.inv),
-    #               as.numeric(swaps), as.numeric(n), as.numeric(m))
+    # temp <- CUSUM_ma_cpp(x, sigma.inv)
+    temp <- .Call("CUSUM_ma", as.numeric(x), as.numeric(sigma.inv),
+                  as.numeric(swaps), as.numeric(n), as.numeric(m))
     k <- which.max(temp)
   } else
   {
-    temp <- CUSUM_cpp(x)
-    # temp <- .Call("CUSUM", as.numeric(x))
+    # temp <- CUSUM_cpp(x)
+    temp <- .Call("CUSUM", as.numeric(x))
     k <- which.max(temp)
     
     if((method == "subsampling" & (is.null(control$l_n) || is.na(control$l_n))) | 
