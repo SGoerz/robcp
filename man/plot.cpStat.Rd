@@ -20,6 +20,9 @@ Plots the trajectory of the test statistic process together with a red line indi
 the critical value (alpha = 0.05) and a blue line indicating the most
 probable change point location
 }
+\value{
+No return value; called for side effects.
+}
 \details{
 \itemize{
 \item Default for \code{ylim} is \code{c(min(c(data, 1.358)), max(c(data, 1.358)))}.
