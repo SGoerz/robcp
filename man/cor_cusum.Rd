@@ -58,8 +58,7 @@ Sheila \enc{Görz}{Goerz}
 }
 
 \examples{
-### first: generate a time series with a burn-in period of m and a change point 
-###        k = n/2
+### first: generate a time series with a burn-in period of m and a change point k = n/2
 require(mvtnorm)
 n <- 500
 m <- 100

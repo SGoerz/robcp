@@ -330,12 +330,6 @@ lrv_dwb <- function(x, l, B, kFun, seed = NA)
   sigma.ma <- matrix(.Call("gen_matrix", as.numeric(n), as.numeric(l),
                            as.numeric(kFun)), ncol = n)
   
-  if(!requireNamespace("pracma", quietly = TRUE)) 
-  {
-    stop("Package \"pracma\" needed for the dependent wild bootstrap to work. Please install it.",
-         call. = FALSE)
-  }
-  
   ## dependency matrix
   sigma.root <- pracma::sqrtm(sigma.ma)$B
   ## set seed

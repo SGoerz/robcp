@@ -67,12 +67,7 @@ scale_stat <- function(x, version = c("empVar", "MD", "GMD", "Qalpha"),
   {
     if(version == "MD")
     {
-      if(!requireNamespace("cumstats", quietly = TRUE)) 
-      {
-        stop("Package \"cumstats\" needed for the MD. Please install it.",
-             call. = FALSE)
-      }
-      y <- cumstats::cummedian(x)
+      y <- sapply(1:n, function(k) median(x[1:k]))
       # res <- MD_cpp(x, y) / (1:(n-1))
       res <- .Call("MD", as.numeric(x), as.numeric(y), as.numeric(n)) / (1:(n-1))
     } else if(version == "GMD")

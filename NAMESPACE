@@ -21,7 +21,11 @@ import(Rcpp)
 
 importFrom("methods", "is")
 
+importFrom("mvtnorm", "rmvt")
 
+importFrom("MASS", "ginv")
+
+importFrom("pracma", "sqrtm")
 
 export(
 psi_cumsum

@@ -145,7 +145,7 @@ void RMCDA(double A[], double L[], int n, double tau, double tau_bar, double mu,
     }
   }
   
-  //phasetwo, A not positive definite
+  //Phase two, A not positive definite
   double delta;
   double sumI, sumN;
   double delta_old = 0; 
@@ -249,7 +249,7 @@ void RMCDA(double A[], double L[], int n, double tau, double tau_bar, double mu,
         temp = 1 - sumN / A[j + j * n];
         for(i = j + 1; i < n; i++)
         {
-          g[i - k] += fabs(A[i + j * n]) * temp;      
+          g[i - kv] += fabs(A[i + j * n]) * temp;     
         }
       }
       

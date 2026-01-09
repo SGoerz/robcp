@@ -16,7 +16,7 @@ CUSUM <- function(x, method = "kernel", control = list(), inverse = "Cholesky", 
   if(is(x, "ts"))
   {
     class(x) <- "numeric"
-    tsp <- attr(x, "tsp")
+    # tsp <- attr(x, "tsp")
   }
   if(!(is(x, "matrix") || is(x, "numeric") || is(x, "integer")))
   {

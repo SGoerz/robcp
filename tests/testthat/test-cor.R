@@ -1,4 +1,4 @@
-context("cor test")
+ context("cor test")
 
 test_that("Output of cor_stat has the correct format", 
 {
